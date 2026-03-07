@@ -111,7 +111,7 @@ export default function MapComponent({
               points.reduce((s, p) => s + p.longitude, 0) / points.length,
               points.reduce((s, p) => s + p.latitude, 0) / points.length,
             ])
-          : fromLonLat([47.9, 47.0]);
+          : fromLonLat([47.0, 47.9]);
 
       const map = new ol.Map({
         target: mapRef.current,

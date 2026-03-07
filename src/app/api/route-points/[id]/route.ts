@@ -3,6 +3,11 @@ import { query } from '@/db/client';
 import { UpdateRoutePointSchema } from '@/schemas';
 import { ZodError } from 'zod';
 
+const ALLOWED_ROUTE_POINT_FIELDS = new Set([
+  'route_id', 'order_index', 'latitude', 'longitude', 'name',
+  'description', 'interesting_fact', 'recommended_time_to_visit', 'images',
+]);
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -13,7 +18,7 @@ export async function PUT(
     const data = UpdateRoutePointSchema.parse({ ...body, id });
 
     const fields = Object.entries(data)
-      .filter(([key]) => key !== 'id')
+      .filter(([key]) => key !== 'id' && ALLOWED_ROUTE_POINT_FIELDS.has(key))
       .filter(([, value]) => value !== undefined);
 
     if (fields.length === 0) {

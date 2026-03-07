@@ -3,6 +3,10 @@ import { query } from '@/db/client';
 import { UpdatePostSchema } from '@/schemas';
 import { ZodError } from 'zod';
 
+const ALLOWED_POST_FIELDS = new Set([
+  'title', 'slug', 'cover_image', 'excerpt', 'content', 'published',
+]);
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -30,7 +34,7 @@ export async function PUT(
     const data = UpdatePostSchema.parse({ ...body, id });
 
     const fields = Object.entries(data)
-      .filter(([key]) => key !== 'id')
+      .filter(([key]) => key !== 'id' && ALLOWED_POST_FIELDS.has(key))
       .filter(([, value]) => value !== undefined);
 
     if (fields.length === 0) {
