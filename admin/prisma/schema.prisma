@@ -200,3 +200,16 @@ model Traveler {
   @@index([booking_id])
   @@map("travelers")
 }
+
+model AdminUser {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(320)
+  name          String    @db.VarChar(200)
+  password_hash String    @db.VarChar(255)
+  is_active     Boolean   @default(true)
+  last_login_at DateTime? @db.Timestamptz(6)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("admin_users")
+}

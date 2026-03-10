@@ -1,19 +1,21 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import prisma from '@/db/client';
 import { FileText, Map, Plus, TrendingUp } from 'lucide-react';
 
 async function getDashboardStats() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/posts?limit=100`, { cache: 'no-store' });
-    if (!res.ok) return { total: 0, published: 0, draft: 0 };
-    const data = await res.json();
-    const posts = data.posts ?? [];
+    const [total, published, draft] = await Promise.all([
+      prisma.post.count(),
+      prisma.post.count({ where: { published: true } }),
+      prisma.post.count({ where: { published: false } }),
+    ]);
+
     return {
-      total: data.total ?? 0,
-      published: posts.filter((p: { published: boolean }) => p.published).length,
-      draft: posts.filter((p: { published: boolean }) => !p.published).length,
+      total,
+      published,
+      draft,
     };
   } catch {
     return { total: 0, published: 0, draft: 0 };
@@ -28,12 +30,12 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">Хяналтын самбар</h1>
-          <p className="text-muted-foreground mt-1">Аяллын хөтөчүүдээ удирдах</p>
+          <p className="text-muted-foreground mt-1">Аяллын багцуудаа удирдах</p>
         </div>
         <Button asChild>
           <Link href="/dashboard/posts/new">
             <Plus className="mr-2 h-4 w-4" />
-            Шинэ хөтөч
+            Шинэ багц
           </Link>
         </Button>
       </div>
@@ -41,12 +43,12 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Нийт хөтөч</CardTitle>
+            <CardTitle className="text-sm font-medium">Нийт багц</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">Үүсгэсэн аяллын хөтөч</p>
+            <p className="text-xs text-muted-foreground">Үүсгэсэн аяллын багц</p>
           </CardContent>
         </Card>
 
@@ -57,7 +59,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.published}</div>
-            <p className="text-xs text-muted-foreground">Нийтэд харагдаж буй хөтөч</p>
+            <p className="text-xs text-muted-foreground">Нийтэд харагдаж буй багц</p>
           </CardContent>
         </Card>
 
@@ -68,7 +70,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.draft}</div>
-            <p className="text-xs text-muted-foreground">Нийтлээгүй хөтөч</p>
+            <p className="text-xs text-muted-foreground">Нийтлээгүй багц</p>
           </CardContent>
         </Card>
       </div>
@@ -79,10 +81,10 @@ export default async function DashboardPage() {
         </CardHeader>
         <CardContent className="flex gap-4">
           <Button asChild variant="outline">
-            <Link href="/dashboard/posts">Бүх хөтөчийг үзэх</Link>
+            <Link href="/dashboard/posts">Бүх багцыг үзэх</Link>
           </Button>
           <Button asChild>
-            <Link href="/dashboard/posts/new">Шинэ хөтөч үүсгэх</Link>
+            <Link href="/dashboard/posts/new">Шинэ багц үүсгэх</Link>
           </Button>
         </CardContent>
       </Card>

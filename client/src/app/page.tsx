@@ -30,10 +30,10 @@ async function FeaturedGuides() {
                             Онцлох чиглэлүүд
                         </span>
                         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                            Сонгомол аяллын хөтөчүүд
+                            Сонгомол аяллын багцууд
                         </h2>
                         <p className="text-gray-500 text-lg max-w-xl mx-auto">
-                            Хөтөч бүрт дэлгэрэнгүй маршрут, орон нутгийн мэдээлэл,
+                            Багц бүрт дэлгэрэнгүй маршрут, орон нутгийн мэдээлэл,
                             хэрэгтэй зөвлөгөө багтсан.
                         </p>
                     </div>
@@ -49,7 +49,7 @@ async function FeaturedGuides() {
                             href="/guides"
                             className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 text-white font-semibold rounded-full hover:bg-primary-700 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
                         >
-                            Бүх хөтөчийг үзэх <FiArrowRight />
+                            Бүх багцыг үзэх <FiArrowRight />
                         </Link>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ export default async function HomePage() {
                         <div className="max-w-3xl">
                             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-sm">
                                 <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                                Шинэ хөтөчүүд тогтмол нэмэгдэнэ
+                                Шинэ багцууд тогтмол нэмэгдэнэ
                             </div>
 
                             <div className="mb-5 flex flex-wrap gap-2">
@@ -144,8 +144,8 @@ export default async function HomePage() {
                             </h1>
 
                             <p className="mb-8 max-w-2xl text-lg leading-8 text-white/72 sm:text-xl">
-                                Aylliin бол аяллаа илүү утга учиртай, цэгцтэй,
-                                урамтай төлөвлөхийг хүсдэг хүмүүст зориулсан travel guide платформ.
+                                Aylal бол аяллаа илүү утга учиртай, цэгцтэй,
+                                урамтай төлөвлөхийг хүсдэг хүмүүст зориулсан аяллын багцын платформ.
                                 Хаашаа явахаас гадна тэнд очоод юуг мэдрэхийг ч хамт санал болгоно.
                             </p>
 
@@ -154,7 +154,7 @@ export default async function HomePage() {
                                     href="/guides"
                                     className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold text-primary-700 shadow-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
                                 >
-                                    Хөтөчүүд үзэх <FiArrowRight />
+                                    Багцууд үзэх <FiArrowRight />
                                 </Link>
                                 <a
                                     href="#guides"
@@ -261,9 +261,9 @@ export default async function HomePage() {
                                 Зүгээр нэг явах биш, илүү гүн мэдэр
                             </h2>
                             <p className="text-gray-500 leading-relaxed mb-4">
-                                Aylliin нь түгээмэл аяллын замаас цааш харж,
+                                Aylal нь түгээмэл аяллын замаас цааш харж,
                                 тухайн газрын онцлогийг илүү сайн мэдрэхэд туслах
-                                судалгаатай аяллын хөтөчүүдийн цуглуулга юм.
+                                судалгаатай аяллын багцуудын цуглуулга юм.
                             </p>
                             <p className="text-gray-500 leading-relaxed">
                                 Хотын богино аялал ч бай, олон өдрийн хөтөлбөр ч бай,

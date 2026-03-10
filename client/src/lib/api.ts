@@ -13,7 +13,7 @@ const getApiUrl = () => {
 
 export async function getPosts(page = 1, limit = 12): Promise<PostsResponse> {
     const res = await fetch(
-        `${ADMIN_API}/api/posts?page=${page}&limit=${limit}`,
+        `${ADMIN_API}/api/posts?page=${page}&limit=${limit}&published=true`,
         { cache: 'no-store' },
     )
     if (!res.ok) throw new Error('Failed to fetch posts')
@@ -41,7 +41,7 @@ export async function getTravelGuide(slug: string): Promise<TravelGuide> {
     })
     if (!res.ok) {
         if (res.status === 404) throw new Error('Not found')
-        throw new Error('Failed to fetch travel guide')
+        throw new Error('Аяллын багцын мэдээллийг авч чадсангүй')
     }
     return res.json()
 }

@@ -350,14 +350,14 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Хөтөчийн мэдээлэл</CardTitle>
+            <CardTitle>Багцын мэдээлэл</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Гарчиг</Label>
               <Input
                 id="title"
-                placeholder="Хөтөчийн гарчиг оруулна уу..."
+                placeholder="Багцын гарчиг оруулна уу..."
                 {...form.register('title')}
                 onChange={handleTitleChange}
               />
@@ -382,7 +382,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
               <Label htmlFor="excerpt">Товч тайлбар</Label>
               <Textarea
                 id="excerpt"
-                placeholder="Хөтөчийн товч тайлбар..."
+                placeholder="Багцын товч тайлбар..."
                 rows={3}
                 {...form.register('excerpt')}
               />
@@ -417,7 +417,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
               <Label htmlFor="content">Нийтлэлийн агуулга (Markdown)</Label>
               <Textarea
                 id="content"
-                placeholder="Аяллын хөтөчийн агуулгаа Markdown-аар бичнэ үү..."
+                placeholder="Аяллын багцын агуулгаа Markdown-аар бичнэ үү..."
                 rows={20}
                 className="font-mono text-sm"
                 {...form.register('content')}
@@ -565,7 +565,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
               label="Хөтөлбөрт багтсан зүйлс"
               description="Аяллын үнэд багтсан бүх зүйлс."
               items={includedItems}
-              placeholder="Хөтөч"
+              placeholder="Байрлах газар"
               addLabel="Багтсан зүйл нэмэх"
               onChange={setIncludedItems}
             />
@@ -730,7 +730,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {postId ? 'Өөрчлөлт хадгалах' : 'Хөтөч үүсгэх'}
+                {postId ? 'Өөрчлөлт хадгалах' : 'Багц үүсгэх'}
               </>
             )}
           </Button>

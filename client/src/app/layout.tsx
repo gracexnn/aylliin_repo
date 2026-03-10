@@ -4,11 +4,11 @@ import '@/app/globals.css'
 
 export const metadata: Metadata = {
     title: {
-        default: 'Aylliin — Аяллын хөтөч',
-        template: '%s | Aylliin',
+        default: 'Aylal — Аяллын багц',
+        template: '%s | Aylal',
     },
     description:
-        'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөө, хэрэгтэй мэдээлэл бүхий аяллын хөтөчүүдийг олж нээгээрэй.',
+        'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөө, хэрэгтэй мэдээлэл бүхий аяллын багцуудыг олж нээгээрэй.',
     robots: {
         index: false,
         follow: false,
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         },
     },
     openGraph: {
-        siteName: 'Aylliin',
+        siteName: 'Aylal',
         type: 'website',
     },
 }

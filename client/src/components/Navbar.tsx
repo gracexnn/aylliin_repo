@@ -8,7 +8,7 @@ import { MdExplore } from 'react-icons/md'
 
 const navLinks = [
     { href: '/', label: 'Нүүр' },
-    { href: '/guides', label: 'Аяллын хөтөчүүд' },
+    { href: '/guides', label: 'Аяллын багцууд' },
     { href: '/#about', label: 'Бидний тухай' },
 ]
 
@@ -52,7 +52,7 @@ export default function Navbar() {
                                 scrolled ? 'text-gray-900' : 'text-white'
                             }`}
                         >
-                            Aylliin
+                            Aylal
                         </span>
                     </Link>
 

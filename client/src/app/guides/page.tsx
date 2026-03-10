@@ -7,8 +7,8 @@ import { MdExplore } from 'react-icons/md'
 import { FiSearch } from 'react-icons/fi'
 
 export const metadata: Metadata = {
-    title: 'Аяллын хөтөчүүд',
-    description: 'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөөтэй аяллын хөтөчүүдийг үзээрэй.',
+    title: 'Аяллын багцууд',
+    description: 'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөөтэй аяллын багцуудыг үзээрэй.',
 }
 
 interface Props {
@@ -45,12 +45,12 @@ export default async function GuidesPage({ searchParams }: Props) {
                         Бүх чиглэлүүд
                     </span>
                     <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">
-                        Аяллын хөтөчүүд
+                        Аяллын багцууд
                     </h1>
                     <p className="text-white/60 text-lg max-w-xl mx-auto">
                         {total > 0
-                            ? `Таны дараагийн аялалд урам өгөх ${total} хөтөч бэлэн байна.`
-                            : 'Хөтөчүүд тун удахгүй нэмэгдэнэ.'}
+                            ? `Таны дараагийн аялалд урам өгөх ${total} багц бэлэн байна.`
+                            : 'Аяллын багцууд тун удахгүй нэмэгдэнэ.'}
                     </p>
                 </div>
             </section>
@@ -64,10 +64,10 @@ export default async function GuidesPage({ searchParams }: Props) {
                                 <FiSearch size={24} className="text-gray-400" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                                Одоогоор хөтөч алга
+                                Одоогоор багц алга
                             </h2>
                             <p className="text-gray-400 max-w-sm">
-                                Манай баг шинэ аяллын хөтөчүүд бэлдэж байна. Удахгүй дахин шалгана уу.
+                                Манай баг шинэ аяллын багцууд бэлдэж байна. Удахгүй дахин шалгана уу.
                             </p>
                         </div>
                     ) : (

@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Travel Agency Admin',
-  description: 'Admin dashboard for managing travel guides',
+  title: 'Аяллын админ',
+  description: 'Аяллын багцуудыг удирдах админ самбар',
   robots: {
     index: false,
     follow: false,

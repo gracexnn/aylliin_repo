@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import LogoutButton from '@/components/logout-button';
 import { LayoutDashboard, FileText, Map, Calendar, Users } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard', label: 'Хяналтын самбар', icon: LayoutDashboard },
-  { href: '/dashboard/posts', label: 'Хөтөчүүд', icon: FileText },
-  { href: '/dashboard/departure-sessions', label: 'Departure Sessions', icon: Calendar },
-  { href: '/dashboard/bookings', label: 'Bookings', icon: Users },
+  { href: '/dashboard/posts', label: 'Багцууд', icon: FileText },
+  { href: '/dashboard/departure-sessions', label: 'Явах товууд', icon: Calendar },
+  { href: '/dashboard/bookings', label: 'Захиалгууд', icon: Users },
 ];
 
 export default function DashboardLayout({
@@ -27,7 +28,7 @@ export default function DashboardLayout({
         <div className="p-6 border-b">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Map className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">Aylliin Админ</span>
+            <span className="font-bold text-lg">Aylal Админ</span>
           </Link>
         </div>
         <nav className="flex-1 p-4 space-y-1">
@@ -52,6 +53,9 @@ export default function DashboardLayout({
           })}
         </nav>
         <div className="p-4 border-t">
+          <div className="mb-3">
+            <LogoutButton />
+          </div>
           <p className="text-xs text-muted-foreground">Аяллын админ v1.0</p>
         </div>
       </aside>

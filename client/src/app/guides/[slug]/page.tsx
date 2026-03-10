@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             },
         }
     } catch {
-        return { title: 'Аяллын хөтөч' }
+        return { title: 'Аяллын багц' }
     }
 }
 
@@ -71,7 +71,7 @@ export default async function GuideDetailPage({ params }: Props) {
             <Navbar />
 
             {/* Cover image hero */}
-            <section className="relative h-[55vh] min-h-[340px] bg-gray-900 overflow-hidden">
+            <section className="relative h-[55vh] min-h-85 bg-gray-900 overflow-hidden">
                 {post.cover_image ? (
                     <Image
                         src={post.cover_image}
@@ -82,11 +82,11 @@ export default async function GuideDetailPage({ params }: Props) {
                         sizes="100vw"
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-primary-800" />
+                    <div className="absolute inset-0 bg-linear-to-br from-slate-900 to-primary-800" />
                 )}
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/30 to-transparent" />
 
                 {/* Hero text */}
                 <div className="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
@@ -94,7 +94,7 @@ export default async function GuideDetailPage({ params }: Props) {
                         href="/guides"
                         className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-4 transition-colors"
                     >
-                        <FiArrowLeft size={14} /> Бүх хөтөч
+                        <FiArrowLeft size={14} /> Бүх багц
                     </Link>
                     <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-3 text-balance">
                         {post.title}
@@ -174,7 +174,7 @@ export default async function GuideDetailPage({ params }: Props) {
                             {routes.length > 0 && (
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-900 mb-8 pb-4 border-b border-gray-200">
-                                        Маршрутын хөтөч
+                                        Маршрутын дэлгэрэнгүй
                                     </h2>
                                     <RouteTimeline routes={routes} />
                                 </div>
@@ -226,7 +226,7 @@ export default async function GuideDetailPage({ params }: Props) {
                                     {routes.length > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <dt className="text-gray-500">Тээвэр</dt>
-                                            <dd className="font-medium text-gray-800 capitalize text-right max-w-[120px] truncate">
+                                            <dd className="font-medium text-gray-800 capitalize text-right max-w-30 truncate">
                                                 {[
                                                     ...new Set(
                                                         routes
@@ -251,7 +251,7 @@ export default async function GuideDetailPage({ params }: Props) {
                                         href="/guides"
                                         className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
                                     >
-                                        <FiArrowLeft size={13} /> Хөтөчүүд рүү буцах
+                                        <FiArrowLeft size={13} /> Багцууд руу буцах
                                     </Link>
                                 </div>
                             </div>

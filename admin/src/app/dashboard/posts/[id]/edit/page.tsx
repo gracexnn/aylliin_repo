@@ -77,7 +77,7 @@ export default function EditPostPage() {
   if (!post) {
     return (
       <div className="p-8">
-        <p className="text-muted-foreground">Хөтөч олдсонгүй</p>
+        <p className="text-muted-foreground">Багц олдсонгүй</p>
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function EditPostPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Хөтөч засах</h1>
+        <h1 className="text-3xl font-bold">Багц засах</h1>
         <p className="text-muted-foreground mt-1">{post.title}</p>
       </div>
 

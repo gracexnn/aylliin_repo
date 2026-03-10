@@ -55,6 +55,13 @@ const statusColors: Record<string, string> = {
   CANCELLED: 'bg-red-500',
 };
 
+const statusLabels: Record<string, string> = {
+  DRAFT: 'Ноорог',
+  OPEN: 'Нээлттэй',
+  FULL: 'Дүүрсэн',
+  CANCELLED: 'Цуцлагдсан',
+};
+
 export default function DepartureSessionsPage() {
   const [sessions, setSessions] = useState<DepartureSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,14 +91,14 @@ export default function DepartureSessionsPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        alert(error.error || 'Failed to delete session');
+        alert(error.error || 'Явах товыг устгаж чадсангүй');
         return;
       }
 
       fetchSessions();
     } catch (error) {
       console.error('Error deleting session:', error);
-      alert('Failed to delete session');
+      alert('Явах товыг устгаж чадсангүй');
     }
   };
 
@@ -102,7 +109,7 @@ export default function DepartureSessionsPage() {
   if (loading) {
     return (
       <div className="container mx-auto py-8">
-        <p>Loading...</p>
+        <p>Ачааллаж байна...</p>
       </div>
     );
   }
@@ -116,15 +123,15 @@ export default function DepartureSessionsPage() {
       >
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Departure Sessions</h1>
+            <h1 className="text-3xl font-bold">Явах товууд</h1>
             <p className="text-muted-foreground mt-1">
-              Manage bookable departure dates for travel packages
+              Аяллын багцуудын захиалах боломжтой явах товуудыг удирдана
             </p>
           </div>
           <Link href="/dashboard/departure-sessions/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Session
+              Шинэ тов
             </Button>
           </Link>
         </div>
@@ -132,14 +139,14 @@ export default function DepartureSessionsPage() {
         {sessions.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <Calendar className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold">No departure sessions</h3>
+            <h3 className="mt-4 text-lg font-semibold">Явах тов алга</h3>
             <p className="text-muted-foreground mt-2">
-              Get started by creating a new departure session
+              Шинэ явах тов үүсгээд эхлээрэй
             </p>
             <Link href="/dashboard/departure-sessions/new">
               <Button className="mt-4">
                 <Plus className="mr-2 h-4 w-4" />
-                Create Session
+                Тов үүсгэх
               </Button>
             </Link>
           </div>
@@ -148,14 +155,14 @@ export default function DepartureSessionsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Travel Package</TableHead>
-                  <TableHead>Label</TableHead>
-                  <TableHead>Departure Date</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Capacity</TableHead>
-                  <TableHead>Seats Left</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Аяллын багц</TableHead>
+                  <TableHead>Нэр</TableHead>
+                  <TableHead>Явах огноо</TableHead>
+                  <TableHead>Үнэ</TableHead>
+                  <TableHead>Багтаамж</TableHead>
+                  <TableHead>Үлдсэн суудал</TableHead>
+                  <TableHead>Төлөв</TableHead>
+                  <TableHead className="text-right">Үйлдэл</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -172,7 +179,7 @@ export default function DepartureSessionsPage() {
                       <div>{formatDate(session.departure_date)}</div>
                       {session.return_date && (
                         <div className="text-sm text-muted-foreground">
-                          to {formatDate(session.return_date)}
+                          хүртэл {formatDate(session.return_date)}
                         </div>
                       )}
                     </TableCell>
@@ -202,7 +209,7 @@ export default function DepartureSessionsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge className={statusColors[session.status]}>
-                        {session.status}
+                        {statusLabels[session.status] ?? session.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -220,24 +227,24 @@ export default function DepartureSessionsPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Session</AlertDialogTitle>
+                              <AlertDialogTitle>Явах тов устгах</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete this departure session?
-                                This action cannot be undone.
+                                Энэ явах товыг устгахдаа итгэлтэй байна уу?
+                                Энэ үйлдлийг буцаах боломжгүй.
                                 {session.seats_booked > 0 && (
                                   <p className="mt-2 text-red-600 font-semibold">
-                                    Warning: This session has {session.seats_booked} booked seats!
+                                    Анхаар: Энэ тов дээр {session.seats_booked} захиалсан суудал байна!
                                   </p>
                                 )}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>Болих</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => deleteSession(session.id)}
                                 className="bg-red-600"
                               >
-                                Delete
+                                Устгах
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

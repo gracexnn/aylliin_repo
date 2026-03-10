@@ -183,11 +183,11 @@ export default function NewDepartureSessionPage() {
         router.refresh();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to save session');
+        alert(error.error || 'Явах товыг хадгалж чадсангүй');
       }
     } catch (error) {
       console.error('Error saving session:', error);
-      alert('Failed to save session');
+      alert('Явах товыг хадгалж чадсангүй');
     } finally {
       setSubmitting(false);
     }
@@ -199,7 +199,7 @@ export default function NewDepartureSessionPage() {
       : [];
 
   if (loading) {
-    return <div className="container mx-auto py-8">Loading...</div>;
+    return <div className="container mx-auto py-8">Ачааллаж байна...</div>;
   }
 
   return (
@@ -208,23 +208,23 @@ export default function NewDepartureSessionPage() {
         <Link href="/dashboard/departure-sessions">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Sessions
+            Товууд руу буцах
           </Button>
         </Link>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{isEditing ? 'Edit' : 'New'} Departure Session</CardTitle>
+          <CardTitle>{isEditing ? 'Явах тов засах' : 'Шинэ явах тов'}</CardTitle>
           <CardDescription>
-            Create a bookable departure date for a travel package
+            Аяллын багцад зориулсан захиалах боломжтой явах тов үүсгэнэ
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Post Selection */}
             <div className="space-y-2">
-              <Label htmlFor="post_id">Travel Package *</Label>
+              <Label htmlFor="post_id">Аяллын багц *</Label>
               <Select
                 value={formData.post_id}
                 onValueChange={(value) =>
@@ -233,7 +233,7 @@ export default function NewDepartureSessionPage() {
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a travel package" />
+                  <SelectValue placeholder="Аяллын багц сонгох" />
                 </SelectTrigger>
                 <SelectContent>
                   {posts.map((post) => (
@@ -248,7 +248,7 @@ export default function NewDepartureSessionPage() {
             {/* Package Option */}
             {packageOptions.length > 0 && (
               <div className="space-y-2">
-                <Label htmlFor="package_option_id">Package Option (Optional)</Label>
+                <Label htmlFor="package_option_id">Багцын сонголт (заавал биш)</Label>
                 <Select
                   value={formData.package_option_id || undefined}
                   onValueChange={(value) =>
@@ -256,7 +256,7 @@ export default function NewDepartureSessionPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="None - Select to override" />
+                    <SelectValue placeholder="Сонгоогүй - дарж сонгоно уу" />
                   </SelectTrigger>
                   <SelectContent>
                     {packageOptions.map((option: any, index: number) => (
@@ -271,14 +271,14 @@ export default function NewDepartureSessionPage() {
 
             {/* Label */}
             <div className="space-y-2">
-              <Label htmlFor="label">Label *</Label>
+              <Label htmlFor="label">Нэр *</Label>
               <Input
                 id="label"
                 value={formData.label}
                 onChange={(e) =>
                   setFormData({ ...formData, label: e.target.value })
                 }
-                placeholder="e.g., March 15, 2026"
+                placeholder="жишээ нь, 2026 оны 3-р сарын 15"
                 required
               />
             </div>
@@ -286,7 +286,7 @@ export default function NewDepartureSessionPage() {
             {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="departure_date">Departure Date *</Label>
+                <Label htmlFor="departure_date">Явах огноо *</Label>
                 <Input
                   id="departure_date"
                   type="date"
@@ -298,7 +298,7 @@ export default function NewDepartureSessionPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="return_date">Return Date</Label>
+                <Label htmlFor="return_date">Буцах огноо</Label>
                 <Input
                   id="return_date"
                   type="date"
@@ -313,7 +313,7 @@ export default function NewDepartureSessionPage() {
             {/* Pricing */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="base_price">Base Price *</Label>
+                <Label htmlFor="base_price">Суурь үнэ *</Label>
                 <Input
                   id="base_price"
                   type="number"
@@ -326,7 +326,7 @@ export default function NewDepartureSessionPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currency">Currency *</Label>
+                <Label htmlFor="currency">Валют *</Label>
                 <Input
                   id="currency"
                   value={formData.currency}
@@ -341,7 +341,7 @@ export default function NewDepartureSessionPage() {
 
             {/* Discount */}
             <div className="space-y-4">
-              <Label>Discount (Optional)</Label>
+              <Label>Хөнгөлөлт (заавал биш)</Label>
               <div className="grid grid-cols-3 gap-4">
                 <Select
                   value={formData.discount_type || undefined}
@@ -350,17 +350,17 @@ export default function NewDepartureSessionPage() {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="No discount" />
+                    <SelectValue placeholder="Хөнгөлөлтгүй" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FIXED">Fixed Amount</SelectItem>
-                    <SelectItem value="PERCENT">Percentage</SelectItem>
+                    <SelectItem value="FIXED">Тогтмол дүн</SelectItem>
+                    <SelectItem value="PERCENT">Хувиар</SelectItem>
                   </SelectContent>
                 </Select>
                 <Input
                   type="number"
                   step="0.01"
-                  placeholder="Value"
+                  placeholder="Утга"
                   value={formData.discount_value}
                   onChange={(e) =>
                     setFormData({ ...formData, discount_value: e.target.value })
@@ -368,7 +368,7 @@ export default function NewDepartureSessionPage() {
                   disabled={!formData.discount_type}
                 />
                 <Input
-                  placeholder="Reason"
+                  placeholder="Шалтгаан"
                   value={formData.discount_reason}
                   onChange={(e) =>
                     setFormData({ ...formData, discount_reason: e.target.value })
@@ -381,7 +381,7 @@ export default function NewDepartureSessionPage() {
             {/* Capacity and Status */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity *</Label>
+                <Label htmlFor="capacity">Багтаамж *</Label>
                 <Input
                   id="capacity"
                   type="number"
@@ -393,7 +393,7 @@ export default function NewDepartureSessionPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="status">Status *</Label>
+                <Label htmlFor="status">Төлөв *</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) =>
@@ -404,10 +404,10 @@ export default function NewDepartureSessionPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="DRAFT">Draft</SelectItem>
-                    <SelectItem value="OPEN">Open</SelectItem>
-                    <SelectItem value="FULL">Full</SelectItem>
-                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                    <SelectItem value="DRAFT">Ноорог</SelectItem>
+                    <SelectItem value="OPEN">Нээлттэй</SelectItem>
+                    <SelectItem value="FULL">Дүүрсэн</SelectItem>
+                    <SelectItem value="CANCELLED">Цуцлагдсан</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -415,26 +415,26 @@ export default function NewDepartureSessionPage() {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label htmlFor="public_note">Public Note</Label>
+              <Label htmlFor="public_note">Нийтийн тэмдэглэл</Label>
               <Textarea
                 id="public_note"
                 value={formData.public_note}
                 onChange={(e) =>
                   setFormData({ ...formData, public_note: e.target.value })
                 }
-                placeholder="Note visible to customers"
+                placeholder="Хэрэглэгчдэд харагдах тэмдэглэл"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="internal_note">Internal Note</Label>
+              <Label htmlFor="internal_note">Дотоод тэмдэглэл</Label>
               <Textarea
                 id="internal_note"
                 value={formData.internal_note}
                 onChange={(e) =>
                   setFormData({ ...formData, internal_note: e.target.value })
                 }
-                placeholder="Internal admin note"
+                placeholder="Админы дотоод тэмдэглэл"
               />
             </div>
 
@@ -442,12 +442,12 @@ export default function NewDepartureSessionPage() {
             <div className="flex justify-end gap-4">
               <Link href="/dashboard/departure-sessions">
                 <Button type="button" variant="outline">
-                  Cancel
+                  Болих
                 </Button>
               </Link>
               <Button type="submit" disabled={submitting}>
                 <Save className="mr-2 h-4 w-4" />
-                {submitting ? 'Saving...' : isEditing ? 'Update' : 'Create'} Session
+                {submitting ? 'Хадгалж байна...' : isEditing ? 'Явах товыг шинэчлэх' : 'Явах тов үүсгэх'}
               </Button>
             </div>
           </form>

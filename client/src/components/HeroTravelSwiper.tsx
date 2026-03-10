@@ -63,7 +63,7 @@ export default function HeroTravelSwiper({ posts }: HeroTravelSwiperProps) {
                         Онцлох аяллуудаа admin дээрээс сонгоод энд харуулаарай.
                     </h2>
                     <p className="text-sm leading-7 text-white/65 sm:text-base">
-                        “Hero-д онцлох” сонголтыг асаасан нийтлэгдсэн хөтөчүүд энд автоматаар slider байдлаар гарна.
+                        “Hero-д онцлох” сонголтыг асаасан нийтлэгдсэн багцууд энд автоматаар slider байдлаар гарна.
                     </p>
                 </div>
             </div>

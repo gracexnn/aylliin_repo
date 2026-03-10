@@ -1,5 +1,23 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Admin access protection
+
+Set these environment variables before running the admin app:
+
+- `AUTH_SECRET` — long random secret for session signing
+- `ADMIN_SEED_EMAIL` — email for the first admin account
+- `ADMIN_SEED_PASSWORD` — password for the first admin account
+- `ADMIN_SEED_NAME` — display name for the first admin account
+
+See [.env.example](.env.example) for a starter template.
+
+Then run the migration and seed the first admin user:
+
+```bash
+npm run db:migrate
+npm run auth:seed-admin
+```
+
 ## Getting Started
 
 First, run the development server:

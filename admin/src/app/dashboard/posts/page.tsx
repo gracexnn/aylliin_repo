@@ -71,13 +71,13 @@ export default function PostsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Аяллын хөтөчүүд</h1>
-          <p className="text-muted-foreground mt-1">Аяллын хөтөч болон маршрут удирдах</p>
+          <h1 className="text-3xl font-bold">Аяллын багцууд</h1>
+          <p className="text-muted-foreground mt-1">Аяллын багц болон маршрут удирдах</p>
         </div>
         <Button asChild>
           <Link href="/dashboard/posts/new">
             <Plus className="mr-2 h-4 w-4" />
-            Шинэ хөтөч
+            Шинэ багц
           </Link>
         </Button>
       </div>
@@ -88,9 +88,9 @@ export default function PostsPage() {
         </div>
       ) : posts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">Одоогоор хөтөч алга.</p>
+          <p className="text-muted-foreground text-lg">Одоогоор багц алга.</p>
           <Button asChild className="mt-4">
-            <Link href="/dashboard/posts/new">Анхны хөтөч үүсгэх</Link>
+            <Link href="/dashboard/posts/new">Анхны багц үүсгэх</Link>
           </Button>
         </div>
       ) : (
@@ -102,7 +102,7 @@ export default function PostsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
+                <TableHead>Гарчиг</TableHead>
                 <TableHead>Slug</TableHead>
                 <TableHead>Төлөв</TableHead>
                 <TableHead>Үүсгэсэн</TableHead>
@@ -153,9 +153,9 @@ export default function PostsPage() {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Хөтөч устгах</AlertDialogTitle>
+                            <AlertDialogTitle>Багц устгах</AlertDialogTitle>
                             <AlertDialogDescription>
-                              &quot;{post.title}&quot; хөтөчийг устгахдаа итгэлтэй байна уу? Буцаах боломжгүй.
+                              &quot;{post.title}&quot; багцыг устгахдаа итгэлтэй байна уу? Буцаах боломжгүй.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

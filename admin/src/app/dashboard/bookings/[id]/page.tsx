@@ -162,18 +162,18 @@ export default function EditBookingPage() {
         router.refresh();
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to update booking');
+        alert(error.error || 'Захиалгыг шинэчилж чадсангүй');
       }
     } catch (error) {
       console.error('Error updating booking:', error);
-      alert('Failed to update booking');
+      alert('Захиалгыг шинэчилж чадсангүй');
     } finally {
       setSubmitting(false);
     }
   };
 
   if (loading) {
-    return <div className="container mx-auto py-8">Loading...</div>;
+    return <div className="container mx-auto py-8">Ачааллаж байна...</div>;
   }
 
   return (
@@ -182,7 +182,7 @@ export default function EditBookingPage() {
         <Link href="/dashboard/bookings">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Bookings
+            Захиалгууд руу буцах
           </Button>
         </Link>
       </div>
@@ -191,14 +191,14 @@ export default function EditBookingPage() {
         {/* Main Booking Details */}
         <Card>
           <CardHeader>
-            <CardTitle>Edit Booking: {bookingCode}</CardTitle>
-            <CardDescription>Update booking details and status</CardDescription>
+            <CardTitle>Захиалга засах: {bookingCode}</CardTitle>
+            <CardDescription>Захиалгын мэдээлэл болон төлөвийг шинэчилнэ</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Booking Details */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="passenger_count">Passenger Count *</Label>
+                <Label htmlFor="passenger_count">Зорчигчийн тоо *</Label>
                 <Input
                   id="passenger_count"
                   type="number"
@@ -211,7 +211,7 @@ export default function EditBookingPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="total_price_snapshot">Total Price *</Label>
+                <Label htmlFor="total_price_snapshot">Нийт үнэ *</Label>
                 <Input
                   id="total_price_snapshot"
                   type="number"
@@ -228,7 +228,7 @@ export default function EditBookingPage() {
             {/* Status */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="booking_status">Booking Status *</Label>
+                <Label htmlFor="booking_status">Захиалгын төлөв *</Label>
                 <Select
                   value={formData.booking_status}
                   onValueChange={(value) =>
@@ -239,15 +239,15 @@ export default function EditBookingPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                    <SelectItem value="COMPLETED">Completed</SelectItem>
+                    <SelectItem value="PENDING">Хүлээгдэж буй</SelectItem>
+                    <SelectItem value="CONFIRMED">Баталгаажсан</SelectItem>
+                    <SelectItem value="CANCELLED">Цуцлагдсан</SelectItem>
+                    <SelectItem value="COMPLETED">Дууссан</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="payment_status">Payment Status *</Label>
+                <Label htmlFor="payment_status">Төлбөрийн төлөв *</Label>
                 <Select
                   value={formData.payment_status}
                   onValueChange={(value) =>
@@ -258,10 +258,10 @@ export default function EditBookingPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UNPAID">Unpaid</SelectItem>
-                    <SelectItem value="PARTIAL">Partial</SelectItem>
-                    <SelectItem value="PAID">Paid</SelectItem>
-                    <SelectItem value="REFUNDED">Refunded</SelectItem>
+                    <SelectItem value="UNPAID">Төлөөгүй</SelectItem>
+                    <SelectItem value="PARTIAL">Хэсэгчлэн төлсөн</SelectItem>
+                    <SelectItem value="PAID">Төлсөн</SelectItem>
+                    <SelectItem value="REFUNDED">Буцаасан</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -269,12 +269,12 @@ export default function EditBookingPage() {
 
             {/* Admin Note */}
             <div className="space-y-2">
-              <Label htmlFor="admin_note">Admin Note</Label>
+              <Label htmlFor="admin_note">Админы тэмдэглэл</Label>
               <Textarea
                 id="admin_note"
                 value={formData.admin_note}
                 onChange={(e) => setFormData({ ...formData, admin_note: e.target.value })}
-                placeholder="Internal notes about this booking"
+                placeholder="Энэ захиалгын дотоод тэмдэглэл"
               />
             </div>
           </CardContent>
@@ -285,26 +285,26 @@ export default function EditBookingPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Traveler Details</CardTitle>
-                <CardDescription>Update passenger information</CardDescription>
+                <CardTitle>Зорчигчийн мэдээлэл</CardTitle>
+                <CardDescription>Зорчигчийн мэдээллийг шинэчилнэ</CardDescription>
               </div>
               <Button type="button" variant="outline" size="sm" onClick={addTraveler}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Traveler
+                Зорчигч нэмэх
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {travelers.length === 0 ? (
               <p className="text-center text-muted-foreground py-4">
-                No travelers added yet. Click "Add Traveler" to add passenger details.
+                Одоогоор зорчигч нэмээгүй байна. "Зорчигч нэмэх" дээр дарж мэдээлэл оруулна уу.
               </p>
             ) : (
               travelers.map((traveler, index) => (
                 <Card key={index} className="relative">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">Traveler {index + 1}</CardTitle>
+                      <CardTitle className="text-lg">Зорчигч {index + 1}</CardTitle>
                       <Button
                         type="button"
                         variant="ghost"
@@ -318,7 +318,7 @@ export default function EditBookingPage() {
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Full Name *</Label>
+                        <Label>Овог нэр *</Label>
                         <Input
                           value={traveler.full_name}
                           onChange={(e) =>
@@ -328,18 +328,18 @@ export default function EditBookingPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Gender (Optional)</Label>
+                        <Label>Хүйс (заавал биш)</Label>
                         <Select
                           value={traveler.gender || undefined}
                           onValueChange={(value) => updateTraveler(index, 'gender', value)}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
+                            <SelectValue placeholder="Хүйс сонгох" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="Male">Эрэгтэй</SelectItem>
+                            <SelectItem value="Female">Эмэгтэй</SelectItem>
+                            <SelectItem value="Other">Бусад</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -347,7 +347,7 @@ export default function EditBookingPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Date of Birth</Label>
+                        <Label>Төрсөн огноо</Label>
                         <Input
                           type="date"
                           value={traveler.date_of_birth}
@@ -357,7 +357,7 @@ export default function EditBookingPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Passport Number</Label>
+                        <Label>Паспортын дугаар</Label>
                         <Input
                           value={traveler.passport_number}
                           onChange={(e) =>
@@ -369,7 +369,7 @@ export default function EditBookingPage() {
 
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label>Nationality</Label>
+                        <Label>Иргэншил</Label>
                         <Input
                           value={traveler.nationality}
                           onChange={(e) =>
@@ -378,14 +378,14 @@ export default function EditBookingPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Phone</Label>
+                        <Label>Утас</Label>
                         <Input
                           value={traveler.phone}
                           onChange={(e) => updateTraveler(index, 'phone', e.target.value)}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Email</Label>
+                        <Label>Имэйл</Label>
                         <Input
                           type="email"
                           value={traveler.email}
@@ -395,24 +395,24 @@ export default function EditBookingPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Emergency Contact</Label>
+                      <Label>Яаралтай үед холбоо барих хүн</Label>
                       <Input
                         value={traveler.emergency_contact}
                         onChange={(e) =>
                           updateTraveler(index, 'emergency_contact', e.target.value)
                         }
-                        placeholder="Name and phone number"
+                        placeholder="Нэр болон утасны дугаар"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Special Requests</Label>
+                      <Label>Тусгай хүсэлт</Label>
                       <Textarea
                         value={traveler.special_request}
                         onChange={(e) =>
                           updateTraveler(index, 'special_request', e.target.value)
                         }
-                        placeholder="Dietary restrictions, accessibility needs, etc."
+                        placeholder="Хоолны онцгой шаардлага, хүртээмжийн хэрэгцээ гэх мэт"
                       />
                     </div>
                   </CardContent>
@@ -426,12 +426,12 @@ export default function EditBookingPage() {
         <div className="flex justify-end gap-4">
           <Link href="/dashboard/bookings">
             <Button type="button" variant="outline">
-              Cancel
+              Болих
             </Button>
           </Link>
           <Button type="submit" disabled={submitting}>
             <Save className="mr-2 h-4 w-4" />
-            {submitting ? 'Updating...' : 'Update Booking'}
+            {submitting ? 'Шинэчилж байна...' : 'Захиалгыг шинэчлэх'}
           </Button>
         </div>
       </form>

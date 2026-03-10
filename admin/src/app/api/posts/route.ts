@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/db/client';
+import { getAdminSession } from '@/auth';
 import { CreatePostSchema } from '@/schemas';
 import { ZodError } from 'zod';
 
@@ -11,6 +12,8 @@ function parseBooleanParam(value: string | null) {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getAdminSession();
+    const isAdmin = Boolean(session?.user);
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') ?? '1');
     const limit = parseInt(searchParams.get('limit') ?? '10');
@@ -19,7 +22,11 @@ export async function GET(request: NextRequest) {
     const highlighted = parseBooleanParam(searchParams.get('highlighted'));
 
     const where = {
-      ...(typeof published === 'boolean' ? { published } : {}),
+      ...(isAdmin
+        ? typeof published === 'boolean'
+          ? { published }
+          : {}
+        : { published: true }),
       ...(typeof highlighted === 'boolean' ? { highlighted } : {}),
     };
 

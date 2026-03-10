@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/db/client';
+import { getAdminSession } from '@/auth';
 import { CreateDepartureSessionSchema } from '@/schemas';
 import { ZodError } from 'zod';
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getAdminSession();
+    const isAdmin = Boolean(session?.user);
     const { searchParams } = new URL(request.url);
     const postId = searchParams.get('post_id');
     const status = searchParams.get('status');
@@ -14,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const where = {
       ...(postId ? { post_id: postId } : {}),
-      ...(status ? { status: status as any } : {}),
+      ...(isAdmin ? (status ? { status: status as any } : {}) : { status: 'OPEN' as const }),
     };
 
     const [sessions, total] = await Promise.all([
@@ -43,7 +46,14 @@ export async function GET(request: NextRequest) {
       prisma.departureSession.count({ where }),
     ]);
 
-    return NextResponse.json({ sessions, total, page, limit });
+    const normalizedSessions = isAdmin
+      ? sessions
+      : sessions.map((session) => ({
+          ...session,
+          internal_note: null,
+        }));
+
+    return NextResponse.json({ sessions: normalizedSessions, total, page, limit });
   } catch (error) {
     console.error('GET /api/departure-sessions error:', error);
     return NextResponse.json({ error: 'Failed to fetch departure sessions' }, { status: 500 });

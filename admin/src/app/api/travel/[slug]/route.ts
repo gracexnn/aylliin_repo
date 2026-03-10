@@ -26,6 +26,6 @@ export async function GET(
     return NextResponse.json({ post, routes });
   } catch (error) {
     console.error('GET /api/travel/[slug] error:', error);
-    return NextResponse.json({ error: 'Failed to fetch travel guide' }, { status: 500 });
+    return NextResponse.json({ error: 'Аяллын багцын мэдээллийг авч чадсангүй' }, { status: 500 });
   }
 }

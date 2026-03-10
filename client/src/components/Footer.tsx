@@ -4,7 +4,7 @@ import { FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi'
 
 const footerLinks = {
     Танилцах: [
-        { href: '/guides', label: 'Аяллын хөтөчүүд' },
+        { href: '/guides', label: 'Аяллын багцууд' },
         { href: '/#about', label: 'Бидний тухай' },
     ],
     Тусламж: [
@@ -25,11 +25,11 @@ export default function Footer() {
                             <div className="p-1.5 rounded-lg bg-primary-600 text-white">
                                 <MdExplore size={22} />
                             </div>
-                            <span className="font-bold text-xl text-white">Aylliin</span>
+                            <span className="font-bold text-xl text-white">Aylal</span>
                         </Link>
                         <p className="text-sm text-gray-400 leading-relaxed max-w-sm">
                             Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөө, хэрэгтэй мэдээлэлтэй
-                            аяллын хөтөчүүдийг танд хүргэнэ.
+                            аяллын багцуудыг танд хүргэнэ.
                         </p>
                         <div className="flex items-center gap-3 mt-6">
                             {[FiInstagram, FiTwitter, FiFacebook].map((Icon, i) => (
@@ -68,7 +68,7 @@ export default function Footer() {
 
                 <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs text-gray-500">
-                        &copy; {new Date().getFullYear()} Aylliin. Бүх эрх хуулиар хамгаалагдсан.
+                        &copy; {new Date().getFullYear()} Aylal. Бүх эрх хуулиар хамгаалагдсан.
                     </p>
                     <p className="text-xs text-gray-600">
                         Аялах дуртай хүмүүст зориулан бүтээв.

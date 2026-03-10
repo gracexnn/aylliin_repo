@@ -64,6 +64,20 @@ const paymentStatusColors: Record<string, string> = {
   REFUNDED: 'bg-gray-500',
 };
 
+const bookingStatusLabels: Record<string, string> = {
+  PENDING: 'Хүлээгдэж буй',
+  CONFIRMED: 'Баталгаажсан',
+  CANCELLED: 'Цуцлагдсан',
+  COMPLETED: 'Дууссан',
+};
+
+const paymentStatusLabels: Record<string, string> = {
+  UNPAID: 'Төлөөгүй',
+  PARTIAL: 'Хэсэгчлэн төлсөн',
+  PAID: 'Төлсөн',
+  REFUNDED: 'Буцаасан',
+};
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,21 +107,21 @@ export default function BookingsPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        alert(error.error || 'Failed to delete booking');
+        alert(error.error || 'Захиалгыг устгаж чадсангүй');
         return;
       }
 
       fetchBookings();
     } catch (error) {
       console.error('Error deleting booking:', error);
-      alert('Failed to delete booking');
+      alert('Захиалгыг устгаж чадсангүй');
     }
   };
 
   if (loading) {
     return (
       <div className="container mx-auto py-8">
-        <p>Loading...</p>
+        <p>Ачааллаж байна...</p>
       </div>
     );
   }
@@ -121,15 +135,15 @@ export default function BookingsPage() {
       >
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Bookings</h1>
+            <h1 className="text-3xl font-bold">Захиалгууд</h1>
             <p className="text-muted-foreground mt-1">
-              Manage travel reservations and customer bookings
+              Аяллын захиалга болон хэрэглэгчдийн бүртгэлийг удирдана
             </p>
           </div>
           <Link href="/dashboard/bookings/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Booking
+              Шинэ захиалга
             </Button>
           </Link>
         </div>
@@ -137,14 +151,14 @@ export default function BookingsPage() {
         {bookings.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold">No bookings yet</h3>
+            <h3 className="mt-4 text-lg font-semibold">Одоогоор захиалга алга</h3>
             <p className="text-muted-foreground mt-2">
-              Create your first booking to get started
+              Эхний захиалгаа үүсгээд эхлээрэй
             </p>
             <Link href="/dashboard/bookings/new">
               <Button className="mt-4">
                 <Plus className="mr-2 h-4 w-4" />
-                Create Booking
+                Захиалга үүсгэх
               </Button>
             </Link>
           </div>
@@ -153,15 +167,15 @@ export default function BookingsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Booking Code</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Travel Package</TableHead>
-                  <TableHead>Departure</TableHead>
-                  <TableHead>Passengers</TableHead>
-                  <TableHead>Total Price</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Payment</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Захиалгын код</TableHead>
+                  <TableHead>Холбоо барих</TableHead>
+                  <TableHead>Аяллын багц</TableHead>
+                  <TableHead>Явах тов</TableHead>
+                  <TableHead>Зорчигч</TableHead>
+                  <TableHead>Нийт үнэ</TableHead>
+                  <TableHead>Төлөв</TableHead>
+                  <TableHead>Төлбөр</TableHead>
+                  <TableHead className="text-right">Үйлдэл</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -189,7 +203,7 @@ export default function BookingsPage() {
                       {booking.passenger_count}
                       {booking.travelers?.length > 0 && (
                         <span className="text-muted-foreground text-sm">
-                          {' '}/ {booking.travelers.length} detailed
+                          {' '}/ {booking.travelers.length} дэлгэрэнгүй
                         </span>
                       )}
                     </TableCell>
@@ -201,12 +215,12 @@ export default function BookingsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge className={bookingStatusColors[booking.booking_status]}>
-                        {booking.booking_status}
+                        {bookingStatusLabels[booking.booking_status] ?? booking.booking_status}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge className={paymentStatusColors[booking.payment_status]}>
-                        {booking.payment_status}
+                        {paymentStatusLabels[booking.payment_status] ?? booking.payment_status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -224,21 +238,21 @@ export default function BookingsPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Booking</AlertDialogTitle>
+                              <AlertDialogTitle>Захиалга устгах</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete booking{' '}
+                                Та{' '}
                                 <strong>{booking.booking_code}</strong>?
-                                This will also delete all traveler information and free up{' '}
-                                {booking.passenger_count} seat(s).
+                                {' '}гэсэн захиалгыг устгахдаа итгэлтэй байна уу?
+                                Ингэснээр зорчигчдын бүх мэдээлэл устаж, {booking.passenger_count} суудал сулрана.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>Болих</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => deleteBooking(booking.id)}
                                 className="bg-red-600"
                               >
-                                Delete
+                                Устгах
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
