@@ -37,6 +37,7 @@ interface PostEditorProps {
     itinerary_days?: ItineraryDay[] | null;
     travel_tips?: string | null;
     published?: boolean;
+    highlighted?: boolean;
   };
   postId?: string;
   onSave?: (postId: string) => void;
@@ -156,6 +157,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
       itinerary_days: initialData?.itinerary_days ?? [],
       travel_tips: initialData?.travel_tips ?? '',
       published: initialData?.published ?? false,
+      highlighted: initialData?.highlighted ?? false,
     },
   });
 
@@ -309,6 +311,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
           .filter((day) => day.title && day.description)
           .sort((a, b) => a.day_number - b.day_number),
         travel_tips: travelTips.trim() || null,
+        highlighted: data.highlighted ?? false,
       };
       
       let res;
@@ -404,6 +407,15 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
                 onCheckedChange={(checked) => form.setValue('published', checked)}
               />
               <Label htmlFor="published">Нийтлэх</Label>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Switch
+                id="highlighted"
+                checked={form.watch('highlighted')}
+                onCheckedChange={(checked) => form.setValue('highlighted', checked)}
+              />
+              <Label htmlFor="highlighted">Онцлох</Label>
             </div>
           </CardContent>
         </Card>

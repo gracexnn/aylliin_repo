@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
         }
 
         const bookingCode = generateBookingCode()
-        const totalPrice = session.final_price * seatsNeeded
+        const unitPrice = Number(session.final_price)
+        const totalPrice = unitPrice * seatsNeeded
 
         // Map payment method to booking status
         let bookingStatus: 'PENDING' | 'CONFIRMED' | 'CANCELLED'
