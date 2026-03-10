@@ -90,3 +90,97 @@ export type PostsResponse = {
     page: number
     limit: number
 }
+
+export type SessionStatus = 'DRAFT' | 'OPEN' | 'FULL' | 'CANCELLED'
+
+export type DepartureSession = {
+    id: string
+    post_id: string
+    package_option_id: string | null
+    departure_date: string
+    return_date: string | null
+    label: string
+    base_price: number
+    currency: string
+    discount_type: 'FIXED' | 'PERCENT' | null
+    discount_value: number | null
+    discount_reason: string | null
+    final_price: number
+    capacity: number
+    seats_booked: number
+    status: SessionStatus
+    public_note: string | null
+    internal_note: string | null
+    created_at: string
+    updated_at: string
+}
+
+export type DepartureSessionsResponse = {
+    sessions: DepartureSession[]
+    total: number
+    page: number
+    limit: number
+}
+
+export type TravelerInput = {
+    first_name: string
+    last_name: string
+    email?: string | null
+    phone: string
+    passport_number?: string | null
+    date_of_birth?: string | null
+    nationality?: string | null
+    emergency_contact?: string | null
+    special_requirements?: string | null
+}
+
+export type PaymentMethod = 'QPAY' | 'CASH' | 'UNPAID'
+
+export type CreateBookingRequest = {
+    departure_session_id: string
+    payment_method: PaymentMethod
+    contact_name: string
+    contact_email: string
+    contact_phone: string
+    travelers: TravelerInput[]
+    special_requests?: string | null
+}
+
+export type QPayInvoice = {
+    invoice_id: string
+    qr_text: string
+    qr_image: string
+    urls: {
+        name: string
+        description: string
+        logo: string
+        link: string
+    }[]
+}
+
+export type BookingResponse = {
+    success: boolean
+    booking: {
+        id: string
+        booking_code: string
+        status: string
+        payment_status: string
+        payment_method: string
+        total_price: number
+        passenger_count: number
+        contact_email: string
+        departure_session: {
+            label: string
+            departure_date: string
+            return_date: string | null
+            post: {
+                id: string
+                title: string
+                slug: string
+            }
+        }
+    }
+    qpay?: QPayInvoice | null
+    message: string
+    error?: string
+}

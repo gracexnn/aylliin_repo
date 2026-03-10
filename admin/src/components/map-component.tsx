@@ -56,6 +56,7 @@ export default function MapComponent({
   } | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [basemap, setBasemap] = useState('carto-light');
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -78,6 +79,9 @@ export default function MapComponent({
   useEffect(() => {
     if (!isClient || !mapRef.current) return;
 
+    let disposed = false;
+    setMapReady(false);
+
     const buildMap = async () => {
       const ol = await import('ol');
       const TileLayer = (await import('ol/layer/Tile')).default;
@@ -94,6 +98,8 @@ export default function MapComponent({
       const Stroke = (await import('ol/style/Stroke')).default;
       const Text = (await import('ol/style/Text')).default;
       const View = (await import('ol/View')).default;
+
+      if (disposed) return;
 
       olModulesRef.current = { Feature, Point, LineString, fromLonLat, toLonLat, Style, CircleStyle, Fill, Stroke, Text };
 
@@ -127,6 +133,7 @@ export default function MapComponent({
       });
 
       mapInstanceRef.current = map;
+      setMapReady(true);
 
       if (interactive && onMapClick) {
         map.on('click', (evt) => {
@@ -159,6 +166,8 @@ export default function MapComponent({
     buildMap();
 
     return () => {
+      disposed = true;
+      setMapReady(false);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.setTarget(undefined);
         mapInstanceRef.current = null;
@@ -219,7 +228,7 @@ export default function MapComponent({
       );
       vs.addFeature(pf);
     });
-  }, [points, selectedIndex]);
+  }, [points, selectedIndex, mapReady]);
 
   // Effect 3: update basemap dynamically
   useEffect(() => {

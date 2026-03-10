@@ -98,6 +98,88 @@ export type UpdatePost = z.infer<typeof UpdatePostSchema>;
 export type PackageDeparture = z.infer<typeof PackageDepartureSchema>;
 export type PackageOption = z.infer<typeof PackageOptionSchema>;
 export type ItineraryDay = z.infer<typeof ItineraryDaySchema>;
+
+// DepartureSession schemas
+export const SESSION_STATUSES = ['DRAFT', 'OPEN', 'FULL', 'CANCELLED'] as const;
+export const DISCOUNT_TYPES = ['FIXED', 'PERCENT'] as const;
+
+export const DepartureSessionSchema = z.object({
+  id: z.string().uuid().optional(),
+  post_id: z.string().uuid(),
+  package_option_id: z.string().max(100).optional().nullable(),
+  departure_date: z.coerce.date(),
+  return_date: z.coerce.date().optional().nullable(),
+  label: z.string().min(1, 'Label is required').max(300),
+  base_price: z.coerce.number().min(0),
+  currency: z.string().max(10).default('IDR'),
+  discount_type: z.enum(DISCOUNT_TYPES).optional().nullable(),
+  discount_value: z.coerce.number().min(0).optional().nullable(),
+  discount_reason: z.string().max(500).optional().nullable(),
+  final_price: z.coerce.number().min(0),
+  capacity: z.coerce.number().int().min(0).default(0),
+  seats_booked: z.coerce.number().int().min(0).default(0),
+  status: z.enum(SESSION_STATUSES).default('DRAFT'),
+  public_note: z.string().optional().nullable(),
+  internal_note: z.string().optional().nullable(),
+});
+
+export const CreateDepartureSessionSchema = DepartureSessionSchema.omit({ 
+  id: true, 
+  seats_booked: true 
+});
+
+export const UpdateDepartureSessionSchema = DepartureSessionSchema.partial().required({ id: true });
+
+export type DepartureSession = z.infer<typeof DepartureSessionSchema>;
+export type CreateDepartureSession = z.infer<typeof CreateDepartureSessionSchema>;
+export type UpdateDepartureSession = z.infer<typeof UpdateDepartureSessionSchema>;
+
+// Booking schemas
+export const BOOKING_STATUSES = ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'] as const;
+export const PAYMENT_STATUSES = ['UNPAID', 'PARTIAL', 'PAID', 'REFUNDED'] as const;
+export const BOOKING_SOURCES = ['admin', 'website', 'phone', 'facebook', 'whatsapp', 'email'] as const;
+
+export const TravelerSchema = z.object({
+  id: z.string().uuid().optional(),
+  booking_id: z.string().uuid().optional(),
+  full_name: z.string().min(1, 'Full name is required').max(300),
+  gender: z.string().max(20).optional().nullable(),
+  date_of_birth: z.coerce.date().optional().nullable(),
+  passport_number: z.string().max(100).optional().nullable(),
+  nationality: z.string().max(100).optional().nullable(),
+  phone: z.string().max(50).optional().nullable(),
+  email: z.string().email().max(300).optional().nullable().or(z.literal('')),
+  emergency_contact: z.string().max(500).optional().nullable(),
+  special_request: z.string().optional().nullable(),
+});
+
+export const BookingSchema = z.object({
+  id: z.string().uuid().optional(),
+  booking_code: z.string().max(50).optional(),
+  post_id: z.string().uuid(),
+  departure_session_id: z.string().uuid(),
+  package_option_id: z.string().max(100).optional().nullable(),
+  contact_name: z.string().min(1, 'Contact name is required').max(300),
+  contact_phone: z.string().min(1, 'Contact phone is required').max(50),
+  contact_email: z.string().email('Valid email is required').max(300),
+  passenger_count: z.coerce.number().int().min(1, 'At least 1 passenger required'),
+  total_price_snapshot: z.coerce.number().min(0),
+  currency: z.string().max(10).default('IDR'),
+  booking_status: z.enum(BOOKING_STATUSES).default('PENDING'),
+  payment_status: z.enum(PAYMENT_STATUSES).default('UNPAID'),
+  admin_note: z.string().optional().nullable(),
+  source: z.enum(BOOKING_SOURCES).default('admin'),
+  travelers: z.array(TravelerSchema).optional(),
+});
+
+export const CreateBookingSchema = BookingSchema.omit({ id: true, booking_code: true });
+export const UpdateBookingSchema = BookingSchema.partial().required({ id: true });
+
+export type Traveler = z.infer<typeof TravelerSchema>;
+export type Booking = z.infer<typeof BookingSchema>;
+export type CreateBooking = z.infer<typeof CreateBookingSchema>;
+export type UpdateBooking = z.infer<typeof UpdateBookingSchema>;
+
 export type Route = z.infer<typeof RouteSchema>;
 export type CreateRoute = z.infer<typeof CreateRouteSchema>;
 export type RoutePoint = z.infer<typeof RoutePointSchema>;

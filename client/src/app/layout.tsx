@@ -9,6 +9,15 @@ export const metadata: Metadata = {
     },
     description:
         'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөө, хэрэгтэй мэдээлэл бүхий аяллын хөтөчүүдийг олж нээгээрэй.',
+    robots: {
+        index: false,
+        follow: false,
+        googleBot: {
+            index: false,
+            follow: false,
+            noimageindex: true,
+        },
+    },
     openGraph: {
         siteName: 'Aylliin',
         type: 'website',

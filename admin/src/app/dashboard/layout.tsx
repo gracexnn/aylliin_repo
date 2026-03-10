@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, FileText, Map } from 'lucide-react';
+import { LayoutDashboard, FileText, Map, Calendar, Users } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard', label: 'Хяналтын самбар', icon: LayoutDashboard },
   { href: '/dashboard/posts', label: 'Хөтөчүүд', icon: FileText },
+  { href: '/dashboard/departure-sessions', label: 'Departure Sessions', icon: Calendar },
+  { href: '/dashboard/bookings', label: 'Bookings', icon: Users },
 ];
 
 export default function DashboardLayout({

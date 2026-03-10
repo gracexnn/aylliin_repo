@@ -8,7 +8,7 @@ import GuidePackages from '@/components/GuidePackages'
 import ItineraryTimeline from '@/components/ItineraryTimeline'
 import RouteTimeline from '@/components/RouteTimeline'
 import RouteMap from '@/components/RouteMap'
-import { getTravelGuide } from '@/lib/api'
+import { getTravelGuide, getDepartureSessions } from '@/lib/api'
 import { FiArrowLeft, FiCalendar, FiMapPin } from 'react-icons/fi'
 import ReactMarkdown from 'react-markdown'
 
@@ -54,6 +54,11 @@ export default async function GuideDetailPage({ params }: Props) {
     }
 
     const { post, routes } = guide
+    
+    // Fetch departure sessions for this post
+    const departureSessions = await getDepartureSessions(post.id)
+    
+    console.log(departureSessions,'ss')
     const totalPoints = routes.reduce((acc, r) => acc + r.points.length, 0)
     const packageOptions = post.package_options ?? []
     const includedItems = post.included_items ?? []
@@ -119,6 +124,7 @@ export default async function GuideDetailPage({ params }: Props) {
             </div>
 
             <GuidePackages
+                departureSessions={departureSessions}
                 journeyOverview={post.journey_overview}
                 packages={packageOptions}
                 includedItems={includedItems}
