@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id               String      @id @default(uuid()) @db.Uuid
+  title            String      @db.VarChar(500)
+  slug             String      @unique @db.VarChar(500)
+  cover_image      String?
+  excerpt          String?
+  content          String?
+  journey_overview String?     @db.VarChar(1000)
+  package_options  Json?
+  included_items   String[]    @default([])
+  attraction_items String[]    @default([])
+  itinerary_days   Json?
+  travel_tips      String?
+  published        Boolean     @default(false)
+  highlighted      Boolean     @default(false)
+  created_at       DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+
+  routes             Route[]
+  post_images        PostImage[]
+  departure_sessions DepartureSession[]
+  bookings           Booking[]
+
+  @@map("posts")
+}
+
+enum TransportMode {
+  WALKING
+  DRIVING
+  CYCLING
+  BUS
+  TRAIN
+  TRAM
+  SUBWAY
+  BOAT
+  FERRY
+  PLANE
+  HELICOPTER
+}
+
+model Route {
+  id         String    @id @default(uuid()) @db.Uuid
+  post_id    String    @db.Uuid
+  title      String    @db.VarChar(500)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+
+  post   Post         @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  points RoutePoint[]
+
+  @@index([post_id])
+  @@map("routes")
+}
+
+model RoutePoint {
+  id                        String   @id @default(uuid()) @db.Uuid
+  route_id                  String   @db.Uuid
+  order_index               Int      @default(0)
+  latitude                  Float
+  longitude                 Float
+  name                      String   @db.VarChar(500)
+  description               String?
+  transport_type            TransportMode @default(WALKING)
+  interesting_fact          String?
+  recommended_time_to_visit String?       @db.VarChar(200)
+  images                    String[]
+  created_at                DateTime      @default(now()) @db.Timestamptz(6)
+
+  route Route @relation(fields: [route_id], references: [id], onDelete: Cascade)
+
+  @@index([route_id])
+  @@index([route_id, order_index])
+  @@map("route_points")
+}
+
+model PostImage {
+  id         String   @id @default(uuid()) @db.Uuid
+  post_id    String   @db.Uuid
+  url        String
+  alt        String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  post Post @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@index([post_id])
+  @@map("post_images")
+}
+
+enum SessionStatus {
+  DRAFT
+  OPEN
+  FULL
+  CANCELLED
+}
+
+enum DiscountType {
+  FIXED
+  PERCENT
+}
+
+model DepartureSession {
+  id                String        @id @default(uuid()) @db.Uuid
+  post_id           String        @db.Uuid
+  package_option_id String?       @db.VarChar(100)
+  departure_date    DateTime      @db.Date
+  return_date       DateTime?     @db.Date
+  label             String        @db.VarChar(300)
+  base_price        Decimal       @db.Decimal(10, 2)
+  currency          String        @default("IDR") @db.VarChar(10)
+  discount_type     DiscountType?
+  discount_value    Decimal?      @db.Decimal(10, 2)
+  discount_reason   String?       @db.VarChar(500)
+  final_price       Decimal       @db.Decimal(10, 2)
+  capacity          Int           @default(0)
+  seats_booked      Int           @default(0)
+  status            SessionStatus @default(DRAFT)
+  public_note       String?
+  internal_note     String?
+  created_at        DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+
+  post     Post      @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([post_id])
+  @@index([departure_date])
+  @@index([status])
+  @@map("departure_sessions")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+model Booking {
+  id                    String        @id @default(uuid()) @db.Uuid
+  booking_code          String        @unique @db.VarChar(50)
+  post_id               String        @db.Uuid
+  departure_session_id  String        @db.Uuid
+  package_option_id     String?       @db.VarChar(100)
+  contact_name          String        @db.VarChar(300)
+  contact_phone         String        @db.VarChar(50)
+  contact_email         String        @db.VarChar(300)
+  passenger_count       Int           @default(1)
+  total_price_snapshot  Decimal       @db.Decimal(10, 2)
+  currency              String        @default("IDR") @db.VarChar(10)
+  booking_status        BookingStatus @default(PENDING)
+  payment_status        PaymentStatus @default(UNPAID)
+  admin_note            String?
+  source                String        @default("admin") @db.VarChar(50)
+  created_at            DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+
+  post              Post             @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  departure_session DepartureSession @relation(fields: [departure_session_id], references: [id], onDelete: Cascade)
+  travelers         Traveler[]
+
+  @@index([post_id])
+  @@index([departure_session_id])
+  @@index([booking_status])
+  @@index([booking_code])
+  @@map("bookings")
+}
+
+model Traveler {
+  id                String   @id @default(uuid()) @db.Uuid
+  booking_id        String   @db.Uuid
+  full_name         String   @db.VarChar(300)
+  gender            String?  @db.VarChar(20)
+  date_of_birth     DateTime? @db.Date
+  passport_number   String?  @db.VarChar(100)
+  nationality       String?  @db.VarChar(100)
+  phone             String?  @db.VarChar(50)
+  email             String?  @db.VarChar(300)
+  emergency_contact String?  @db.VarChar(500)
+  special_request   String?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  booking Booking @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  @@index([booking_id])
+  @@map("travelers")
+}
