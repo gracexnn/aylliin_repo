@@ -11,10 +11,23 @@ import {
   CircleDollarSign,
   Clock3,
   FileText,
+  Globe,
   Plus,
   TrendingUp,
   Users,
 } from 'lucide-react';
+
+type VisitSummaryRow = {
+  total_views: bigint;
+  unique_visitors: bigint;
+  today_views: bigint;
+  week_views: bigint;
+};
+
+type VisitPathRow = {
+  path: string;
+  views: bigint;
+};
 
 const BOOKING_STATUS_LABELS: Record<string, string> = {
   PENDING: 'Хүлээгдэж буй',
@@ -49,6 +62,14 @@ function formatCompactNumber(value: number) {
   return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 }
 
+function formatPathLabel(path: string) {
+  if (path === '/') {
+    return 'Нүүр хуудас';
+  }
+
+  return path;
+}
+
 function getMonthBuckets() {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
@@ -69,6 +90,10 @@ async function getDashboardStats() {
   today.setHours(0, 0, 0, 0);
 
   const sixMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 5, 1);
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
   try {
     const [
@@ -264,6 +289,53 @@ async function getDashboardStats() {
       },
     ].filter((item) => item.value > 0);
 
+    let visits = {
+      totalViews: 0,
+      uniqueVisitors: 0,
+      todayViews: 0,
+      weekViews: 0,
+      topPaths: [] as Array<{ path: string; views: number }>,
+    };
+
+    try {
+      const [visitSummary] = await prisma.$queryRaw<VisitSummaryRow[]>`
+        SELECT
+          COUNT(*) FILTER (WHERE created_at >= ${thirtyDaysAgo})::bigint AS total_views,
+          COUNT(DISTINCT visitor_id) FILTER (WHERE created_at >= ${thirtyDaysAgo})::bigint AS unique_visitors,
+          COUNT(*) FILTER (WHERE created_at >= ${today})::bigint AS today_views,
+          COUNT(*) FILTER (WHERE created_at >= ${sevenDaysAgo})::bigint AS week_views
+        FROM site_visits
+      `;
+
+      const topPaths = await prisma.$queryRaw<VisitPathRow[]>`
+        SELECT path, COUNT(*)::bigint AS views
+        FROM site_visits
+        WHERE created_at >= ${thirtyDaysAgo}
+        GROUP BY path
+        ORDER BY views DESC, path ASC
+        LIMIT 5
+      `;
+
+      visits = {
+        totalViews: Number(visitSummary?.total_views ?? 0),
+        uniqueVisitors: Number(visitSummary?.unique_visitors ?? 0),
+        todayViews: Number(visitSummary?.today_views ?? 0),
+        weekViews: Number(visitSummary?.week_views ?? 0),
+        topPaths: topPaths.map((item) => ({
+          path: item.path,
+          views: Number(item.views),
+        })),
+      };
+    } catch {
+      visits = {
+        totalViews: 0,
+        uniqueVisitors: 0,
+        todayViews: 0,
+        weekViews: 0,
+        topPaths: [],
+      };
+    }
+
     return {
       posts: {
         total: totalPosts,
@@ -297,6 +369,7 @@ async function getDashboardStats() {
       monthlyBookings,
       topPosts,
       attentionItems,
+      visits,
     };
   } catch {
     return {
@@ -332,6 +405,13 @@ async function getDashboardStats() {
       monthlyBookings: getMonthBuckets(),
       topPosts: [],
       attentionItems: [],
+      visits: {
+        totalViews: 0,
+        uniqueVisitors: 0,
+        todayViews: 0,
+        weekViews: 0,
+        topPaths: [],
+      },
     };
   }
 }
@@ -400,6 +480,9 @@ export default async function DashboardPage() {
               </span>
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
                 {stats.bookings.totalPassengers} нийт зорчигч
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                {formatCompactNumber(stats.visits.totalViews)} хандалт / 30 хоног
               </span>
             </div>
           </div>
@@ -552,6 +635,48 @@ export default async function DashboardPage() {
               ) : (
                 <p className="text-sm text-muted-foreground">Одоогоор онцгой анхаарах зүйл алга.</p>
               )}
+            </div>
+
+            <div className="space-y-3 rounded-2xl border p-4">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-sky-500" />
+                <p className="font-medium">Сайтын хандалт</p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl bg-muted/40 p-3">
+                  <p className="text-xs text-muted-foreground">30 хоногийн хандалт</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompactNumber(stats.visits.totalViews)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/40 p-3">
+                  <p className="text-xs text-muted-foreground">Давтагдашгүй зочин</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompactNumber(stats.visits.uniqueVisitors)}</p>
+                </div>
+                <div className="rounded-xl bg-muted/40 p-3">
+                  <p className="text-xs text-muted-foreground">Өнөөдрийн хандалт</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCompactNumber(stats.visits.todayViews)}</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Сүүлийн 7 хоног</span>
+                  <span className="font-medium">{formatCompactNumber(stats.visits.weekViews)}</span>
+                </div>
+
+                {stats.visits.topPaths.length > 0 ? (
+                  <div className="space-y-2">
+                    {stats.visits.topPaths.map((item) => (
+                      <div key={item.path} className="flex items-center justify-between rounded-xl bg-muted/30 px-3 py-2 text-sm">
+                        <span className="max-w-[75%] truncate text-muted-foreground">{formatPathLabel(item.path)}</span>
+                        <span className="font-semibold">{formatCompactNumber(item.views)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Хандалтын өгөгдөл хараахан алга.</p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import '@/app/globals.css'
+import SiteVisitTracker from '@/components/site-visit-tracker'
 
 export const metadata: Metadata = {
     title: {
@@ -27,7 +28,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="mn">
-            <body>{children}</body>
+            <body>
+                <Suspense fallback={null}>
+                    <SiteVisitTracker />
+                </Suspense>
+                {children}
+            </body>
         </html>
     )
 }

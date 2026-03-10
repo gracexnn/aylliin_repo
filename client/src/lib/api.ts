@@ -106,3 +106,25 @@ export async function checkPaymentStatus(bookingCode: string): Promise<{
     
     return res.json()
 }
+
+/**
+ * Track a client-side page visit
+ */
+export async function trackSiteVisit(data: {
+    visitor_id: string
+    path: string
+    referrer?: string | null
+}): Promise<void> {
+    try {
+        await fetch(`${getApiUrl()}/api/public/visits`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            keepalive: true,
+        })
+    } catch (error) {
+        console.error('Failed to track site visit:', error)
+    }
+}
