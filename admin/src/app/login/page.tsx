@@ -109,7 +109,7 @@ function LoginForm() {
             ) : null}
 
             <p className="text-xs text-muted-foreground">
-              Анхны админ хэрэглэгч үүсгэхийн тулд `auth:seed-admin` командыг нэг удаа ажиллуулна уу.
+              Password: testing123
             </p>
 
             <Button className="w-full" type="submit" disabled={isSubmitting}>
