@@ -1,0 +1,442 @@
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Trash2, GripVertical, Save, Loader2 } from 'lucide-react';
+import MapComponent from './map-component';
+import { TRANSPORT_MODE_OPTIONS, TRANSPORT_MODE_MAP } from '@/lib/constants';
+import type { TransportMode } from '@/schemas';
+
+interface RoutePoint {
+  id?: string;
+  route_id?: string;
+  order_index: number;
+  latitude: number;
+  longitude: number;
+  name: string;
+  description: string;
+  interesting_fact: string;
+  recommended_time_to_visit: string;
+  images: string[];
+  transport_type: TransportMode;
+}
+
+interface Route {
+  id: string;
+  post_id: string;
+  title: string;
+  points: RoutePoint[];
+}
+
+interface RouteEditorProps {
+  postId: string;
+}
+
+export default function RouteEditor({ postId }: RouteEditorProps) {
+  const [route, setRoute] = useState<Route | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [routeTitle, setRouteTitle] = useState('');
+  const [editingPoint, setEditingPoint] = useState<RoutePoint | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchRoute();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postId]);
+
+  const fetchRoute = async () => {
+    try {
+      const res = await fetch(`/api/posts/${postId}/route-data`);
+      const routes = await res.json();
+      if (routes.length > 0) {
+        setRoute(routes[0]);
+        setRouteTitle(routes[0].title);
+      }
+    } catch (error) {
+      console.error('Failed to fetch route:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createRoute = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/routes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: postId, title: routeTitle || 'Main Route' }),
+      });
+      if (res.ok) {
+        const newRoute = await res.json();
+        setRoute({ ...newRoute, points: [] });
+        setRouteTitle(newRoute.title);
+      }
+    } catch (error) {
+      console.error('Failed to create route:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveRouteTitle = async () => {
+    if (!route) return;
+    setSaving(true);
+    try {
+      await fetch(`/api/routes/${route.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: routeTitle }),
+      });
+      setRoute((prev) => prev ? { ...prev, title: routeTitle } : prev);
+    } catch (error) {
+      console.error('Failed to update route title:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleMapClick = useCallback(
+    async (lat: number, lng: number) => {
+      if (!route) return;
+
+      const newPoint: RoutePoint = {
+        route_id: route.id,
+        order_index: route.points.length,
+        latitude: lat,
+        longitude: lng,
+        name: `Point ${route.points.length + 1}`,
+        description: '',
+        interesting_fact: '',
+        recommended_time_to_visit: '',
+        images: [],
+        transport_type: 'WALKING',
+      };
+
+      try {
+        const res = await fetch('/api/route-points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newPoint),
+        });
+        if (res.ok) {
+          const savedPoint = await res.json();
+          setRoute((prev) =>
+            prev ? { ...prev, points: [...prev.points, savedPoint] } : prev
+          );
+        }
+      } catch (error) {
+        console.error('Failed to add point:', error);
+      }
+    },
+    [route]
+  );
+
+  const openEditDialog = (point: RoutePoint) => {
+    setEditingPoint({ ...point });
+    setEditDialogOpen(true);
+  };
+
+  const savePoint = async () => {
+    if (!editingPoint || !route) return;
+    setSaving(true);
+    try {
+      if (editingPoint.id) {
+        const res = await fetch(`/api/route-points/${editingPoint.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editingPoint),
+        });
+        if (res.ok) {
+          const updated = await res.json();
+          setRoute((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  points: prev.points.map((p) => (p.id === updated.id ? updated : p)),
+                }
+              : prev
+          );
+        }
+      }
+      setEditDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to save point:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deletePoint = async (pointId: string) => {
+    try {
+      await fetch(`/api/route-points/${pointId}`, { method: 'DELETE' });
+      setRoute((prev) =>
+        prev
+          ? {
+              ...prev,
+              points: prev.points
+                .filter((p) => p.id !== pointId)
+                .map((p, i) => ({ ...p, order_index: i })),
+            }
+          : prev
+      );
+    } catch (error) {
+      console.error('Failed to delete point:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!route) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Маршрут үүсгэх</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Маршрутын нэр</Label>
+            <Input
+              value={routeTitle}
+              onChange={(e) => setRouteTitle(e.target.value)}
+              placeholder="жишээ нь: Турк улсын гурван хотын аялал"
+            />
+          </div>
+          <Button onClick={createRoute} disabled={saving}>
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
+            Маршрут үүсгэх
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Маршрут: {route.title}</CardTitle>
+            <Badge variant="outline">{route.points.length} цэг</Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              value={routeTitle}
+              onChange={(e) => setRouteTitle(e.target.value)}
+              placeholder="Маршрутын нэр"
+            />
+            <Button variant="outline" onClick={saveRouteTitle} disabled={saving}>
+              <Save className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Газрын зураг дээр дарж маршрутын цэг нэмнэ. Цэг дээр дарж нэр, тайлбар, тээврийн төрлийг засна.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Map */}
+      <Card>
+        <CardContent className="p-0 overflow-hidden rounded-lg">
+          <MapComponent
+            points={route.points}
+            onMapClick={handleMapClick}
+            onPointClick={(index) => {
+              setSelectedPointIndex(index);
+              openEditDialog(route.points[index]);
+            }}
+            interactive={true}
+            height="500px"
+            selectedIndex={selectedPointIndex ?? undefined}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Route Points List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Маршрутын цэгүүд</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AnimatePresence>
+            {route.points.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                Газрын зураг дээр дарж цэг нэмнэ үү
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {route.points.map((point, index) => {
+                  const mode = TRANSPORT_MODE_MAP[point.transport_type];
+                  return (
+                    <motion.div
+                      key={point.id ?? index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
+                        selectedPointIndex === index ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                      }`}
+                      onClick={() => openEditDialog(point)}
+                    >
+                      <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <div
+                        className="flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold shrink-0"
+                        style={{ backgroundColor: mode?.color ?? '#3b82f6' }}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{point.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {point.latitude.toFixed(4)}, {point.longitude.toFixed(4)}
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="shrink-0 gap-1 text-xs"
+                        style={{ borderColor: mode?.color, color: mode?.color }}
+                      >
+                        {mode?.icon} {mode?.label}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (point.id) deletePoint(point.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
+      {/* Edit Point Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Маршрутын цэг засах</DialogTitle>
+          </DialogHeader>
+          {editingPoint && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Нэр</Label>
+                <Input
+                  value={editingPoint.name}
+                  onChange={(e) => setEditingPoint({ ...editingPoint, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Дараагийн цэг хүртэлх тээвэр</Label>
+                <Select
+                  value={editingPoint.transport_type}
+                  onValueChange={(v) =>
+                    setEditingPoint({ ...editingPoint, transport_type: v as TransportMode })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TRANSPORT_MODE_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: opt.color }}
+                          />
+                          <span>{opt.icon}</span>
+                          <span>{opt.label}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Тайлбар</Label>
+                <Textarea
+                  value={editingPoint.description}
+                  onChange={(e) => setEditingPoint({ ...editingPoint, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Сонирхолтой баримт</Label>
+                <Textarea
+                  value={editingPoint.interesting_fact}
+                  onChange={(e) => setEditingPoint({ ...editingPoint, interesting_fact: e.target.value })}
+                  rows={2}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Очих тохиромжтой хугацаа</Label>
+                <Input
+                  value={editingPoint.recommended_time_to_visit}
+                  onChange={(e) => setEditingPoint({ ...editingPoint, recommended_time_to_visit: e.target.value })}
+                  placeholder="жишээ нь: 6 - 8-р сар"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Өргөрөг</Label>
+                  <Input value={editingPoint.latitude.toFixed(6)} readOnly className="bg-muted" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Уртраг</Label>
+                  <Input value={editingPoint.longitude.toFixed(6)} readOnly className="bg-muted" />
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Болих
+            </Button>
+            <Button onClick={savePoint} disabled={saving}>
+              {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+              Цэг хадгалах
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

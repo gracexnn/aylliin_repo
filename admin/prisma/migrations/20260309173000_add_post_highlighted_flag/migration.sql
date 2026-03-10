@@ -1,0 +1,2 @@
+ALTER TABLE "posts"
+ADD COLUMN "highlighted" BOOLEAN NOT NULL DEFAULT false;
