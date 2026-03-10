@@ -87,7 +87,11 @@
   * {
     @apply border-border;
   }
+  html {
+    height: 100%;
+  }
   body {
+    min-height: 100%;
     @apply bg-background text-foreground;
   }
 }

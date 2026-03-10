@@ -22,9 +22,9 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-dvh bg-background overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card flex flex-col">
+      <aside className="flex h-dvh w-64 shrink-0 flex-col border-r bg-card">
         <div className="p-6 border-b">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Map className="h-6 w-6 text-primary" />
@@ -61,14 +61,14 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
         <motion.div
           key={pathname}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="h-full"
+          className="min-h-full"
         >
           {children}
         </motion.div>
