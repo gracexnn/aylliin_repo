@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { useState, useCallback, useEffect } from 'react'
 import {
     MdDirectionsWalk,
     MdDirectionsCar,
@@ -11,7 +14,7 @@ import {
     MdFlight,
     MdFlightTakeoff,
 } from 'react-icons/md'
-import { FiClock, FiStar, FiMapPin } from 'react-icons/fi'
+import { FiClock, FiStar, FiMapPin, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import type { Route, TransportMode } from '@/lib/types'
 
 const transportConfig: Record<
@@ -31,14 +34,47 @@ const transportConfig: Record<
     HELICOPTER: { icon: MdFlightTakeoff,   label: 'Нисдэг тэрэг', color: 'bg-indigo-100 text-indigo-700' },
 }
 
+interface LightboxState {
+    images: string[]
+    index: number
+}
+
 interface RouteTimelineProps {
     routes: Route[]
 }
 
 export default function RouteTimeline({ routes }: RouteTimelineProps) {
+    const [lightbox, setLightbox] = useState<LightboxState | null>(null)
+
+    const openLightbox = useCallback((images: string[], index: number) => {
+        setLightbox({ images, index })
+    }, [])
+
+    const closeLightbox = useCallback(() => setLightbox(null), [])
+
+    const prev = useCallback(() =>
+        setLightbox((lb) => lb ? { ...lb, index: (lb.index - 1 + lb.images.length) % lb.images.length } : lb)
+    , [])
+
+    const next = useCallback(() =>
+        setLightbox((lb) => lb ? { ...lb, index: (lb.index + 1) % lb.images.length } : lb)
+    , [])
+
+    useEffect(() => {
+        if (!lightbox) return
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closeLightbox()
+            if (e.key === 'ArrowLeft') prev()
+            if (e.key === 'ArrowRight') next()
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [lightbox, closeLightbox, prev, next])
+
     if (routes.length === 0) return null
 
     return (
+        <>
         <div className="space-y-10">
             {routes.map((route) => (
                 <div key={route.id}>
@@ -68,7 +104,7 @@ export default function RouteTimeline({ routes }: RouteTimelineProps) {
                                     </div>
 
                                     {/* Point content */}
-                                    <div className={`flex-1 pb-8 ${isLast ? 'pb-0' : ''}`}>
+                                    <div className={`flex-1 min-w-0 pb-8 ${isLast ? 'pb-0' : ''}`}>
                                         <div className="flex items-start flex-wrap gap-2 mb-2">
                                             <h4 className="font-semibold text-gray-900 text-base leading-tight">
                                                 {point.name}
@@ -107,21 +143,25 @@ export default function RouteTimeline({ routes }: RouteTimelineProps) {
                                         )}
 
                                         {point.images.length > 0 && (
-                                            <div className="flex gap-2 overflow-x-auto pb-1">
-                                                {point.images.map((img, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className="relative w-28 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100"
-                                                    >
-                                                        <Image
-                                                            src={img}
-                                                            alt={`${point.name} image ${i + 1}`}
-                                                            fill
-                                                            className="object-cover"
-                                                            sizes="112px"
-                                                        />
-                                                    </div>
-                                                ))}
+                                            <div className="w-full overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300">
+                                                <div className="flex gap-2 w-max">
+                                                    {point.images.map((img, i) => (
+                                                        <button
+                                                            key={i}
+                                                            type="button"
+                                                            onClick={() => openLightbox(point.images, i)}
+                                                            className="relative w-28 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 hover:opacity-90 transition-opacity"
+                                                        >
+                                                            <Image
+                                                                src={img}
+                                                                alt={`${point.name} image ${i + 1}`}
+                                                                fill
+                                                                className="object-cover"
+                                                                sizes="112px"
+                                                            />
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -132,5 +172,69 @@ export default function RouteTimeline({ routes }: RouteTimelineProps) {
                 </div>
             ))}
         </div>
+
+            {/* Lightbox */}
+            {lightbox && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                    onClick={closeLightbox}
+                >
+                    {/* Close */}
+                    <button
+                        type="button"
+                        onClick={closeLightbox}
+                        className="absolute top-4 right-4 text-white bg-black/40 hover:bg-black/70 rounded-full p-2 transition-colors"
+                        aria-label="Close"
+                    >
+                        <FiX size={22} />
+                    </button>
+
+                    {/* Prev */}
+                    {lightbox.images.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); prev() }}
+                            className="absolute left-4 z-10 text-white bg-black/40 hover:bg-black/70 rounded-full p-2 transition-colors"
+                            aria-label="Previous"
+                        >
+                            <FiChevronLeft size={26} />
+                        </button>
+                    )}
+
+                    {/* Image */}
+                    <div
+                        className="relative max-w-[90vw] max-h-[85vh] w-full h-full flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Image
+                            src={lightbox.images[lightbox.index]}
+                            alt={`Image ${lightbox.index + 1}`}
+                            fill
+                            className="object-contain"
+                            sizes="90vw"
+                        />
+                    </div>
+
+                    {/* Next */}
+                    {lightbox.images.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); next() }}
+                            className="absolute right-4 z-10 text-white bg-black/40 hover:bg-black/70 rounded-full p-2 transition-colors"
+                            aria-label="Next"
+                        >
+                            <FiChevronRight size={26} />
+                        </button>
+                    )}
+
+                    {/* Counter */}
+                    {lightbox.images.length > 1 && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/40 px-3 py-1 rounded-full">
+                            {lightbox.index + 1} / {lightbox.images.length}
+                        </div>
+                    )}
+                </div>
+            )}
+        </>
     )
 }

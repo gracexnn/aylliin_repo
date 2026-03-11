@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LogoutButton from '@/components/logout-button';
-import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon, Library, MapPin, Sparkles, ListChecks } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 const navItems = [
@@ -14,6 +14,12 @@ const navItems = [
   { href: '/dashboard/posts', label: 'Багцууд', icon: FileText },
   { href: '/dashboard/departure-sessions', label: 'Явах товууд', icon: Calendar },
   { href: '/dashboard/bookings', label: 'Захиалгууд', icon: Users },
+];
+
+const libraryNavItems = [
+  { href: '/dashboard/library/inclusions', label: 'Багтсан зүйлс', icon: ListChecks },
+  { href: '/dashboard/library/highlights', label: 'Онцлох зүйлс', icon: Sparkles },
+  { href: '/dashboard/library/locations', label: 'Байршлууд', icon: MapPin },
 ];
 
 export default function DashboardLayout({
@@ -95,6 +101,59 @@ export default function DashboardLayout({
               </Link>
             );
           })}
+
+          {/* Library section */}
+          <div className={cn('pt-3', collapsed ? 'flex flex-col items-center' : '')}>
+            <AnimatePresence initial={false}>
+              {!collapsed && (
+                <motion.div
+                  key="library-label"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1 px-3 pb-1"
+                >
+                  <Library className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Цуглуулга</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {libraryNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    collapsed ? 'justify-center' : '',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <AnimatePresence initial={false}>
+                    {!collapsed && (
+                      <motion.span
+                        key={`lib-label-${item.href}`}
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="whitespace-nowrap overflow-hidden"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
         {/* Footer */}

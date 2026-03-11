@@ -88,6 +88,7 @@ export const RoutePointSchema = z.object({
   recommended_time_to_visit: z.string().max(200).optional().nullable(),
   images: z.array(z.string().url()).optional(),
   day_number: z.number().int().min(1).optional().nullable(),
+  location_id: z.string().uuid().optional().nullable(),
 });
 
 export const CreateRoutePointSchema = RoutePointSchema.omit({ id: true });
@@ -186,3 +187,86 @@ export type CreateRoute = z.infer<typeof CreateRouteSchema>;
 export type RoutePoint = z.infer<typeof RoutePointSchema>;
 export type CreateRoutePoint = z.infer<typeof CreateRoutePointSchema>;
 export type UpdateRoutePoint = z.infer<typeof UpdateRoutePointSchema>;
+
+// ─── Content Library Schemas ─────────────────────────────────────────────────
+
+export const LibraryInclusionSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().min(1, 'Гарчиг шаардлагатай').max(500),
+  description: z.string().optional().nullable(),
+  icon: z.string().max(100).optional().nullable(),
+  active: z.boolean().default(true),
+});
+
+export const CreateLibraryInclusionSchema = LibraryInclusionSchema.omit({ id: true });
+export const UpdateLibraryInclusionSchema = LibraryInclusionSchema.partial().required({ id: true });
+
+export type LibraryInclusion = z.infer<typeof LibraryInclusionSchema>;
+export type CreateLibraryInclusion = z.infer<typeof CreateLibraryInclusionSchema>;
+export type UpdateLibraryInclusion = z.infer<typeof UpdateLibraryInclusionSchema>;
+
+export const LibraryHighlightSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().min(1, 'Гарчиг шаардлагатай').max(500),
+  description: z.string().optional().nullable(),
+  active: z.boolean().default(true),
+});
+
+export const CreateLibraryHighlightSchema = LibraryHighlightSchema.omit({ id: true });
+export const UpdateLibraryHighlightSchema = LibraryHighlightSchema.partial().required({ id: true });
+
+export type LibraryHighlight = z.infer<typeof LibraryHighlightSchema>;
+export type CreateLibraryHighlight = z.infer<typeof CreateLibraryHighlightSchema>;
+export type UpdateLibraryHighlight = z.infer<typeof UpdateLibraryHighlightSchema>;
+
+export const LibraryLocationSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(1, 'Нэр шаардлагатай').max(500),
+  slug: z
+    .string()
+    .min(1, 'Slug шаардлагатай')
+    .max(500)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug нь жижиг латин үсэг, тоо, зураасаас бүрдэх ёстой'),
+  short_description: z.string().max(1000).optional().nullable(),
+  description: z.string().optional().nullable(),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  cover_image: z.string().url().optional().nullable(),
+  gallery: z.array(z.string().url()).default([]),
+  region: z.string().max(200).optional().nullable(),
+  country: z.string().max(200).optional().nullable(),
+  tags: z.array(z.string().min(1).max(200)).default([]),
+  active: z.boolean().default(true),
+});
+
+export const CreateLibraryLocationSchema = LibraryLocationSchema.omit({ id: true });
+export const UpdateLibraryLocationSchema = LibraryLocationSchema.partial().required({ id: true });
+
+export type LibraryLocation = z.infer<typeof LibraryLocationSchema>;
+export type CreateLibraryLocation = z.infer<typeof CreateLibraryLocationSchema>;
+export type UpdateLibraryLocation = z.infer<typeof UpdateLibraryLocationSchema>;
+
+/** A single item in a post's ordered inclusion list */
+export const PostInclusionItemSchema = z.object({
+  inclusion_id: z.string().uuid(),
+  label_snapshot: z.string().min(1).max(500),
+  order_index: z.number().int().min(0),
+});
+
+/** A single item in a post's ordered highlight list */
+export const PostHighlightItemSchema = z.object({
+  highlight_id: z.string().uuid(),
+  label_snapshot: z.string().min(1).max(500),
+  order_index: z.number().int().min(0),
+});
+
+export const SetPostInclusionsSchema = z.object({
+  items: z.array(PostInclusionItemSchema),
+});
+
+export const SetPostHighlightsSchema = z.object({
+  items: z.array(PostHighlightItemSchema),
+});
+
+export type PostInclusionItem = z.infer<typeof PostInclusionItemSchema>;
+export type PostHighlightItem = z.infer<typeof PostHighlightItemSchema>;

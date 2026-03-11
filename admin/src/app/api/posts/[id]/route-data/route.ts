@@ -10,7 +10,10 @@ export async function GET(
     const routes = await prisma.route.findMany({
       where: { post_id: id },
       include: {
-        points: { orderBy: { order_index: 'asc' } },
+        points: {
+          orderBy: { order_index: 'asc' },
+          include: { location: true },
+        },
       },
       orderBy: { created_at: 'asc' },
     });

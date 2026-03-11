@@ -24,6 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, GripVertical, Save, Loader2 } from 'lucide-react';
 import MapComponent from './map-component';
+import LocationPicker, { type LibraryLocationRef } from './location-picker';
 import { TRANSPORT_MODE_OPTIONS, TRANSPORT_MODE_MAP, getDayColor } from '@/lib/constants';
 import type { TransportMode, ItineraryDay } from '@/schemas';
 
@@ -40,6 +41,7 @@ interface RoutePoint {
   images: string[];
   transport_type: TransportMode;
   day_number?: number | null;
+  location_id?: string | null;
 }
 
 interface Route {
@@ -57,18 +59,33 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
   const [route, setRoute] = useState<Route | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [addingTemplatePoint, setAddingTemplatePoint] = useState(false);
   const [routeTitle, setRouteTitle] = useState('');
   const [editingPoint, setEditingPoint] = useState<RoutePoint | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
   const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>([]);
   const [activeDayFilter, setActiveDayFilter] = useState<number | null>(null);
+  const [templateLocations, setTemplateLocations] = useState<LibraryLocationRef[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
   useEffect(() => {
     fetchRoute();
     fetchItineraryDays();
+    fetchTemplateLocations();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
+
+  const fetchTemplateLocations = async () => {
+    try {
+      const res = await fetch('/api/library/locations?active=true');
+      if (!res.ok) return;
+      const locations: LibraryLocationRef[] = await res.json();
+      setTemplateLocations(locations);
+    } catch {
+      // ignore – template dropdown is optional
+    }
+  };
 
   const fetchItineraryDays = async () => {
     try {
@@ -171,9 +188,77 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
     [route, activeDayFilter]
   );
 
+  const addPointFromTemplate = async (locationId: string) => {
+    if (!route) return;
+
+    const template = templateLocations.find((loc) => loc.id === locationId);
+    if (!template) return;
+
+    setAddingTemplatePoint(true);
+    try {
+      const newPoint: RoutePoint = {
+        route_id: route.id,
+        order_index: route.points.length,
+        latitude: template.latitude,
+        longitude: template.longitude,
+        name: template.name,
+        description: template.description ?? template.short_description ?? '',
+        interesting_fact: '',
+        recommended_time_to_visit: '',
+        images: buildPointImagesFromLocation(template),
+        transport_type: 'WALKING',
+        day_number: activeDayFilter ?? null,
+        location_id: template.id,
+      };
+
+      const res = await fetch('/api/route-points', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPoint),
+      });
+
+      if (res.ok) {
+        const savedPoint = await res.json();
+        setRoute((prev) =>
+          prev ? { ...prev, points: [...prev.points, savedPoint] } : prev
+        );
+        setSelectedPointIndex(route.points.length);
+      }
+    } catch (error) {
+      console.error('Failed to add template point:', error);
+    } finally {
+      setAddingTemplatePoint(false);
+      setSelectedTemplateId('');
+    }
+  };
+
   const openEditDialog = (point: RoutePoint) => {
     setEditingPoint({ ...point });
     setEditDialogOpen(true);
+  };
+
+  const buildPointImagesFromLocation = (loc: LibraryLocationRef) => {
+    const merged = [loc.cover_image, ...(loc.gallery ?? [])].filter(
+      (url): url is string => Boolean(url)
+    );
+
+    return Array.from(new Set(merged));
+  };
+
+  const applyLocationTemplate = (point: RoutePoint, loc: LibraryLocationRef | null): RoutePoint => {
+    if (!loc) {
+      return { ...point, location_id: null };
+    }
+
+    return {
+      ...point,
+      location_id: loc.id,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      name: loc.name,
+      description: loc.description ?? loc.short_description ?? point.description,
+      images: buildPointImagesFromLocation(loc),
+    };
   };
 
   const savePoint = async () => {
@@ -284,6 +369,31 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
               </span>
             )}
           </p>
+          <div className="grid gap-2 md:max-w-md">
+            <Label>Хадгалсан байршлаас шууд цэг нэмэх</Label>
+            <Select
+              value={selectedTemplateId}
+              onValueChange={(value) => {
+                setSelectedTemplateId(value);
+                void addPointFromTemplate(value);
+              }}
+              disabled={addingTemplatePoint || templateLocations.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={templateLocations.length === 0 ? 'Хадгалсан байршил алга' : ''} />
+              </SelectTrigger>
+              <SelectContent>
+                {templateLocations.map((location) => (
+                  <SelectItem key={location.id} value={location.id}>
+                    {[location.name, location.region, location.country].filter(Boolean).join(' · ')}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Сонголтоос сонгоход шинэ цэг автоматаар нэмэгдэнэ.
+            </p>
+          </div>
           {/* Day filter bar */}
           {itineraryDays.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-1">
@@ -426,12 +536,24 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
 
       {/* Edit Point Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Маршрутын цэг засах</DialogTitle>
           </DialogHeader>
           {editingPoint && (
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Хадгалсан байршилтай холбох</Label>
+                <LocationPicker
+                  value={editingPoint.location_id}
+                  onSelect={(loc: LibraryLocationRef | null) =>
+                    setEditingPoint((prev) => (prev ? applyLocationTemplate(prev, loc) : prev))
+                  }
+                />
+                <p className="text-xs text-muted-foreground">
+                  Сонгосон хадгалсан байршил нь энэ цэгийн template болж, нэр, координат, тайлбар, зургуудыг автоматаар бөглөнө.
+                </p>
+              </div>
               <div className="space-y-2">
                 <Label>Нэр</Label>
                 <Input

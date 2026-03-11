@@ -200,8 +200,8 @@ export default async function GuideDetailPage({ params }: Props) {
                         </div>
 
                         {/* ── Right: Sticky sidebar ──────────────────── */}
-                        <aside>
-                            <div className="sticky top-24">
+                        <aside className="lg:sticky lg:top-20 lg:self-start top-24">
+                            <div>
                                 <TourSidebar
                                     departureSessions={departureSessions}
                                     itineraryDays={itineraryDays.length}

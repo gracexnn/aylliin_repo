@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         recommended_time_to_visit: data.recommended_time_to_visit ?? null,
         images: data.images ?? [],
         day_number: data.day_number ?? null,
+        location_id: data.location_id ?? null,
       },
     });
 
