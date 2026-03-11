@@ -74,9 +74,9 @@ export default function ImageUpload({ value, onChange, folder = 'uploads', class
       }
 
       if (multiple) {
-        onChange(uploadedUrls);
+        (onChange as (urls: string[]) => void)(uploadedUrls);
       } else {
-        onChange(uploadedUrls[0]);
+        (onChange as (url: string) => void)(uploadedUrls[0]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
@@ -90,13 +90,13 @@ export default function ImageUpload({ value, onChange, folder = 'uploads', class
 
   const handleRemove = () => {
     if (multiple) return;
-    onChange('');
+    (onChange as (url: string) => void)('');
     if (inputRef.current) {
       inputRef.current.value = '';
     }
   };
 
-  const singleValue = multiple ? undefined : value;
+  const singleValue = multiple ? undefined : (value as string | undefined);
   const multipleValueCount = multiple && Array.isArray(value) ? value.length : 0;
 
   return (
