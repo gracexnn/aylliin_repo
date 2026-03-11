@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { FiArrowRight, FiMapPin, FiCalendar } from 'react-icons/fi'
+import { FiArrowRight, FiCalendar, FiClock, FiMapPin, FiStar } from 'react-icons/fi'
 import type { Post } from '@/lib/types'
 
 interface GuideCardProps {
@@ -16,6 +16,13 @@ function formatDate(dateStr: string) {
 }
 
 export default function GuideCard({ post }: GuideCardProps) {
+    const durationDays = post.itinerary_days?.length ?? null
+    const durationLabel =
+        durationDays !== null
+            ? `${durationDays} өдөр`
+            : (post.package_options?.[0]?.duration_label ?? null)
+    const attractionCount = post.attraction_items?.length ?? 0
+
     return (
         <Link
             href={`/guides/${post.slug}`}
@@ -38,6 +45,14 @@ export default function GuideCard({ post }: GuideCardProps) {
                 )}
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Duration badge */}
+                {durationLabel && (
+                    <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <FiClock size={11} />
+                        {durationLabel}
+                    </div>
+                )}
             </div>
 
             {/* Content */}
@@ -53,9 +68,17 @@ export default function GuideCard({ post }: GuideCardProps) {
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                        <FiCalendar size={12} />
-                        <span>{formatDate(post.created_at)}</span>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                            <FiCalendar size={12} />
+                            <span>{formatDate(post.created_at)}</span>
+                        </div>
+                        {attractionCount > 0 && (
+                            <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                                <FiStar size={11} />
+                                <span>{attractionCount}</span>
+                            </div>
+                        )}
                     </div>
                     <span className="flex items-center gap-1 text-xs font-semibold text-primary-600 group-hover:gap-2 transition-all">
                         Дэлгэрэнгүй <FiArrowRight size={13} />
