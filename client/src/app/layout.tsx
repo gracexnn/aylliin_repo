@@ -2,14 +2,18 @@ import type { Metadata } from 'next'
 import { Suspense, type ReactNode } from 'react'
 import '@/app/globals.css'
 import SiteVisitTracker from '@/components/site-visit-tracker'
+import siteConfig from '@/site.config'
 
 export const metadata: Metadata = {
     title: {
-        default: 'Aylal — Аяллын багц',
-        template: '%s | Aylal',
+        default: siteConfig.fullTitle,
+        template: siteConfig.titleTemplate,
     },
-    description:
-        'Дэлгэрэнгүй маршрут, орон нутгийн зөвлөгөө, хэрэгтэй мэдээлэл бүхий аяллын багцуудыг олж нээгээрэй.',
+    description: siteConfig.description,
+    icons: {
+        icon: siteConfig.icons.favicon,
+        apple: siteConfig.icons.apple,
+    },
     robots: {
         index: false,
         follow: false,
@@ -20,7 +24,7 @@ export const metadata: Metadata = {
         },
     },
     openGraph: {
-        siteName: 'Aylal',
+        siteName: siteConfig.name,
         type: 'website',
     },
 }
