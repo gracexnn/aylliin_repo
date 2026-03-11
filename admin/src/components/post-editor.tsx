@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
@@ -21,6 +21,7 @@ import {
 } from '@/schemas';
 import ImageUpload from './image-upload';
 import RichTextEditor from './rich-text-editor';
+import LibraryItemPicker, { type SelectedLibraryItem } from './library-item-picker';
 import { Save, Loader2, Plus, Trash2, CalendarRange, Route, Sparkles, ListChecks } from 'lucide-react';
 
 interface PostEditorProps {
@@ -143,6 +144,38 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
   const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>(
     [...(initialData?.itinerary_days ?? [])].sort((a, b) => a.day_number - b.day_number)
   );
+
+  // Library-based inclusions and highlights
+  const [libraryInclusions, setLibraryInclusions] = useState<SelectedLibraryItem[]>([]);
+  const [libraryHighlights, setLibraryHighlights] = useState<SelectedLibraryItem[]>([]);
+
+  useEffect(() => {
+    if (!postId) return;
+    // Load existing library assignments for this post
+    Promise.all([
+      fetch(`/api/posts/${postId}/inclusions`).then((r) => r.json()),
+      fetch(`/api/posts/${postId}/highlights`).then((r) => r.json()),
+    ]).then(([inclusions, highlights]) => {
+      if (Array.isArray(inclusions)) {
+        setLibraryInclusions(
+          inclusions.map((i: { inclusion_id: string; label_snapshot: string; order_index: number }) => ({
+            inclusion_id: i.inclusion_id,
+            label_snapshot: i.label_snapshot,
+            order_index: i.order_index,
+          }))
+        );
+      }
+      if (Array.isArray(highlights)) {
+        setLibraryHighlights(
+          highlights.map((h: { highlight_id: string; label_snapshot: string; order_index: number }) => ({
+            highlight_id: h.highlight_id,
+            label_snapshot: h.label_snapshot,
+            order_index: h.order_index,
+          }))
+        );
+      }
+    }).catch(() => { /* library data is optional - non-critical */ });
+  }, [postId]);
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(CreatePostSchema),
@@ -339,7 +372,23 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
       }
 
       const saved = await res.json();
-      onSave?.(saved.id);
+
+      // Save library associations
+      const savedId: string = saved.id;
+      await Promise.all([
+        fetch(`/api/posts/${savedId}/inclusions`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: libraryInclusions.map((item, i) => ({ ...item, order_index: i })) }),
+        }),
+        fetch(`/api/posts/${savedId}/highlights`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: libraryHighlights.map((item, i) => ({ ...item, order_index: i })) }),
+        }),
+      ]);
+
+      onSave?.(savedId);
     } catch (error) {
       console.error('Failed to save post:', error);
     } finally {
@@ -575,22 +624,20 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-6 md:grid-cols-2">
-            <StringListEditor
+            <LibraryItemPicker
               label="Хөтөлбөрт багтсан зүйлс"
-              description="Аяллын үнэд багтсан бүх зүйлс."
-              items={includedItems}
-              placeholder="Байрлах газар"
-              addLabel="Багтсан зүйл нэмэх"
-              onChange={setIncludedItems}
+              description="Аяллын үнэд багтсан бүх зүйлс. Номын сангаас сонго эсвэл шинэ зүйл үүсгэ."
+              type="inclusions"
+              items={libraryInclusions}
+              onChange={setLibraryInclusions}
             />
 
-            <StringListEditor
+            <LibraryItemPicker
               label="Үзвэр / Онцлох зүйлс"
-              description="Аялагчдын үзэх гол газрууд, туршлагууд."
-              items={attractionItems}
-              placeholder="Дюдень хүрхрээ"
-              addLabel="Онцлох зүйл нэмэх"
-              onChange={setAttractionItems}
+              description="Аялагчдын үзэх гол газрууд, туршлагууд. Номын сангаас сонго эсвэл шинэ зүйл үүсгэ."
+              type="highlights"
+              items={libraryHighlights}
+              onChange={setLibraryHighlights}
             />
           </CardContent>
         </Card>

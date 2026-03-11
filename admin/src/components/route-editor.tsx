@@ -24,6 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, GripVertical, Save, Loader2 } from 'lucide-react';
 import MapComponent from './map-component';
+import LocationPicker, { type LibraryLocationRef } from './location-picker';
 import { TRANSPORT_MODE_OPTIONS, TRANSPORT_MODE_MAP, getDayColor } from '@/lib/constants';
 import type { TransportMode, ItineraryDay } from '@/schemas';
 
@@ -40,6 +41,7 @@ interface RoutePoint {
   images: string[];
   transport_type: TransportMode;
   day_number?: number | null;
+  location_id?: string | null;
 }
 
 interface Route {
@@ -426,12 +428,24 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
 
       {/* Edit Point Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Маршрутын цэг засах</DialogTitle>
           </DialogHeader>
           {editingPoint && (
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Хадгалсан байршилтай холбох</Label>
+                <LocationPicker
+                  value={editingPoint.location_id}
+                  onSelect={(loc: LibraryLocationRef | null) =>
+                    setEditingPoint({ ...editingPoint, location_id: loc?.id ?? null })
+                  }
+                  onInheritCoordinates={(lat, lng, name) =>
+                    setEditingPoint({ ...editingPoint, latitude: lat, longitude: lng, name })
+                  }
+                />
+              </div>
               <div className="space-y-2">
                 <Label>Нэр</Label>
                 <Input

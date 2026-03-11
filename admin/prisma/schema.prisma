@@ -29,6 +29,8 @@ model Post {
   post_images        PostImage[]
   departure_sessions DepartureSession[]
   bookings           Booking[]
+  post_inclusions    PostInclusion[]
+  post_highlights    PostHighlight[]
 
   @@map("posts")
 }
@@ -73,9 +75,11 @@ model RoutePoint {
   recommended_time_to_visit String?       @db.VarChar(200)
   images                    String[]
   day_number                Int?
+  location_id               String?       @db.Uuid
   created_at                DateTime      @default(now()) @db.Timestamptz(6)
 
-  route Route @relation(fields: [route_id], references: [id], onDelete: Cascade)
+  route    Route            @relation(fields: [route_id], references: [id], onDelete: Cascade)
+  location LibraryLocation? @relation(fields: [location_id], references: [id], onDelete: SetNull)
 
   @@index([route_id])
   @@index([route_id, order_index])
@@ -93,6 +97,91 @@ model PostImage {
 
   @@index([post_id])
   @@map("post_images")
+}
+
+// ─── Reusable Content Library ────────────────────────────────────────────────
+
+model LibraryInclusion {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(500)
+  description String?
+  icon        String?  @db.VarChar(100)
+  active      Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  post_inclusions PostInclusion[]
+
+  @@map("library_inclusions")
+}
+
+model LibraryHighlight {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(500)
+  description String?
+  active      Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  post_highlights PostHighlight[]
+
+  @@map("library_highlights")
+}
+
+model LibraryLocation {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String   @db.VarChar(500)
+  slug              String   @unique @db.VarChar(500)
+  short_description String?  @db.VarChar(1000)
+  description       String?
+  latitude          Float
+  longitude         Float
+  cover_image       String?
+  gallery           String[] @default([])
+  region            String?  @db.VarChar(200)
+  country           String?  @db.VarChar(200)
+  tags              String[] @default([])
+  active            Boolean  @default(true)
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  route_points RoutePoint[]
+
+  @@map("library_locations")
+}
+
+/// Join: which inclusions are assigned to a guide, in what order, with a label snapshot
+model PostInclusion {
+  id             String   @id @default(uuid()) @db.Uuid
+  post_id        String   @db.Uuid
+  inclusion_id   String   @db.Uuid
+  order_index    Int      @default(0)
+  label_snapshot String   @db.VarChar(500)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  post      Post             @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  inclusion LibraryInclusion @relation(fields: [inclusion_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, inclusion_id])
+  @@index([post_id])
+  @@map("post_inclusions")
+}
+
+/// Join: which highlights are assigned to a guide, in what order, with a label snapshot
+model PostHighlight {
+  id             String   @id @default(uuid()) @db.Uuid
+  post_id        String   @db.Uuid
+  highlight_id   String   @db.Uuid
+  order_index    Int      @default(0)
+  label_snapshot String   @db.VarChar(500)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  post      Post             @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  highlight LibraryHighlight @relation(fields: [highlight_id], references: [id], onDelete: Cascade)
+
+  @@unique([post_id, highlight_id])
+  @@index([post_id])
+  @@map("post_highlights")
 }
 
 enum SessionStatus {
