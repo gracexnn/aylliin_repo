@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(locations);
   } catch (error) {
     console.error('GET /api/library/locations error:', error);
-    return NextResponse.json({ error: 'Failed to fetch locations' }, { status: 500 });
+    return NextResponse.json({ error: 'Байршлуудыг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -47,6 +47,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     console.error('POST /api/library/locations error:', error);
-    return NextResponse.json({ error: 'Failed to create location' }, { status: 500 });
+    return NextResponse.json({ error: 'Байршил үүсгэж чадсангүй' }, { status: 500 });
   }
 }

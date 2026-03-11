@@ -12,12 +12,12 @@ export async function GET(
     const { id } = await params;
     const inclusion = await prisma.libraryInclusion.findUnique({ where: { id } });
     if (!inclusion) {
-      return NextResponse.json({ error: 'Inclusion not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Багтсан зүйл олдсонгүй' }, { status: 404 });
     }
     return NextResponse.json(inclusion);
   } catch (error) {
     console.error('GET /api/library/inclusions/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to fetch inclusion' }, { status: 500 });
+    return NextResponse.json({ error: 'Багтсан зүйлийг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -32,7 +32,7 @@ export async function PUT(
 
     const { id: _id, ...updateFields } = data;
     if (Object.keys(updateFields).length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+      return NextResponse.json({ error: 'Шинэчлэх талбар алга' }, { status: 400 });
     }
 
     const inclusion = await prisma.libraryInclusion.update({
@@ -46,10 +46,10 @@ export async function PUT(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Inclusion not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Багтсан зүйл олдсонгүй' }, { status: 404 });
     }
     console.error('PUT /api/library/inclusions/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to update inclusion' }, { status: 500 });
+    return NextResponse.json({ error: 'Багтсан зүйлийг шинэчилж чадсангүй' }, { status: 500 });
   }
 }
 
@@ -60,12 +60,12 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.libraryInclusion.delete({ where: { id } });
-    return NextResponse.json({ message: 'Inclusion deleted successfully' });
+    return NextResponse.json({ message: 'Багтсан зүйлийг амжилттай устгалаа' });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Inclusion not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Багтсан зүйл олдсонгүй' }, { status: 404 });
     }
     console.error('DELETE /api/library/inclusions/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to delete inclusion' }, { status: 500 });
+    return NextResponse.json({ error: 'Багтсан зүйлийг устгаж чадсангүй' }, { status: 500 });
   }
 }

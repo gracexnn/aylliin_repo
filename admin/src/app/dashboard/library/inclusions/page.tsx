@@ -27,6 +27,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import IconPicker from '@/components/icon-picker';
+import { LibraryIcon } from '@/lib/library-icons';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 
 interface LibraryInclusion {
@@ -75,7 +77,7 @@ export default function InclusionsLibraryPage() {
   };
 
   const handleSave = async () => {
-    if (!form.title.trim()) { setError('Title is required'); return; }
+    if (!form.title.trim()) { setError('Гарчиг шаардлагатай'); return; }
     setSaving(true);
     setError('');
     try {
@@ -84,7 +86,7 @@ export default function InclusionsLibraryPage() {
         ? await fetch(`/api/library/inclusions/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         : await fetch('/api/library/inclusions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Failed to save'); return; }
+      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Хадгалж чадсангүй'); return; }
       await fetchItems();
       setDialogOpen(false);
     } finally {
@@ -103,12 +105,12 @@ export default function InclusionsLibraryPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Inclusions Library</h1>
-          <p className="text-muted-foreground mt-1">Reusable "What&apos;s Included" items for guides</p>
+          <h1 className="text-3xl font-bold">Багтсан зүйлсийн сан</h1>
+          <p className="text-muted-foreground mt-1">Гайд бүрт дахин ашиглах боломжтой багтсан зүйлс</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          New Inclusion
+          Шинэ зүйл
         </Button>
       </div>
 
@@ -116,8 +118,8 @@ export default function InclusionsLibraryPage() {
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
       ) : items.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No inclusions yet.</p>
-          <Button className="mt-4" onClick={openCreate}>Create First Inclusion</Button>
+          <p className="text-muted-foreground text-lg">Одоогоор багтсан зүйл алга.</p>
+          <Button className="mt-4" onClick={openCreate}>Эхний зүйлийг үүсгэх</Button>
         </div>
       ) : (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,12 +128,16 @@ export default function InclusionsLibraryPage() {
               <Card className={!item.active ? 'opacity-60' : ''}>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base leading-snug">
-                      {item.icon && <span className="mr-1">{item.icon}</span>}
-                      {item.title}
+                    <CardTitle className="flex items-center gap-2 text-base leading-snug">
+                      {item.icon && (
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border bg-muted/30 text-foreground">
+                          <LibraryIcon value={item.icon} size={16} className="h-4 w-4" fallbackClassName="text-base leading-none" />
+                        </span>
+                      )}
+                      <span>{item.title}</span>
                     </CardTitle>
                     <Badge variant={item.active ? 'default' : 'secondary'} className="shrink-0">
-                      {item.active ? 'Active' : 'Inactive'}
+                      {item.active ? 'Идэвхтэй' : 'Идэвхгүй'}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -151,14 +157,14 @@ export default function InclusionsLibraryPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Inclusion</AlertDialogTitle>
+                          <AlertDialogTitle>Зүйлийг устгах</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Delete &quot;{item.title}&quot;? This will unlink it from all guides.
+                            &quot;{item.title}&quot;-ийг устгах уу? Ингэснээр бүх гайдаас холбоос нь сална.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                          <AlertDialogCancel>Болих</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Устгах</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -173,32 +179,32 @@ export default function InclusionsLibraryPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Inclusion' : 'New Inclusion'}</DialogTitle>
+            <DialogTitle>{editing ? 'Зүйлийг засах' : 'Шинэ зүйл'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label>Title <span className="text-destructive">*</span></Label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g., Hotel Accommodation" />
+              <Label>Гарчиг <span className="text-destructive">*</span></Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="ж.нь., Зочид буудлын байр" />
             </div>
             <div className="space-y-1">
-              <Label>Description</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Optional description" rows={2} />
+              <Label>Тайлбар</Label>
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Сонголтоор тайлбар" rows={2} />
             </div>
             <div className="space-y-1">
-              <Label>Icon (emoji)</Label>
-              <Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g., 🏨" className="w-24" />
+              <Label>Icon</Label>
+              <IconPicker value={form.icon} onChange={(icon) => setForm({ ...form, icon })} />
             </div>
             <div className="flex items-center gap-3">
               <Switch checked={form.active} onCheckedChange={(v) => setForm({ ...form, active: v })} />
-              <Label>Active</Label>
+              <Label>Идэвхтэй</Label>
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Болих</Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editing ? 'Save Changes' : 'Create'}
+              {editing ? 'Өөрчлөлт хадгалах' : 'Үүсгэх'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -192,7 +192,7 @@ export type UpdateRoutePoint = z.infer<typeof UpdateRoutePointSchema>;
 
 export const LibraryInclusionSchema = z.object({
   id: z.string().uuid().optional(),
-  title: z.string().min(1, 'Title is required').max(500),
+  title: z.string().min(1, 'Гарчиг шаардлагатай').max(500),
   description: z.string().optional().nullable(),
   icon: z.string().max(100).optional().nullable(),
   active: z.boolean().default(true),
@@ -207,7 +207,7 @@ export type UpdateLibraryInclusion = z.infer<typeof UpdateLibraryInclusionSchema
 
 export const LibraryHighlightSchema = z.object({
   id: z.string().uuid().optional(),
-  title: z.string().min(1, 'Title is required').max(500),
+  title: z.string().min(1, 'Гарчиг шаардлагатай').max(500),
   description: z.string().optional().nullable(),
   active: z.boolean().default(true),
 });
@@ -221,12 +221,12 @@ export type UpdateLibraryHighlight = z.infer<typeof UpdateLibraryHighlightSchema
 
 export const LibraryLocationSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Name is required').max(500),
+  name: z.string().min(1, 'Нэр шаардлагатай').max(500),
   slug: z
     .string()
-    .min(1, 'Slug is required')
+    .min(1, 'Slug шаардлагатай')
     .max(500)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase alphanumeric with hyphens'),
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug нь жижиг латин үсэг, тоо, зураасаас бүрдэх ёстой'),
   short_description: z.string().max(1000).optional().nullable(),
   description: z.string().optional().nullable(),
   latitude: z.number().min(-90).max(90),

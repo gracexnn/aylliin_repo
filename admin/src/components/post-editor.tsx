@@ -626,7 +626,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
           <CardContent className="grid gap-6 md:grid-cols-2">
             <LibraryItemPicker
               label="Хөтөлбөрт багтсан зүйлс"
-              description="Аяллын үнэд багтсан бүх зүйлс. Номын сангаас сонго эсвэл шинэ зүйл үүсгэ."
+              description="Аяллын үнэд багтсан бүх зүйлс. Цуглуулгаас сонго эсвэл шинэ зүйл үүсгэ."
               type="inclusions"
               items={libraryInclusions}
               onChange={setLibraryInclusions}
@@ -634,7 +634,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
 
             <LibraryItemPicker
               label="Үзвэр / Онцлох зүйлс"
-              description="Аялагчдын үзэх гол газрууд, туршлагууд. Номын сангаас сонго эсвэл шинэ зүйл үүсгэ."
+              description="Аялагчдын үзэх гол газрууд, туршлагууд. Цуглуулгаас сонго эсвэл шинэ зүйл үүсгэ."
               type="highlights"
               items={libraryHighlights}
               onChange={setLibraryHighlights}

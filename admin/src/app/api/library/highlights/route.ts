@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(highlights);
   } catch (error) {
     console.error('GET /api/library/highlights error:', error);
-    return NextResponse.json({ error: 'Failed to fetch highlights' }, { status: 500 });
+    return NextResponse.json({ error: 'Онцлох зүйлсийг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -34,6 +34,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     console.error('POST /api/library/highlights error:', error);
-    return NextResponse.json({ error: 'Failed to create highlight' }, { status: 500 });
+    return NextResponse.json({ error: 'Онцлох зүйл үүсгэж чадсангүй' }, { status: 500 });
   }
 }

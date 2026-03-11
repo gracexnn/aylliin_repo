@@ -74,7 +74,7 @@ export default function HighlightsLibraryPage() {
   };
 
   const handleSave = async () => {
-    if (!form.title.trim()) { setError('Title is required'); return; }
+    if (!form.title.trim()) { setError('Гарчиг шаардлагатай'); return; }
     setSaving(true);
     setError('');
     try {
@@ -83,7 +83,7 @@ export default function HighlightsLibraryPage() {
         ? await fetch(`/api/library/highlights/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         : await fetch('/api/library/highlights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Failed to save'); return; }
+      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Хадгалж чадсангүй'); return; }
       await fetchItems();
       setDialogOpen(false);
     } finally {
@@ -102,12 +102,12 @@ export default function HighlightsLibraryPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Highlights Library</h1>
-          <p className="text-muted-foreground mt-1">Reusable attraction / highlight items for guides</p>
+          <h1 className="text-3xl font-bold">Онцлох зүйлсийн сан</h1>
+          <p className="text-muted-foreground mt-1">Гайд бүрт дахин ашиглах боломжтой үзвэр, онцлох зүйлс</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          New Highlight
+          Шинэ онцлох зүйл
         </Button>
       </div>
 
@@ -115,8 +115,8 @@ export default function HighlightsLibraryPage() {
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
       ) : items.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No highlights yet.</p>
-          <Button className="mt-4" onClick={openCreate}>Create First Highlight</Button>
+          <p className="text-muted-foreground text-lg">Одоогоор онцлох зүйл алга.</p>
+          <Button className="mt-4" onClick={openCreate}>Эхний онцлох зүйлийг үүсгэх</Button>
         </div>
       ) : (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,7 +127,7 @@ export default function HighlightsLibraryPage() {
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-base leading-snug">{item.title}</CardTitle>
                     <Badge variant={item.active ? 'default' : 'secondary'} className="shrink-0">
-                      {item.active ? 'Active' : 'Inactive'}
+                      {item.active ? 'Идэвхтэй' : 'Идэвхгүй'}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -147,14 +147,14 @@ export default function HighlightsLibraryPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Highlight</AlertDialogTitle>
+                          <AlertDialogTitle>Онцлох зүйлийг устгах</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Delete &quot;{item.title}&quot;? This will unlink it from all guides.
+                            &quot;{item.title}&quot;-ийг устгах уу? Ингэснээр бүх гайдаас холбоос нь сална.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                          <AlertDialogCancel>Болих</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Устгах</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -169,28 +169,28 @@ export default function HighlightsLibraryPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Highlight' : 'New Highlight'}</DialogTitle>
+            <DialogTitle>{editing ? 'Онцлох зүйлийг засах' : 'Шинэ онцлох зүйл'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1">
-              <Label>Title <span className="text-destructive">*</span></Label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g., Great Wall of China" />
+              <Label>Гарчиг <span className="text-destructive">*</span></Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="ж.нь., Хятадын Цагаан хэрэм" />
             </div>
             <div className="space-y-1">
-              <Label>Description</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Optional description" rows={2} />
+              <Label>Тайлбар</Label>
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Сонголтоор тайлбар" rows={2} />
             </div>
             <div className="flex items-center gap-3">
               <Switch checked={form.active} onCheckedChange={(v) => setForm({ ...form, active: v })} />
-              <Label>Active</Label>
+              <Label>Идэвхтэй</Label>
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Болих</Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editing ? 'Save Changes' : 'Create'}
+              {editing ? 'Өөрчлөлт хадгалах' : 'Үүсгэх'}
             </Button>
           </DialogFooter>
         </DialogContent>

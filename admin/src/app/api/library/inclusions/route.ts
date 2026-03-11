@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(inclusions);
   } catch (error) {
     console.error('GET /api/library/inclusions error:', error);
-    return NextResponse.json({ error: 'Failed to fetch inclusions' }, { status: 500 });
+    return NextResponse.json({ error: 'Багтсан зүйлсийг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -35,6 +35,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     console.error('POST /api/library/inclusions error:', error);
-    return NextResponse.json({ error: 'Failed to create inclusion' }, { status: 500 });
+    return NextResponse.json({ error: 'Багтсан зүйл үүсгэж чадсангүй' }, { status: 500 });
   }
 }

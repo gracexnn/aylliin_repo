@@ -115,7 +115,7 @@ export default function DashboardLayout({
                   className="flex items-center gap-1 px-3 pb-1"
                 >
                   <Library className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Номын сан</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Цуглуулга</span>
                 </motion.div>
               )}
             </AnimatePresence>

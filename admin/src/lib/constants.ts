@@ -115,3 +115,50 @@ export const DAY_COLORS = [
 export function getDayColor(dayNumber: number): string {
   return DAY_COLORS[(dayNumber - 1) % DAY_COLORS.length];
 }
+
+// ---------------------------------------------------------------------------
+// Basemaps
+// ---------------------------------------------------------------------------
+
+export interface BasemapOption {
+  id: string;
+  label: string;
+  url: string;
+  /** Attribution text shown in map footers / legal notices */
+  attribution?: string;
+}
+
+export const BASEMAPS: BasemapOption[] = [
+  {
+    id: 'carto-light',
+    label: 'Light',
+    url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    attribution: '\u00a9 OpenStreetMap contributors \u00a9 CARTO',
+  },
+  {
+    id: 'carto-dark',
+    label: 'Dark',
+    url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+    attribution: '\u00a9 OpenStreetMap contributors \u00a9 CARTO',
+  },
+  {
+    id: 'osm',
+    label: 'OSM',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '\u00a9 OpenStreetMap contributors',
+  },
+  {
+    id: 'satellite',
+    label: 'Satellite',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles \u00a9 Esri',
+  },
+  {
+    id: 'topo',
+    label: 'Topo',
+    url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
+    attribution: '\u00a9 OpenStreetMap contributors, SRTM | OpenTopoMap',
+  },
+];
+
+export const DEFAULT_BASEMAP_ID = 'carto-light';

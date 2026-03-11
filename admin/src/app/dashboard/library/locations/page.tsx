@@ -30,6 +30,7 @@ import {
 import { Plus, Pencil, Trash2, Loader2, MapPin } from 'lucide-react';
 import { slugify } from '@/lib/utils';
 import ImageUpload from '@/components/image-upload';
+import GeocoderSearch from '@/components/geocoder-search';
 
 interface LibraryLocation {
   id: string;
@@ -117,12 +118,12 @@ export default function LocationsLibraryPage() {
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) { setError('Name is required'); return; }
-    if (!form.slug.trim()) { setError('Slug is required'); return; }
+    if (!form.name.trim()) { setError('Нэр шаардлагатай'); return; }
+    if (!form.slug.trim()) { setError('Slug шаардлагатай'); return; }
     const lat = parseFloat(form.latitude);
     const lng = parseFloat(form.longitude);
-    if (isNaN(lat) || lat < -90 || lat > 90) { setError('Latitude must be between -90 and 90'); return; }
-    if (isNaN(lng) || lng < -180 || lng > 180) { setError('Longitude must be between -180 and 180'); return; }
+    if (isNaN(lat) || lat < -90 || lat > 90) { setError('Өргөрөг -90-ээс 90 хооронд байх ёстой'); return; }
+    if (isNaN(lng) || lng < -180 || lng > 180) { setError('Уртраг -180-аас 180 хооронд байх ёстой'); return; }
 
     setSaving(true);
     setError('');
@@ -146,7 +147,7 @@ export default function LocationsLibraryPage() {
         ? await fetch(`/api/library/locations/${editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         : await fetch('/api/library/locations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Failed to save'); return; }
+      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Хадгалж чадсангүй'); return; }
       await fetchItems();
       setDialogOpen(false);
     } finally {
@@ -165,6 +166,10 @@ export default function LocationsLibraryPage() {
     setForm((prev) => ({ ...prev, gallery: [...prev.gallery, url] }));
   };
 
+  const addGalleryImages = (urls: string[]) => {
+    setForm((prev) => ({ ...prev, gallery: [...prev.gallery, ...urls] }));
+  };
+
   const removeGalleryImage = (index: number) => {
     setForm((prev) => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
   };
@@ -173,12 +178,12 @@ export default function LocationsLibraryPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Locations Library</h1>
-          <p className="text-muted-foreground mt-1">Reusable saved locations for route points</p>
+          <h1 className="text-3xl font-bold">Байршлуудын сан</h1>
+          <p className="text-muted-foreground mt-1">Маршрутын цэгүүдэд ашиглах хадгалсан байршлууд</p>
         </div>
         <Button onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          New Location
+          Шинэ байршил
         </Button>
       </div>
 
@@ -186,8 +191,8 @@ export default function LocationsLibraryPage() {
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
       ) : items.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No locations yet.</p>
-          <Button className="mt-4" onClick={openCreate}>Create First Location</Button>
+          <p className="text-muted-foreground text-lg">Одоогоор байршил алга.</p>
+          <Button className="mt-4" onClick={openCreate}>Эхний байршлыг үүсгэх</Button>
         </div>
       ) : (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -204,7 +209,7 @@ export default function LocationsLibraryPage() {
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>
                     <Badge variant={item.active ? 'default' : 'secondary'} className="shrink-0">
-                      {item.active ? 'Active' : 'Inactive'}
+                      {item.active ? 'Идэвхтэй' : 'Идэвхгүй'}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -240,14 +245,14 @@ export default function LocationsLibraryPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Location</AlertDialogTitle>
+                          <AlertDialogTitle>Байршлыг устгах</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Delete &quot;{item.name}&quot;? Route points linked to this location will lose the reference.
+                            &quot;{item.name}&quot;-ийг устгах уу? Энэ байршилтай холбогдсон маршрутын цэгүүд холбоосоо алдана.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                          <AlertDialogCancel>Болих</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(item.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Устгах</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -262,56 +267,81 @@ export default function LocationsLibraryPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? 'Edit Location' : 'New Location'}</DialogTitle>
+            <DialogTitle>{editing ? 'Байршлыг засах' : 'Шинэ байршил'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 space-y-1">
-                <Label>Name <span className="text-destructive">*</span></Label>
-                <Input value={form.name} onChange={(e) => handleNameChange(e.target.value)} placeholder="e.g., Tiananmen Square" />
+                <Label>Нэр <span className="text-destructive">*</span></Label>
+                <Input value={form.name} onChange={(e) => handleNameChange(e.target.value)} placeholder="ж.нь., Тяньаньмэний талбай" />
               </div>
               <div className="col-span-2 space-y-1">
                 <Label>Slug <span className="text-destructive">*</span></Label>
-                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g., tiananmen-square" />
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="ж.нь., tiananmen-square" />
+              </div>
+              <div className="col-span-2 space-y-1">
+                <Label className="text-xs text-muted-foreground">Байршил хайх (Nominatim / OpenStreetMap)</Label>
+                <GeocoderSearch
+                  originalPoint={
+                    editing
+                      ? { lat: editing.latitude, lng: editing.longitude, label: editing.name }
+                      : null
+                  }
+                  sessionPoint={(() => {
+                    const lat = parseFloat(form.latitude);
+                    const lng = parseFloat(form.longitude);
+                    return !isNaN(lat) && !isNaN(lng) && form.latitude !== '' && form.longitude !== ''
+                      ? { lat, lng, label: form.name || undefined }
+                      : null;
+                  })()}
+                  onSelect={(lat, lng, displayName) => {
+                    setForm((prev) => ({
+                      ...prev,
+                      latitude: String(lat),
+                      longitude: String(lng),
+                      ...(prev.name === '' ? { name: displayName.split(',')[0].trim(), slug: slugify(displayName.split(',')[0].trim()) } : {}),
+                    }));
+                  }}
+                />
               </div>
               <div className="space-y-1">
-                <Label>Latitude <span className="text-destructive">*</span></Label>
+                <Label>Өргөрөг <span className="text-destructive">*</span></Label>
                 <Input type="number" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: e.target.value })} placeholder="39.9042" step="any" />
               </div>
               <div className="space-y-1">
-                <Label>Longitude <span className="text-destructive">*</span></Label>
+                <Label>Уртраг <span className="text-destructive">*</span></Label>
                 <Input type="number" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: e.target.value })} placeholder="116.4074" step="any" />
               </div>
               <div className="space-y-1">
-                <Label>Region</Label>
-                <Input value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })} placeholder="e.g., Beijing" />
+                <Label>Бүс нутаг</Label>
+                <Input value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })} placeholder="ж.нь., Бээжин" />
               </div>
               <div className="space-y-1">
-                <Label>Country</Label>
-                <Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="e.g., China" />
+                <Label>Улс</Label>
+                <Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="ж.нь., Хятад" />
               </div>
             </div>
             <div className="space-y-1">
-              <Label>Short Description</Label>
-              <Input value={form.short_description} onChange={(e) => setForm({ ...form, short_description: e.target.value })} placeholder="Brief one-liner" />
+              <Label>Товч тайлбар</Label>
+              <Input value={form.short_description} onChange={(e) => setForm({ ...form, short_description: e.target.value })} placeholder="Нэг мөрийн товч тайлбар" />
             </div>
             <div className="space-y-1">
-              <Label>Full Description</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Detailed description..." rows={3} />
+              <Label>Дэлгэрэнгүй тайлбар</Label>
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Дэлгэрэнгүй тайлбар..." rows={3} />
             </div>
             <div className="space-y-1">
-              <Label>Tags (comma-separated)</Label>
-              <Input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="e.g., historical, landmark, UNESCO" />
+              <Label>Шошгууд (таслалаар)</Label>
+              <Input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="ж.нь., түүхэн, дурсгалт, UNESCO" />
             </div>
             <div className="space-y-2">
-              <Label>Cover Image</Label>
+              <Label>Нүүр зураг</Label>
               <ImageUpload
                 value={form.cover_image}
                 onChange={(url) => setForm({ ...form, cover_image: url })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Photo Gallery</Label>
+              <Label>Зургийн цомог</Label>
               <div className="grid grid-cols-3 gap-2">
                 {form.gallery.map((url, i) => (
                   <div key={i} className="relative group aspect-video">
@@ -322,27 +352,28 @@ export default function LocationsLibraryPage() {
                       onClick={() => removeGalleryImage(i)}
                       className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded text-white text-xs transition-opacity"
                     >
-                      Remove
+                      Хасах
                     </button>
                   </div>
                 ))}
               </div>
               <ImageUpload
-                value=""
-                onChange={addGalleryImage}
+                multiple
+                value={form.gallery}
+                onChange={addGalleryImages}
               />
             </div>
             <div className="flex items-center gap-3">
               <Switch checked={form.active} onCheckedChange={(v) => setForm({ ...form, active: v })} />
-              <Label>Active</Label>
+              <Label>Идэвхтэй</Label>
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Болих</Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editing ? 'Save Changes' : 'Create'}
+              {editing ? 'Өөрчлөлт хадгалах' : 'Үүсгэх'}
             </Button>
           </DialogFooter>
         </DialogContent>

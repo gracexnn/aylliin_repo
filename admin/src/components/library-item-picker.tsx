@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { LibraryIcon } from '@/lib/library-icons';
 import { Plus, Trash2, ChevronUp, ChevronDown, Search, Loader2 } from 'lucide-react';
 
 export interface SelectedLibraryItem {
@@ -56,6 +57,7 @@ export default function LibraryItemPicker({
 
   const endpoint = `/api/library/${type}`;
   const idKey = type === 'inclusions' ? 'inclusion_id' : 'highlight_id';
+  const singularLabel = type === 'inclusions' ? 'багтсан зүйл' : 'онцлох зүйл';
 
   const fetchLibrary = async () => {
     setLibraryLoading(true);
@@ -107,7 +109,7 @@ export default function LibraryItemPicker({
   };
 
   const handleCreate = async () => {
-    if (!newTitle.trim()) { setCreateError('Title is required'); return; }
+    if (!newTitle.trim()) { setCreateError('Гарчиг шаардлагатай'); return; }
     setCreateSaving(true);
     setCreateError('');
     try {
@@ -116,7 +118,7 @@ export default function LibraryItemPicker({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: newTitle.trim(), active: true }),
       });
-      if (!res.ok) { const d = await res.json(); setCreateError(d.error ?? 'Failed to create'); return; }
+      if (!res.ok) { const d = await res.json(); setCreateError(d.error ?? 'Үүсгэж чадсангүй'); return; }
       const created: LibraryRecord = await res.json();
       // Add immediately to selection
       onChange([
@@ -161,18 +163,18 @@ export default function LibraryItemPicker({
           </div>
         ))}
         {items.length === 0 && (
-          <p className="text-sm text-muted-foreground py-2">No items selected. Add from library or create new.</p>
+          <p className="text-sm text-muted-foreground py-2">Одоогоор зүйл сонгогдоогүй байна. Сангаас нэмэх эсвэл шинээр үүсгэнэ үү.</p>
         )}
       </div>
 
       <div className="flex gap-2">
         <Button type="button" variant="outline" size="sm" onClick={() => setLibraryDialogOpen(true)}>
           <Search className="mr-2 h-3 w-3" />
-          Add from Library
+          Сангаас нэмэх
         </Button>
         <Button type="button" variant="outline" size="sm" onClick={() => { setNewTitle(''); setCreateError(''); setCreateDialogOpen(true); }}>
           <Plus className="mr-2 h-3 w-3" />
-          Create New
+          Шинээр үүсгэх
         </Button>
       </div>
 
@@ -180,11 +182,11 @@ export default function LibraryItemPicker({
       <Dialog open={libraryDialogOpen} onOpenChange={setLibraryDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Select {label}</DialogTitle>
+            <DialogTitle>{label} сонгох</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <Input
-              placeholder="Search..."
+              placeholder="Хайх..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-8"
@@ -192,7 +194,7 @@ export default function LibraryItemPicker({
             {libraryLoading ? (
               <div className="flex justify-center py-4"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
             ) : filtered.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-4 text-center">No items found.</p>
+              <p className="text-sm text-muted-foreground py-4 text-center">Тохирох зүйл олдсонгүй.</p>
             ) : (
               <div className="max-h-64 overflow-y-auto space-y-1">
                 {filtered.map((record) => {
@@ -209,10 +211,12 @@ export default function LibraryItemPicker({
                       }`}
                     >
                       {'icon' in record && record.icon && (
-                        <span>{record.icon}</span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border bg-background/70 text-foreground">
+                          <LibraryIcon value={record.icon} size={15} className="h-3.75 w-3.75" fallbackClassName="text-sm leading-none" />
+                        </span>
                       )}
                       <span className="flex-1">{record.title}</span>
-                      {selected && <Badge variant="secondary" className="text-xs">Selected</Badge>}
+                      {selected && <Badge variant="secondary" className="text-xs">Сонгосон</Badge>}
                     </button>
                   );
                 })}
@@ -220,7 +224,7 @@ export default function LibraryItemPicker({
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setLibraryDialogOpen(false)}>Done</Button>
+            <Button variant="outline" onClick={() => setLibraryDialogOpen(false)}>Болсон</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -229,25 +233,25 @@ export default function LibraryItemPicker({
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Create New {label.replace(/s$/, '')}</DialogTitle>
+            <DialogTitle>Шинэ {singularLabel} үүсгэх</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1">
-              <Label>Title <span className="text-destructive">*</span></Label>
+              <Label>Гарчиг <span className="text-destructive">*</span></Label>
               <Input
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Enter title..."
+                placeholder="Гарчиг оруулна уу..."
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreate(); } }}
               />
             </div>
             {createError && <p className="text-sm text-destructive">{createError}</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Болих</Button>
             <Button onClick={handleCreate} disabled={createSaving}>
               {createSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create &amp; Add
+              Үүсгээд нэмэх
             </Button>
           </DialogFooter>
         </DialogContent>

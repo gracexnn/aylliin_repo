@@ -12,12 +12,12 @@ export async function GET(
     const { id } = await params;
     const location = await prisma.libraryLocation.findUnique({ where: { id } });
     if (!location) {
-      return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Байршил олдсонгүй' }, { status: 404 });
     }
     return NextResponse.json(location);
   } catch (error) {
     console.error('GET /api/library/locations/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to fetch location' }, { status: 500 });
+    return NextResponse.json({ error: 'Байршлыг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -32,7 +32,7 @@ export async function PUT(
 
     const { id: _id, ...updateFields } = data;
     if (Object.keys(updateFields).length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+      return NextResponse.json({ error: 'Шинэчлэх талбар алга' }, { status: 400 });
     }
 
     const location = await prisma.libraryLocation.update({
@@ -46,13 +46,13 @@ export async function PUT(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Байршил олдсонгүй' }, { status: 404 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      return NextResponse.json({ error: 'Slug already exists' }, { status: 409 });
+      return NextResponse.json({ error: 'Ийм slug аль хэдийн байна' }, { status: 409 });
     }
     console.error('PUT /api/library/locations/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to update location' }, { status: 500 });
+    return NextResponse.json({ error: 'Байршлыг шинэчилж чадсангүй' }, { status: 500 });
   }
 }
 
@@ -63,12 +63,12 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.libraryLocation.delete({ where: { id } });
-    return NextResponse.json({ message: 'Location deleted successfully' });
+    return NextResponse.json({ message: 'Байршлыг амжилттай устгалаа' });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Location not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Байршил олдсонгүй' }, { status: 404 });
     }
     console.error('DELETE /api/library/locations/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to delete location' }, { status: 500 });
+    return NextResponse.json({ error: 'Байршлыг устгаж чадсангүй' }, { status: 500 });
   }
 }

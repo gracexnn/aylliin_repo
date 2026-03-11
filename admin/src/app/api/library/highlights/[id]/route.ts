@@ -12,12 +12,12 @@ export async function GET(
     const { id } = await params;
     const highlight = await prisma.libraryHighlight.findUnique({ where: { id } });
     if (!highlight) {
-      return NextResponse.json({ error: 'Highlight not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Онцлох зүйл олдсонгүй' }, { status: 404 });
     }
     return NextResponse.json(highlight);
   } catch (error) {
     console.error('GET /api/library/highlights/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to fetch highlight' }, { status: 500 });
+    return NextResponse.json({ error: 'Онцлох зүйлийг авч чадсангүй' }, { status: 500 });
   }
 }
 
@@ -32,7 +32,7 @@ export async function PUT(
 
     const { id: _id, ...updateFields } = data;
     if (Object.keys(updateFields).length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+      return NextResponse.json({ error: 'Шинэчлэх талбар алга' }, { status: 400 });
     }
 
     const highlight = await prisma.libraryHighlight.update({
@@ -46,10 +46,10 @@ export async function PUT(
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Highlight not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Онцлох зүйл олдсонгүй' }, { status: 404 });
     }
     console.error('PUT /api/library/highlights/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to update highlight' }, { status: 500 });
+    return NextResponse.json({ error: 'Онцлох зүйлийг шинэчилж чадсангүй' }, { status: 500 });
   }
 }
 
@@ -60,12 +60,12 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.libraryHighlight.delete({ where: { id } });
-    return NextResponse.json({ message: 'Highlight deleted successfully' });
+    return NextResponse.json({ message: 'Онцлох зүйлийг амжилттай устгалаа' });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Highlight not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Онцлох зүйл олдсонгүй' }, { status: 404 });
     }
     console.error('DELETE /api/library/highlights/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to delete highlight' }, { status: 500 });
+    return NextResponse.json({ error: 'Онцлох зүйлийг устгаж чадсангүй' }, { status: 500 });
   }
 }

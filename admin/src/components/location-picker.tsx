@@ -21,6 +21,9 @@ export interface LibraryLocationRef {
   latitude: number;
   longitude: number;
   short_description: string | null;
+  description?: string | null;
+  cover_image?: string | null;
+  gallery?: string[];
   country: string | null;
   region: string | null;
 }
@@ -97,18 +100,18 @@ export default function LocationPicker({ value, onSelect, onInheritCoordinates }
       ) : (
         <Button type="button" variant="outline" size="sm" className="w-full justify-start" onClick={openDialog}>
           <MapPin className="mr-2 h-3 w-3" />
-          Link to saved location
+          Хадгалсан байршилтай холбох
         </Button>
       )}
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Select Saved Location</DialogTitle>
+            <DialogTitle>Хадгалсан байршил сонгох</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <Input
-              placeholder="Search locations..."
+              placeholder="Байршил хайх..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-8"
@@ -117,8 +120,8 @@ export default function LocationPicker({ value, onSelect, onInheritCoordinates }
               <div className="flex justify-center py-4"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
             ) : filtered.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                No saved locations found.{' '}
-                <a href="/dashboard/library/locations" target="_blank" className="underline">Create one in the library.</a>
+                Хадгалсан байршил олдсонгүй.{' '}
+                <a href="/dashboard/library/locations" target="_blank" className="underline">Сан хэсэгт шинээр үүсгэнэ үү.</a>
               </p>
             ) : (
               <div className="max-h-72 overflow-y-auto space-y-1">
@@ -144,7 +147,7 @@ export default function LocationPicker({ value, onSelect, onInheritCoordinates }
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Болих</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -168,8 +171,8 @@ export function CreateLocationFromPin({ latitude, longitude, suggestedName, onCr
   const [error, setError] = useState('');
 
   const handleCreate = async () => {
-    if (!name.trim()) { setError('Name is required'); return; }
-    if (!slug.trim()) { setError('Slug is required'); return; }
+    if (!name.trim()) { setError('Нэр шаардлагатай'); return; }
+    if (!slug.trim()) { setError('Slug шаардлагатай'); return; }
     setSaving(true);
     setError('');
     try {
@@ -178,7 +181,7 @@ export function CreateLocationFromPin({ latitude, longitude, suggestedName, onCr
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim(), slug: slug.trim(), latitude, longitude, active: true }),
       });
-      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Failed to create'); return; }
+      if (!res.ok) { const d = await res.json(); setError(d.error ?? 'Үүсгэж чадсангүй'); return; }
       const created: LibraryLocationRef = await res.json();
       onCreated(created);
     } finally {
@@ -193,11 +196,11 @@ export function CreateLocationFromPin({ latitude, longitude, suggestedName, onCr
         {latitude.toFixed(5)}, {longitude.toFixed(5)}
       </div>
       <div className="space-y-1">
-        <Label>Location Name <span className="text-destructive">*</span></Label>
+        <Label>Байршлын нэр <span className="text-destructive">*</span></Label>
         <Input
           value={name}
           onChange={(e) => { setName(e.target.value); setSlug(slugify(e.target.value)); }}
-          placeholder="e.g., Tiananmen Square"
+          placeholder="ж.нь., Тяньаньмэний талбай"
         />
       </div>
       <div className="space-y-1">
@@ -206,10 +209,10 @@ export function CreateLocationFromPin({ latitude, longitude, suggestedName, onCr
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+        <Button type="button" variant="outline" size="sm" onClick={onClose}>Болих</Button>
         <Button type="button" size="sm" onClick={handleCreate} disabled={saving}>
           {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save to Library
+          Санд хадгалах
         </Button>
       </div>
     </div>
