@@ -92,3 +92,26 @@ export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
 export const TRANSPORT_MODE_MAP = Object.fromEntries(
   TRANSPORT_MODE_OPTIONS.map((opt) => [opt.value, opt])
 ) as Record<TransportMode, TransportModeOption>;
+
+/** A repeating palette of colors for itinerary day numbers (1-indexed). */
+export const DAY_COLORS = [
+  '#ef4444', // red
+  '#f97316', // orange
+  '#eab308', // yellow
+  '#22c55e', // green
+  '#06b6d4', // cyan
+  '#3b82f6', // blue
+  '#8b5cf6', // violet
+  '#ec4899', // pink
+  '#14b8a6', // teal
+  '#f59e0b', // amber
+  '#10b981', // emerald
+  '#6366f1', // indigo
+  '#d946ef', // fuchsia
+  '#84cc16', // lime
+];
+
+/** Returns a hex color string for a given itinerary day number (1-based). */
+export function getDayColor(dayNumber: number): string {
+  return DAY_COLORS[(dayNumber - 1) % DAY_COLORS.length];
+}

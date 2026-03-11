@@ -1,6 +1,16 @@
 import type { ItineraryDay } from '@/lib/types'
 import { FiClock, FiCoffee, FiFlag, FiInfo } from 'react-icons/fi'
 
+const DAY_COLORS = [
+    '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4',
+    '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f59e0b',
+    '#10b981', '#6366f1', '#d946ef', '#84cc16',
+]
+
+function getDayColor(dayNumber: number): string {
+    return DAY_COLORS[(dayNumber - 1) % DAY_COLORS.length]
+}
+
 interface ItineraryTimelineProps {
     days: ItineraryDay[]
     travelTips?: string | null
@@ -26,7 +36,10 @@ export default function ItineraryTimeline({ days, travelTips }: ItineraryTimelin
                             .map((day) => (
                                 <li key={`day-${day.day_number}-${day.title}`} className="relative flex gap-4">
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 rounded-2xl bg-primary-600 text-white flex items-center justify-center font-bold shadow-lg">
+                                        <div
+                                            className="w-12 h-12 rounded-2xl text-white flex items-center justify-center font-bold shadow-lg text-lg"
+                                            style={{ backgroundColor: getDayColor(day.day_number) }}
+                                        >
                                             {day.day_number}
                                         </div>
                                         <div className="w-0.5 flex-1 bg-gray-200 mt-3" />
@@ -39,7 +52,13 @@ export default function ItineraryTimeline({ days, travelTips }: ItineraryTimelin
                                                     {day.title}
                                                 </h3>
                                                 {day.route_label && (
-                                                    <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 text-primary-700 px-3 py-1 text-xs font-semibold">
+                                                    <span
+                                                        className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                                                        style={{
+                                                            backgroundColor: getDayColor(day.day_number) + '18',
+                                                            color: getDayColor(day.day_number),
+                                                        }}
+                                                    >
                                                         <FiFlag size={12} />
                                                         {day.route_label}
                                                     </span>

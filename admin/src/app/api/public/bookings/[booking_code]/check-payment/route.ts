@@ -8,7 +8,7 @@ import prisma from '@/db/client'
 import { qpayService } from '@/lib/qpay'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': 'https://aylal-client.vercel.app',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 }

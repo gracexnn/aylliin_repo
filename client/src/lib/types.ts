@@ -68,6 +68,7 @@ export type RoutePoint = {
     interesting_fact: string | null
     recommended_time_to_visit: string | null
     images: string[]
+    day_number?: number | null
     created_at: string
 }
 

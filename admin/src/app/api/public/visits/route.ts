@@ -4,7 +4,7 @@ import { z } from 'zod';
 import prisma from '@/db/client';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://aylal-client.vercel.app',
+  'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };

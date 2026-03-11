@@ -72,6 +72,7 @@ model RoutePoint {
   interesting_fact          String?
   recommended_time_to_visit String?       @db.VarChar(200)
   images                    String[]
+  day_number                Int?
   created_at                DateTime      @default(now()) @db.Timestamptz(6)
 
   route Route @relation(fields: [route_id], references: [id], onDelete: Cascade)

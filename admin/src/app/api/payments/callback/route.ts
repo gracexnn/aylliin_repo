@@ -9,7 +9,7 @@ import { qpayService } from '@/lib/qpay'
 
 // CORS headers
 const corsHeaders = {
-    'Access-Control-Allow-Origin': 'https://aylal-client.vercel.app',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }

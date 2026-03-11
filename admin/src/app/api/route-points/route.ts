@@ -16,9 +16,11 @@ export async function POST(request: NextRequest) {
         longitude: data.longitude,
         name: data.name,
         description: data.description ?? null,
+        transport_type: data.transport_type ?? 'WALKING',
         interesting_fact: data.interesting_fact ?? null,
         recommended_time_to_visit: data.recommended_time_to_visit ?? null,
         images: data.images ?? [],
+        day_number: data.day_number ?? null,
       },
     });
 

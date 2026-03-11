@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { TRANSPORT_MODE_MAP } from '@/lib/constants';
+import { TRANSPORT_MODE_MAP, getDayColor } from '@/lib/constants';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -19,6 +19,7 @@ interface RoutePoint {
   name: string;
   order_index: number;
   transport_type?: string;
+  day_number?: number | null;
 }
 
 interface MapComponentProps {
@@ -28,6 +29,8 @@ interface MapComponentProps {
   interactive?: boolean;
   height?: string;
   selectedIndex?: number;
+  /** When set, only points with this day_number are rendered at full brightness; others are dimmed. */
+  activeDayFilter?: number | null;
 }
 
 export default function MapComponent({
@@ -37,6 +40,7 @@ export default function MapComponent({
   interactive = false,
   height = '400px',
   selectedIndex,
+  activeDayFilter,
 }: MapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<import('ol/Map').default | null>(null);
@@ -186,8 +190,13 @@ export default function MapComponent({
 
     const { Feature, Point, LineString, fromLonLat, Style, CircleStyle, Fill, Stroke, Text } = m;
 
-    const getColor = (mode?: string) =>
+    const getTransportColor = (mode?: string) =>
       TRANSPORT_MODE_MAP[mode as keyof typeof TRANSPORT_MODE_MAP]?.color ?? '#3b82f6';
+
+    const getPointColor = (point: RoutePoint) => {
+      if (point.day_number != null) return getDayColor(point.day_number);
+      return getTransportColor(point.transport_type);
+    };
 
     vs.clear();
 
@@ -195,32 +204,53 @@ export default function MapComponent({
 
     const sorted = [...points].sort((a, b) => a.order_index - b.order_index);
 
-    // Per-segment lines colored by the departure point transport_type
+    const isDayFilterActive = activeDayFilter != null;
+
+    const isPointActive = (point: RoutePoint) =>
+      !isDayFilterActive || point.day_number === activeDayFilter;
+
+    // Per-segment lines
     for (let i = 0; i < sorted.length - 1; i++) {
       const from = fromLonLat([sorted[i].longitude, sorted[i].latitude]);
       const to = fromLonLat([sorted[i + 1].longitude, sorted[i + 1].latitude]);
-      const color = getColor(sorted[i].transport_type);
+      const segActive = !isDayFilterActive ||
+        (sorted[i].day_number === activeDayFilter && sorted[i + 1].day_number === activeDayFilter);
+      const color = segActive ? getPointColor(sorted[i]) : '#d1d5db';
       const seg = new Feature(new LineString([from, to]));
-      seg.setStyle(new Style({ stroke: new Stroke({ color, width: 3, lineDash: [6, 4] }) }));
+      seg.setStyle(
+        new Style({
+          stroke: new Stroke({
+            color,
+            width: segActive ? 3 : 1.5,
+            lineDash: [6, 4],
+          }),
+        })
+      );
       vs.addFeature(seg);
     }
 
-    // Point markers colored by each point's own transport_type
+    // Point markers
     sorted.forEach((point, i) => {
       const isSelected = i === selectedIndex;
-      const color = getColor(point.transport_type);
+      const active = isPointActive(point);
+      const color = active ? getPointColor(point) : '#9ca3af';
+      const radius = isSelected ? 13 : active ? 10 : 7;
+      const fillColor = isSelected ? '#ef4444' : color;
       const pf = new Feature(new Point(fromLonLat([point.longitude, point.latitude])));
       pf.set('pointIndex', i);
       pf.setStyle(
         new Style({
           image: new CircleStyle({
-            radius: isSelected ? 12 : 9,
-            fill: new Fill({ color: isSelected ? '#ef4444' : color }),
-            stroke: new Stroke({ color: '#ffffff', width: isSelected ? 3 : 2 }),
+            radius,
+            fill: new Fill({ color: fillColor }),
+            stroke: new Stroke({
+              color: '#ffffff',
+              width: isSelected ? 3 : active ? 2 : 1,
+            }),
           }),
           text: new Text({
             text: String(i + 1),
-            fill: new Fill({ color: '#ffffff' }),
+            fill: new Fill({ color: active ? '#ffffff' : '#e5e7eb' }),
             font: `bold ${isSelected ? 12 : 11}px sans-serif`,
             offsetY: 0,
           }),
@@ -228,7 +258,7 @@ export default function MapComponent({
       );
       vs.addFeature(pf);
     });
-  }, [points, selectedIndex, mapReady]);
+  }, [points, selectedIndex, mapReady, activeDayFilter]);
 
   // Effect 3: update basemap dynamically
   useEffect(() => {

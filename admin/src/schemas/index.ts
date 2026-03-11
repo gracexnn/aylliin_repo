@@ -87,6 +87,7 @@ export const RoutePointSchema = z.object({
   interesting_fact: z.string().optional().nullable(),
   recommended_time_to_visit: z.string().max(200).optional().nullable(),
   images: z.array(z.string().url()).optional(),
+  day_number: z.number().int().min(1).optional().nullable(),
 });
 
 export const CreateRoutePointSchema = RoutePointSchema.omit({ id: true });

@@ -24,8 +24,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, GripVertical, Save, Loader2 } from 'lucide-react';
 import MapComponent from './map-component';
-import { TRANSPORT_MODE_OPTIONS, TRANSPORT_MODE_MAP } from '@/lib/constants';
-import type { TransportMode } from '@/schemas';
+import { TRANSPORT_MODE_OPTIONS, TRANSPORT_MODE_MAP, getDayColor } from '@/lib/constants';
+import type { TransportMode, ItineraryDay } from '@/schemas';
 
 interface RoutePoint {
   id?: string;
@@ -39,6 +39,7 @@ interface RoutePoint {
   recommended_time_to_visit: string;
   images: string[];
   transport_type: TransportMode;
+  day_number?: number | null;
 }
 
 interface Route {
@@ -60,11 +61,26 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
   const [editingPoint, setEditingPoint] = useState<RoutePoint | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
+  const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>([]);
+  const [activeDayFilter, setActiveDayFilter] = useState<number | null>(null);
 
   useEffect(() => {
     fetchRoute();
+    fetchItineraryDays();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
+
+  const fetchItineraryDays = async () => {
+    try {
+      const res = await fetch(`/api/posts/${postId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const days: ItineraryDay[] = (data?.itinerary_days ?? []);
+      setItineraryDays([...days].sort((a, b) => a.day_number - b.day_number));
+    } catch {
+      // ignore – itinerary days are optional for the route editor
+    }
+  };
 
   const fetchRoute = async () => {
     try {
@@ -133,6 +149,7 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
         recommended_time_to_visit: '',
         images: [],
         transport_type: 'WALKING',
+        day_number: activeDayFilter ?? null,
       };
 
       try {
@@ -151,7 +168,7 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
         console.error('Failed to add point:', error);
       }
     },
-    [route]
+    [route, activeDayFilter]
   );
 
   const openEditDialog = (point: RoutePoint) => {
@@ -261,7 +278,48 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
           </div>
           <p className="text-sm text-muted-foreground">
             Газрын зураг дээр дарж маршрутын цэг нэмнэ. Цэг дээр дарж нэр, тайлбар, тээврийн төрлийг засна.
+            {activeDayFilter != null && (
+              <span className="ml-1 font-medium" style={{ color: getDayColor(activeDayFilter) }}>
+                Шүүлтүүр: Өдөр {activeDayFilter} — Дарах газар {activeDayFilter}-р өдөрт нэмэгдэнэ.
+              </span>
+            )}
           </p>
+          {/* Day filter bar */}
+          {itineraryDays.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setActiveDayFilter(null)}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  activeDayFilter === null
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'bg-background text-muted-foreground border-border hover:border-foreground hover:text-foreground'
+                }`}
+              >
+                Бүгд
+              </button>
+              {itineraryDays.map((day) => {
+                const color = getDayColor(day.day_number);
+                const isActive = activeDayFilter === day.day_number;
+                return (
+                  <button
+                    key={day.day_number}
+                    type="button"
+                    onClick={() => setActiveDayFilter(isActive ? null : day.day_number)}
+                    className="px-3 py-1 rounded-full text-xs font-medium border transition-all"
+                    style={{
+                      borderColor: color,
+                      color: isActive ? '#fff' : color,
+                      backgroundColor: isActive ? color : 'transparent',
+                    }}
+                    title={day.title || `Өдөр ${day.day_number}`}
+                  >
+                    Өдөр {day.day_number}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -278,6 +336,7 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
             interactive={true}
             height="500px"
             selectedIndex={selectedPointIndex ?? undefined}
+            activeDayFilter={activeDayFilter}
           />
         </CardContent>
       </Card>
@@ -306,13 +365,21 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                       transition={{ delay: index * 0.05 }}
                       className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
                         selectedPointIndex === index ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                      } ${
+                        activeDayFilter != null && point.day_number !== activeDayFilter
+                          ? 'opacity-40'
+                          : ''
                       }`}
                       onClick={() => openEditDialog(point)}
                     >
                       <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
                       <div
                         className="flex items-center justify-center w-6 h-6 rounded-full text-white text-xs font-bold shrink-0"
-                        style={{ backgroundColor: mode?.color ?? '#3b82f6' }}
+                        style={{
+                          backgroundColor: point.day_number != null
+                            ? getDayColor(point.day_number)
+                            : (mode?.color ?? '#3b82f6'),
+                        }}
                       >
                         {index + 1}
                       </div>
@@ -322,6 +389,15 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                           {point.latitude.toFixed(4)}, {point.longitude.toFixed(4)}
                         </p>
                       </div>
+                      {point.day_number != null && (
+                        <Badge
+                          variant="outline"
+                          className="shrink-0 text-xs"
+                          style={{ borderColor: getDayColor(point.day_number), color: getDayColor(point.day_number) }}
+                        >
+                          Өдөр {point.day_number}
+                        </Badge>
+                      )}
                       <Badge
                         variant="outline"
                         className="shrink-0 gap-1 text-xs"
@@ -390,6 +466,45 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                   </SelectContent>
                 </Select>
               </div>
+              {itineraryDays.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Хөтөлбөрийн өдөр</Label>
+                  <Select
+                    value={editingPoint.day_number != null ? String(editingPoint.day_number) : 'none'}
+                    onValueChange={(v) =>
+                      setEditingPoint({
+                        ...editingPoint,
+                        day_number: v === 'none' ? null : Number(v),
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Өдөр сонгох..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">
+                        <span className="text-muted-foreground">— Өдөр оноогүй —</span>
+                      </SelectItem>
+                      {itineraryDays.map((day) => (
+                        <SelectItem key={day.day_number} value={String(day.day_number)}>
+                          <span className="flex items-center gap-2">
+                            <span
+                              className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+                              style={{ backgroundColor: getDayColor(day.day_number) }}
+                            />
+                            <span>Өдөр {day.day_number}</span>
+                            {day.title && (
+                              <span className="text-muted-foreground text-xs truncate max-w-40">
+                                — {day.title}
+                              </span>
+                            )}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Тайлбар</Label>
                 <Textarea

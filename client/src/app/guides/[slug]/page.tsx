@@ -10,7 +10,6 @@ import RouteTimeline from '@/components/RouteTimeline'
 import RouteMap from '@/components/RouteMap'
 import { getTravelGuide, getDepartureSessions } from '@/lib/api'
 import { FiArrowLeft, FiCalendar, FiMapPin } from 'react-icons/fi'
-import ReactMarkdown from 'react-markdown'
 
 interface Props {
     params: Promise<{ slug: string }>
@@ -54,11 +53,8 @@ export default async function GuideDetailPage({ params }: Props) {
     }
 
     const { post, routes } = guide
-    
     // Fetch departure sessions for this post
     const departureSessions = await getDepartureSessions(post.id)
-    
-    console.log(departureSessions,'ss')
     const totalPoints = routes.reduce((acc, r) => acc + r.points.length, 0)
     const packageOptions = post.package_options ?? []
     const includedItems = post.included_items ?? []
@@ -148,7 +144,7 @@ export default async function GuideDetailPage({ params }: Props) {
                                 </p>
                             </div>
                         </div>
-                        <RouteMap routes={routes} />
+                        <RouteMap routes={routes} itineraryDays={itineraryDays} />
                     </div>
                 </section>
             )}
@@ -165,9 +161,10 @@ export default async function GuideDetailPage({ params }: Props) {
                             />
 
                             {post.content && (
-                                <article className="prose prose-gray prose-lg max-w-none mb-12 mt-12">
-                                    <ReactMarkdown>{post.content}</ReactMarkdown>
-                                </article>
+                                <article
+                                    className="prose prose-gray prose-lg max-w-none mb-12 mt-12"
+                                    dangerouslySetInnerHTML={{ __html: post.content }}
+                                />
                             )}
 
                             {/* Routes */}

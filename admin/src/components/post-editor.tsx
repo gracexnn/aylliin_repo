@@ -20,6 +20,7 @@ import {
   type PackageOption,
 } from '@/schemas';
 import ImageUpload from './image-upload';
+import RichTextEditor from './rich-text-editor';
 import { Save, Loader2, Plus, Trash2, CalendarRange, Route, Sparkles, ListChecks } from 'lucide-react';
 
 interface PostEditorProps {
@@ -133,6 +134,7 @@ type PostFormValues = z.input<typeof CreatePostSchema>;
 export default function PostEditor({ initialData, postId, onSave }: PostEditorProps) {
   const [saving, setSaving] = useState(false);
   const [coverImage, setCoverImage] = useState(initialData?.cover_image ?? '');
+  const [content, setContent] = useState(initialData?.content ?? '');
   const [journeyOverview, setJourneyOverview] = useState(initialData?.journey_overview ?? '');
   const [travelTips, setTravelTips] = useState(initialData?.travel_tips ?? '');
   const [packageOptions, setPackageOptions] = useState<PackageOption[]>(initialData?.package_options ?? []);
@@ -279,6 +281,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
       const payload: CreatePost = {
         ...data,
         cover_image: coverImage || data.cover_image || null,
+        content: content || null,
         journey_overview: journeyOverview.trim() || null,
         package_options: packageOptions
           .map((pkg) => ({
@@ -426,13 +429,12 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="content">Нийтлэлийн агуулга (Markdown)</Label>
-              <Textarea
-                id="content"
-                placeholder="Аяллын багцын агуулгаа Markdown-аар бичнэ үү..."
-                rows={20}
-                className="font-mono text-sm"
-                {...form.register('content')}
+              <Label>Нийтлэлийн агуулга</Label>
+              <RichTextEditor
+                value={content}
+                onChange={setContent}
+                placeholder="Аяллын багцын агуулгаа бичнэ үү..."
+                minHeight={400}
               />
             </div>
           </CardContent>

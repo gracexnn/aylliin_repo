@@ -5,7 +5,7 @@ import { signOut } from 'next-auth/react';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function LogoutButton() {
+export default function LogoutButton({ collapsed }: { collapsed?: boolean }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -22,12 +22,13 @@ export default function LogoutButton() {
       type="button"
       variant="outline"
       size="sm"
-      className="w-full justify-start gap-2"
+      title={collapsed ? 'Гарах' : undefined}
+      className={collapsed ? 'w-full justify-center px-0' : 'w-full justify-start gap-2'}
       onClick={handleLogout}
       disabled={isLoggingOut}
     >
-      <LogOut className="h-4 w-4" />
-      {isLoggingOut ? 'Гарч байна...' : 'Гарах'}
+      <LogOut className="h-4 w-4 shrink-0" />
+      {!collapsed && (isLoggingOut ? 'Гарч байна...' : 'Гарах')}
     </Button>
   );
 }
