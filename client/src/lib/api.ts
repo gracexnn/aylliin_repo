@@ -108,6 +108,25 @@ export async function checkPaymentStatus(bookingCode: string): Promise<{
 }
 
 /**
+ * Fetch public landing page settings from admin backend.
+ * Returns null on error so callers can fall back to defaults.
+ */
+export async function getLandingSettings(): Promise<import('./types').LandingSettings | null> {
+    try {
+        const res = await fetch(`${ADMIN_API}/api/public/landing-settings`, {
+            next: { revalidate: 300 }, // revalidate at most every 5 minutes
+        })
+        if (!res.ok) return null
+        const data = await res.json()
+        // If the row doesn't exist yet, the API returns {}
+        if (!data || !data.updated_at) return null
+        return data as import('./types').LandingSettings
+    } catch {
+        return null
+    }
+}
+
+/**
  * Track a client-side page visit
  */
 export async function trackSiteVisit(data: {

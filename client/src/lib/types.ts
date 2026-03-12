@@ -159,6 +159,37 @@ export type QPayInvoice = {
     }[]
 }
 
+export type LandingSettings = {
+    hero_title: string | null
+    hero_subtitle: string | null
+    hero_primary_cta_text: string | null
+    hero_primary_cta_url: string | null
+    hero_secondary_cta_text: string | null
+    hero_secondary_cta_url: string | null
+    contact_email: string | null
+    contact_phone: string | null
+    contact_address: string | null
+    contact_whatsapp: string | null
+    facebook_url: string | null
+    instagram_url: string | null
+    linkedin_url: string | null
+    highlight_1_title: string | null
+    highlight_1_description: string | null
+    highlight_2_title: string | null
+    highlight_2_description: string | null
+    highlight_3_title: string | null
+    highlight_3_description: string | null
+    why_label: string | null
+    why_heading: string | null
+    why_body: string | null
+    announcement_text: string | null
+    footer_blurb: string | null
+    meta_title: string | null
+    meta_description: string | null
+    og_image_url: string | null
+    updated_at: string
+}
+
 export type BookingResponse = {
     success: boolean
     booking: {

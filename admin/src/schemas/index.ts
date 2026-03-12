@@ -270,3 +270,62 @@ export const SetPostHighlightsSchema = z.object({
 
 export type PostInclusionItem = z.infer<typeof PostInclusionItemSchema>;
 export type PostHighlightItem = z.infer<typeof PostHighlightItemSchema>;
+
+// ─── Landing Page Settings ────────────────────────────────────────────────────
+
+const urlField = z
+  .string()
+  .max(500)
+  .refine((v) => v === '' || v === null || v === undefined || /^(https?:\/\/|\/|#)/.test(v), {
+    message: 'URL / зам буруу байна (http://, https://, / эсвэл # -аар эхлэх ёстой)',
+  })
+  .optional()
+  .nullable();
+
+const fullUrlField = z
+  .string()
+  .max(1000)
+  .refine((v) => v === '' || v === null || v === undefined || /^https?:\/\//.test(v), {
+    message: 'Бүрэн URL шаардлагатай (https://...)',
+  })
+  .optional()
+  .nullable();
+
+export const LandingSettingsSchema = z.object({
+  // Hero
+  hero_title:              z.string().max(500).optional().nullable(),
+  hero_subtitle:           z.string().max(1000).optional().nullable(),
+  hero_primary_cta_text:   z.string().max(200).optional().nullable(),
+  hero_primary_cta_url:    urlField,
+  hero_secondary_cta_text: z.string().max(200).optional().nullable(),
+  hero_secondary_cta_url:  urlField,
+  // Contact
+  contact_email:    z.string().max(320).email('Имэйл буруу байна').optional().nullable().or(z.literal('')),
+  contact_phone:    z.string().max(50).optional().nullable(),
+  contact_address:  z.string().max(500).optional().nullable(),
+  contact_whatsapp: z.string().max(50).optional().nullable(),
+  // Social
+  facebook_url:  fullUrlField,
+  instagram_url: fullUrlField,
+  linkedin_url:  fullUrlField,
+  // Hero highlight cards
+  highlight_1_title:       z.string().max(200).optional().nullable(),
+  highlight_1_description: z.string().max(500).optional().nullable(),
+  highlight_2_title:       z.string().max(200).optional().nullable(),
+  highlight_2_description: z.string().max(500).optional().nullable(),
+  highlight_3_title:       z.string().max(200).optional().nullable(),
+  highlight_3_description: z.string().max(500).optional().nullable(),
+  // Why it works
+  why_label:   z.string().max(100).optional().nullable(),
+  why_heading: z.string().max(500).optional().nullable(),
+  why_body:    z.string().max(1000).optional().nullable(),
+  // Misc
+  announcement_text: z.string().max(500).optional().nullable(),
+  footer_blurb:      z.string().max(500).optional().nullable(),
+  // SEO
+  meta_title:       z.string().max(200).optional().nullable(),
+  meta_description: z.string().max(500).optional().nullable(),
+  og_image_url:     z.string().max(1000).url('OG зургийн URL буруу').optional().nullable().or(z.literal('')),
+});
+
+export type LandingSettings = z.infer<typeof LandingSettingsSchema>;

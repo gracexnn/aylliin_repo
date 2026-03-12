@@ -94,7 +94,7 @@ export default function HeroTravelSwiper({ posts }: HeroTravelSwiperProps) {
                 <div className="absolute left-4 right-4 top-4 z-20 flex items-center justify-between">
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs font-medium text-white/85 backdrop-blur-md">
                         <FiStar size={12} className="text-accent-400" />
-                        Admin highlight
+                        Онцлох
                     </div>
 
                     <div className="flex items-center gap-2">

@@ -1,9 +1,11 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import GuideCard from '@/components/GuideCard'
 import HeroTravelSwiper from '@/components/HeroTravelSwiper'
-import { getHighlightedPosts, getPosts } from '@/lib/api'
+import { getHighlightedPosts, getLandingSettings, getPosts } from '@/lib/api'
+import siteConfig from '@/site.config'
 import {
     FiArrowRight,
     FiClock,
@@ -66,36 +68,105 @@ const stats = [
     { icon: FiUsers, value: '10K+',  label: 'Аялагч' },
 ]
 
-const heroHighlights = [
-    {
-        icon: FiCompass,
-        title: 'Тодорхой маршрут',
-        description: 'Өдөр, байршил, шилжилт бүрийг эмх цэгцтэй дарааллаар харуулна.',
-    },
-    {
-        icon: FiMapPin,
-        title: 'Орон нутгийн өнгө аяс',
-        description: 'Түгээмэл цэгүүдээс цааш тухайн газрын онцгой мэдрэмжийг мэдрүүлнэ.',
-    },
-    {
-        icon: FiClock,
-        title: 'Ухаалаг төлөвлөлт',
-        description: 'Хэзээ очих, хаанаас эхлэх, юуг заавал үзэхийг нэг дороос.',
-    },
-]
+// Static icons for the 3 hero highlight cards (not editable, structural)
+const HIGHLIGHT_ICONS = [FiCompass, FiMapPin, FiClock]
+
+const DEFAULT_HIGHLIGHTS = [
+    { title: 'Тодорхой маршрут',       description: 'Өдөр, байршил, шилжилт бүрийг эмх цэгцтэй дарааллаар харуулна.' },
+    { title: 'Орон нутгийн өнгө аяс',  description: 'Түгээмэл цэгүүдээс цааш тухайн газрын онцгой мэдрэмжийг мэдрүүлнэ.' },
+    { title: 'Ухаалаг төлөвлөлт',      description: 'Хэзээ очих, хаанаас эхлэх, юуг заавал үзэхийг нэг дороос.' },
+] as const
 
 const heroTags = ['Weekend getaway', 'Curated routes', 'Local discoveries', 'Slow travel']
 
+// ─── Default / fallback values ────────────────────────────────────────────────
+const DEFAULTS = {
+    heroTitle: null as string | null, // null = use styled JSX fallback
+    heroSubtitle:
+        'Aylal бол аяллаа илүү утга учиртай, цэгцтэй, урамтай төлөвлөхийг хүсдэг хүмүүст зориулсан аяллын багцын платформ. Хаашаа явахаас гадна тэнд очоод юуг мэдрэхийг ч хамт санал болгоно.',
+    heroPrimaryCta: { text: 'Багцууд үзэх', url: '/guides' },
+    heroSecondaryCta: { text: 'Онцлох чиглэл үзэх', url: '#guides' },
+    footerBlurb: siteConfig.footer.description,
+    facebookUrl: siteConfig.social.facebook,
+    instagramUrl: siteConfig.social.instagram,
+    linkedinUrl: '#',
+} as const
+
+function s<T>(val: T | null | undefined, fallback: T): T {
+    return val !== null && val !== undefined && val !== ('' as unknown as T) ? val : fallback
+}
+
+// ─── Dynamic metadata for homepage ───────────────────────────────────────────
+export async function generateMetadata(): Promise<Metadata> {
+    const settings = await getLandingSettings()
+    return {
+        title: s(settings?.meta_title, siteConfig.fullTitle),
+        description: s(settings?.meta_description, siteConfig.description),
+        openGraph: {
+            title: s(settings?.meta_title, siteConfig.fullTitle),
+            description: s(settings?.meta_description, siteConfig.description),
+            ...(settings?.og_image_url ? { images: [{ url: settings.og_image_url }] } : {}),
+        },
+    }
+}
+
+// ─── Announcement banner (only renders when text is set) ──────────────────────
+function AnnouncementBanner({ text }: { text: string | null }) {
+    if (!text) return null
+    return (
+        <div className="w-full bg-primary-600 text-white text-sm text-center px-4 py-2.5 font-medium">
+            {text}
+        </div>
+    )
+}
+
 export default async function HomePage() {
-    const highlightedPosts = await getHighlightedPosts(4).catch(() => [])
+    const [highlightedPosts, settings] = await Promise.all([
+        getHighlightedPosts(4).catch(() => [] as Awaited<ReturnType<typeof getHighlightedPosts>>),
+        getLandingSettings(),
+    ])
     const heroPosts =
         highlightedPosts.length > 0
             ? highlightedPosts
             : (await getPosts(1, 4).catch(() => ({ posts: [], total: 0, page: 1, limit: 4 }))).posts
 
+    const heroTitle = s<string | null>(settings?.hero_title, DEFAULTS.heroTitle)
+    const heroSubtitle = s(settings?.hero_subtitle, DEFAULTS.heroSubtitle)
+    const primaryCta = {
+        text: s(settings?.hero_primary_cta_text, DEFAULTS.heroPrimaryCta.text),
+        url: s(settings?.hero_primary_cta_url, DEFAULTS.heroPrimaryCta.url),
+    }
+    const secondaryCta = {
+        text: s(settings?.hero_secondary_cta_text, DEFAULTS.heroSecondaryCta.text),
+        url: s(settings?.hero_secondary_cta_url, DEFAULTS.heroSecondaryCta.url),
+    }
+
+    const highlights = DEFAULT_HIGHLIGHTS.map((def, i) => ({
+        Icon: HIGHLIGHT_ICONS[i],
+        title: s(
+            i === 0 ? settings?.highlight_1_title
+            : i === 1 ? settings?.highlight_2_title
+            : settings?.highlight_3_title,
+            def.title,
+        ),
+        description: s(
+            i === 0 ? settings?.highlight_1_description
+            : i === 1 ? settings?.highlight_2_description
+            : settings?.highlight_3_description,
+            def.description,
+        ),
+    }))
+
+    const why = {
+        label:   s(settings?.why_label,   'Why it works'),
+        heading: s(settings?.why_heading, 'Хүмүүс эндээс зөвхөн санаа биш, шийдвэр гаргах тодорхой байдал авдаг.'),
+        body:    s(settings?.why_body,    'Хэт ерөнхий зөвлөгөө биш — маршрут, цагийн хуваарь, тээврийн сонголт, очих үеийн зөвлөмжийг нэгтгэснээр аяллаа итгэлтэй эхлүүлэхэд тусална.'),
+    }
+
     return (
         <>
             <Navbar />
+            <AnnouncementBanner text={settings?.announcement_text ?? null} />
 
             {/* ─── Hero ─────────────────────────────────────────── */}
             <section className="relative overflow-hidden bg-hero-gradient">
@@ -134,38 +205,41 @@ export default async function HomePage() {
                             </div>
 
                             <h1 className="mb-6 max-w-4xl text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
-                                Аяллаа зүгээр
-                                {' '}
-                                <span className="text-transparent bg-linear-to-r from-primary-300 via-white to-accent-300 bg-clip-text">
-                                    төлөвлөх биш,
-                                </span>
-                                <br />
-                                утга учиртай эхлүүл.
+                                {heroTitle ? (
+                                    heroTitle
+                                ) : (
+                                    <>
+                                        Аяллаа зүгээр{' '}
+                                        <span className="text-transparent bg-linear-to-r from-primary-300 via-white to-accent-300 bg-clip-text">
+                                            төлөвлөх биш,
+                                        </span>
+                                        <br />
+                                        утга учиртай эхлүүл.
+                                    </>
+                                )}
                             </h1>
 
                             <p className="mb-8 max-w-2xl text-lg leading-8 text-white/72 sm:text-xl">
-                                Aylal бол аяллаа илүү утга учиртай, цэгцтэй,
-                                урамтай төлөвлөхийг хүсдэг хүмүүст зориулсан аяллын багцын платформ.
-                                Хаашаа явахаас гадна тэнд очоод юуг мэдрэхийг ч хамт санал болгоно.
+                                {heroSubtitle}
                             </p>
 
                             <div className="mb-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
                                 <Link
-                                    href="/guides"
+                                    href={primaryCta.url}
                                     className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-bold text-primary-700 shadow-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
                                 >
-                                    Багцууд үзэх <FiArrowRight />
+                                    {primaryCta.text} <FiArrowRight />
                                 </Link>
                                 <a
-                                    href="#guides"
+                                    href={secondaryCta.url}
                                     className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                                 >
-                                    Онцлох чиглэл үзэх
+                                    {secondaryCta.text}
                                 </a>
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-3">
-                                {heroHighlights.map(({ icon: Icon, title, description }) => (
+                                {highlights.map(({ Icon, title, description }) => (
                                     <div
                                         key={title}
                                         className="rounded-2xl border border-white/10 bg-white/8 p-5 backdrop-blur-sm"
@@ -209,14 +283,13 @@ export default async function HomePage() {
                     <div className="grid overflow-hidden rounded-[28px] border border-white/10 bg-white/10 backdrop-blur-md sm:grid-cols-[1.25fr_1fr]">
                         <div className="border-b border-white/10 p-6 sm:border-b-0 sm:border-r">
                             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary-200/80">
-                                Why it works
+                                {why.label}
                             </p>
                             <h3 className="mb-2 text-2xl font-bold text-white">
-                                Хүмүүс эндээс зөвхөн санаа биш, шийдвэр гаргах тодорхой байдал авдаг.
+                                {why.heading}
                             </h3>
                             <p className="max-w-xl text-sm leading-6 text-white/65 sm:text-base">
-                                Хэт ерөнхий зөвлөгөө биш — маршрут, цагийн хуваарь, тээврийн
-                                сонголт, очих үеийн зөвлөмжийг нэгтгэснээр аяллаа итгэлтэй эхлүүлэхэд тусална.
+                                {why.body}
                             </p>
                         </div>
 
@@ -294,7 +367,7 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            <Footer />
+            <Footer settings={settings} />
         </>
     )
 }

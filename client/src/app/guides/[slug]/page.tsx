@@ -162,11 +162,8 @@ export default async function GuideDetailPage({ params }: Props) {
                                         </div>
                                         <div>
                                             <h2 className="text-white font-bold text-lg leading-none">
-                                                Интерактив маршрут
+                                                Маршрут
                                             </h2>
-                                            <p className="text-gray-500 text-xs mt-0.5">
-                                                Дурын цэг дээр дарж мэдээлэл үзнэ · Дугуйгаар томруулна
-                                            </p>
                                         </div>
                                     </div>
                                     <RouteMap routes={routes} itineraryDays={itineraryDays} />

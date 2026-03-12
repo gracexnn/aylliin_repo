@@ -98,7 +98,7 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class: cn(
-          'prose prose-sm max-w-none focus:outline-none px-4 py-3',
+          'prose dark:prose-invert prose-sm max-w-none focus:outline-none px-4 py-3',
           'prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg',
           'prose-a:text-primary prose-a:underline',
           'prose-blockquote:border-l-4 prose-blockquote:border-muted-foreground prose-blockquote:pl-4 prose-blockquote:italic',
