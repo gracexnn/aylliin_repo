@@ -10,7 +10,7 @@
     "postinstall": "prisma generate",
     "auth:seed-admin": "node ./scripts/seed-admin.mjs",
     "db:migrate": "prisma migrate dev",
-    "db:migrateprod": "prisma migrate dev",
+    "db:migrateprod": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio"
   },
