@@ -69,16 +69,16 @@ export default function ItineraryTimeline({ days, travelTips }: ItineraryTimelin
                                                 {day.description}
                                             </p>
 
-                                            {(day.meals.length > 0 || day.optional_extras.length > 0) && (
+                                            {((day.meals?.length ?? 0) > 0 || (day.optional_extras?.length ?? 0) > 0) && (
                                                 <div className="grid gap-4 md:grid-cols-2 mt-5">
-                                                    {day.meals.length > 0 && (
+                                                    {(day.meals?.length ?? 0) > 0 && (
                                                         <div className="rounded-2xl bg-gray-50 p-4 border border-gray-100">
                                                             <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-800">
                                                                 <FiCoffee className="text-primary-600" size={14} />
                                                                 Хоол
                                                             </div>
                                                             <div className="flex flex-wrap gap-2">
-                                                                {day.meals.map((meal, index) => (
+                                                                {day.meals?.map((meal, index) => (
                                                                     <span
                                                                         key={`${meal}-${index}`}
                                                                         className="rounded-full bg-white border border-gray-200 px-3 py-1.5 text-xs text-gray-600"
@@ -90,14 +90,14 @@ export default function ItineraryTimeline({ days, travelTips }: ItineraryTimelin
                                                         </div>
                                                     )}
 
-                                                    {day.optional_extras.length > 0 && (
+                                                    {(day.optional_extras?.length ?? 0) > 0 && (
                                                         <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100">
                                                             <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-amber-900">
                                                                 <FiClock className="text-amber-600" size={14} />
                                                                 Нэмэлт сонголт
                                                             </div>
                                                             <div className="space-y-2">
-                                                                {day.optional_extras.map((extra, index) => (
+                                                                {day.optional_extras?.map((extra, index) => (
                                                                     <div key={`${extra}-${index}`} className="text-sm text-amber-800">
                                                                         {extra}
                                                                     </div>
