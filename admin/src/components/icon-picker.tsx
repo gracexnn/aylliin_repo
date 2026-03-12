@@ -42,6 +42,14 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
   const selectedIcon = getLibraryIconOption(value);
   const normalizedSearch = search.trim().toLowerCase();
 
+  // Reset visible count during render when filters change (avoids setState-in-effect)
+  const filterKey = `${activePack}:${normalizedSearch}:${String(open)}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(INITIAL_ICON_BATCH);
+  }
+
   const filteredIcons = useMemo(() => {
     const sourceIcons =
       activePack === 'suggested' && normalizedSearch
@@ -87,8 +95,6 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
   }, [hasMoreIcons, loadMoreIcons]);
 
   useEffect(() => {
-    setVisibleCount(INITIAL_ICON_BATCH);
-
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }

@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Booking not found' }, { status: 404, headers: corsHeaders })
         }
 
-        // Extract invoice ID from booking notes
-        const invoiceIdMatch = booking.admin_note?.match(/QPay Invoice ID: (.+)/)
+        // Extract invoice ID from booking notes (use precise regex to avoid greedy match issues)
+        const invoiceIdMatch = booking.admin_note?.match(/QPay Invoice ID: ([a-f0-9-]+)/)
         if (!invoiceIdMatch) {
             return NextResponse.json({ error: 'Invoice ID not found in booking' }, { status: 400, headers: corsHeaders })
         }
@@ -50,6 +50,14 @@ export async function POST(req: NextRequest) {
         const isPaid = await qpayService.verifyPayment(invoiceId)
 
         if (isPaid) {
+            // Idempotency: only update if not already paid
+            if (booking.payment_status === 'PAID') {
+                return NextResponse.json({
+                    success: true,
+                    message: 'Payment already confirmed'
+                }, { headers: corsHeaders })
+            }
+
             // Update booking status
             await prisma.booking.update({
                 where: { id: booking.id },

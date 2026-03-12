@@ -36,6 +36,19 @@ interface Traveler {
   special_request: string;
 }
 
+interface TravelerResponse {
+  id?: string;
+  full_name: string;
+  gender?: string | null;
+  date_of_birth?: string | null;
+  passport_number?: string | null;
+  nationality?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  emergency_contact?: string | null;
+  special_request?: string | null;
+}
+
 export default function EditBookingPage() {
   const router = useRouter();
   const params = useParams();
@@ -77,7 +90,7 @@ export default function EditBookingPage() {
         });
         
         setTravelers(
-          (booking.travelers || []).map((t: any) => ({
+          (booking.travelers || []).map((t: TravelerResponse) => ({
             id: t.id,
             full_name: t.full_name,
             gender: t.gender || '',
@@ -297,7 +310,7 @@ export default function EditBookingPage() {
           <CardContent className="space-y-6">
             {travelers.length === 0 ? (
               <p className="text-center text-muted-foreground py-4">
-                Одоогоор зорчигч нэмээгүй байна. "Зорчигч нэмэх" дээр дарж мэдээлэл оруулна уу.
+                Одоогоор зорчигч нэмээгүй байна. &quot;Зорчигч нэмэх&quot; дээр дарж мэдээлэл оруулна уу.
               </p>
             ) : (
               travelers.map((traveler, index) => (

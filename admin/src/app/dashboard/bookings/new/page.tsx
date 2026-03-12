@@ -23,10 +23,15 @@ import {
 import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
+interface PackageOption {
+  id?: string;
+  title: string;
+}
+
 interface Post {
   id: string;
   title: string;
-  package_options: any;
+  package_options: PackageOption[];
 }
 
 interface DepartureSession {
@@ -304,7 +309,7 @@ export default function NewBookingPage() {
                     <SelectValue placeholder="Сонгоогүй - дарж сонгоно уу" />
                   </SelectTrigger>
                   <SelectContent>
-                    {packageOptions.map((option: any, index: number) => (
+                    {packageOptions.map((option, index: number) => (
                       <SelectItem key={option.id || index} value={option.id || String(index)}>
                         {option.title}
                       </SelectItem>
@@ -477,7 +482,7 @@ export default function NewBookingPage() {
           <CardContent className="space-y-6">
             {travelers.length === 0 ? (
               <p className="text-center text-muted-foreground py-4">
-                Одоогоор зорчигч нэмээгүй байна. "Зорчигч нэмэх" дээр дарж мэдээлэл оруулна уу.
+                Одоогоор зорчигч нэмээгүй байна. &quot;Зорчигч нэмэх&quot; дээр дарж мэдээлэл оруулна уу.
               </p>
             ) : (
               travelers.map((traveler, index) => (
