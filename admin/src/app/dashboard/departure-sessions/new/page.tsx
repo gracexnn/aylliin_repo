@@ -204,11 +204,11 @@ export default function NewDepartureSessionPage() {
       : [];
 
   if (loading) {
-    return <div className="container mx-auto py-8">Ачааллаж байна...</div>;
+    return <div className="container mx-auto p-4 md:p-8">Ачааллаж байна...</div>;
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-3xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-3xl">
       <div className="mb-6">
         <Link href="/dashboard/departure-sessions">
           <Button variant="ghost" size="sm">
@@ -289,7 +289,7 @@ export default function NewDepartureSessionPage() {
             </div>
 
             {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="departure_date">Явах огноо *</Label>
                 <Input
@@ -316,7 +316,7 @@ export default function NewDepartureSessionPage() {
             </div>
 
             {/* Pricing */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="base_price">Суурь үнэ *</Label>
                 <Input
@@ -347,7 +347,7 @@ export default function NewDepartureSessionPage() {
             {/* Discount */}
             <div className="space-y-4">
               <Label>Хөнгөлөлт (заавал биш)</Label>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Select
                   value={formData.discount_type || undefined}
                   onValueChange={(value) =>
@@ -384,7 +384,7 @@ export default function NewDepartureSessionPage() {
             </div>
 
             {/* Capacity and Status */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="capacity">Багтаамж *</Label>
                 <Input

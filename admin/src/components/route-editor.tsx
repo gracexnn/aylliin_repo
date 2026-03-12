@@ -692,7 +692,7 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                   placeholder="жишээ нь: 6 - 8-р сар"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Өргөрөг</Label>
                   <Input value={editingPoint.latitude.toFixed(6)} readOnly className="bg-muted" />

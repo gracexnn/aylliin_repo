@@ -186,11 +186,11 @@ export default function EditBookingPage() {
   };
 
   if (loading) {
-    return <div className="container mx-auto py-8">Ачааллаж байна...</div>;
+    return <div className="container mx-auto p-4 md:p-8">Ачааллаж байна...</div>;
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-5xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-5xl">
       <div className="mb-6">
         <Link href="/dashboard/bookings">
           <Button variant="ghost" size="sm">
@@ -209,7 +209,7 @@ export default function EditBookingPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Booking Details */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="passenger_count">Зорчигчийн тоо *</Label>
                 <Input
@@ -239,7 +239,7 @@ export default function EditBookingPage() {
             </div>
 
             {/* Status */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="booking_status">Захиалгын төлөв *</Label>
                 <Select
@@ -329,7 +329,7 @@ export default function EditBookingPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Овог нэр *</Label>
                         <Input
@@ -358,7 +358,7 @@ export default function EditBookingPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Төрсөн огноо</Label>
                         <Input
@@ -380,7 +380,7 @@ export default function EditBookingPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label>Иргэншил</Label>
                         <Input

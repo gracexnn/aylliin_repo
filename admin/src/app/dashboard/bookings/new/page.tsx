@@ -222,7 +222,7 @@ export default function NewBookingPage() {
     : 0;
 
   return (
-    <div className="container mx-auto py-8 max-w-5xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-5xl">
       <div className="mb-6">
         <Link href="/dashboard/bookings">
           <Button variant="ghost" size="sm">
@@ -241,7 +241,7 @@ export default function NewBookingPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Post and Session Selection */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="post_id">Аяллын багц *</Label>
                 <Select
@@ -322,7 +322,7 @@ export default function NewBookingPage() {
             {/* Contact Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Холбоо барих мэдээлэл</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="contact_name">Нэр *</Label>
                   <Input
@@ -361,7 +361,7 @@ export default function NewBookingPage() {
             </div>
 
             {/* Booking Details */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="passenger_count">Зорчигчийн тоо *</Label>
                 <Input
@@ -411,7 +411,7 @@ export default function NewBookingPage() {
             </div>
 
             {/* Status */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="booking_status">Захиалгын төлөв *</Label>
                 <Select
@@ -501,7 +501,7 @@ export default function NewBookingPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Овог нэр *</Label>
                         <Input
@@ -530,7 +530,7 @@ export default function NewBookingPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Төрсөн огноо</Label>
                         <Input
@@ -552,7 +552,7 @@ export default function NewBookingPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label>Иргэншил</Label>
                         <Input

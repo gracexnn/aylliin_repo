@@ -266,7 +266,7 @@ export default function LandingSettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 p-6">
+    <div className="max-w-3xl mx-auto space-y-4 md:space-y-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -314,7 +314,7 @@ export default function LandingSettingsPage() {
           />
         </FieldGroup>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldGroup id="hero_primary_cta_text" label="Үндсэн товч текст" error={errors.hero_primary_cta_text}>
             <Input
               id="hero_primary_cta_text"
@@ -461,7 +461,7 @@ export default function LandingSettingsPage() {
       </SectionCard>
       {/* ── Contact ─────────────────────────────── */}
       <SectionCard icon={Phone} title="Холбоо барих мэдээлэл" description="Имэйл, утас, хаяг, WhatsApp">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldGroup id="contact_email" label="Имэйл" error={errors.contact_email}>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />

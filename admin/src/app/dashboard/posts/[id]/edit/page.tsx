@@ -68,7 +68,7 @@ export default function EditPostPage() {
 
   if (loading) {
     return (
-      <div className="p-8 flex items-center justify-center">
+      <div className="p-4 md:p-8 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
@@ -76,14 +76,14 @@ export default function EditPostPage() {
 
   if (!post) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-muted-foreground">Багц олдсонгүй</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Багц засах</h1>
         <p className="text-muted-foreground mt-1">{post.title}</p>

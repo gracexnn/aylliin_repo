@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LogoutButton from '@/components/logout-button';
-import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon, Library, MapPin, Sparkles, ListChecks, Globe } from 'lucide-react';
+import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon, Library, MapPin, Sparkles, ListChecks, Globe, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 const navItems = [
@@ -33,6 +33,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -40,20 +41,29 @@ export default function DashboardLayout({
   const isDark = mounted && resolvedTheme === 'dark';
 
   return (
-    <div className="flex h-full w-full bg-background overflow-hidden">
+    <div className="flex h-full w-full bg-background overflow-hidden relative">
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
-          'relative flex h-full flex-col border-r bg-card transition-all duration-300 shrink-0',
-          collapsed ? 'w-16' : 'w-64'
+          'fixed inset-y-0 left-0 z-50 flex h-full flex-col border-r bg-card transition-all duration-300 shrink-0 md:relative',
+          mobileOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0',
+          !mobileOpen && collapsed ? 'md:w-16' : 'md:w-64'
         )}
       >
         {/* Logo */}
-        <div className={cn('flex h-16 items-center border-b px-4', collapsed ? 'justify-center' : 'gap-2')}>
-          <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
+        <div className={cn('flex h-16 items-center justify-between border-b px-4', collapsed ? 'md:justify-center' : '')}>
+          <Link href="/dashboard" className="flex items-center gap-2 min-w-0" onClick={() => setMobileOpen(false)}>
             <Map className="h-6 w-6 shrink-0 text-primary" />
             <AnimatePresence initial={false}>
-              {!collapsed && (
+              {(!collapsed || mobileOpen) && (
                 <motion.span
                   key="logo-text"
                   initial={{ opacity: 0, width: 0 }}
@@ -67,6 +77,9 @@ export default function DashboardLayout({
               )}
             </AnimatePresence>
           </Link>
+          <button className="md:hidden p-2 text-muted-foreground" onClick={() => setMobileOpen(false)}>
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Nav */}
@@ -78,6 +91,7 @@ export default function DashboardLayout({
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setMobileOpen(false)}
                 title={collapsed ? item.label : undefined}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -130,6 +144,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.href}
                   href={item.href}
+                onClick={() => setMobileOpen(false)}
                   title={collapsed ? item.label : undefined}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -183,6 +198,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.href}
                   href={item.href}
+                onClick={() => setMobileOpen(false)}
                   title={collapsed ? item.label : undefined}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -267,7 +283,7 @@ export default function DashboardLayout({
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed((v) => !v)}
-          className="absolute -right-3 top-18 z-10 flex h-6 w-6 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-sm hover:text-foreground transition-colors"
+          className="hidden md:flex absolute -right-3 top-18 z-10 h-6 w-6 items-center justify-center rounded-full border bg-card text-muted-foreground shadow-sm hover:text-foreground transition-colors"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
@@ -275,16 +291,28 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-        >
-          {children}
-        </motion.div>
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        {/* Mobile top nav */}
+        <div className="md:hidden flex h-16 shrink-0 items-center justify-between border-b px-4">
+          <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+            <Map className="h-6 w-6 text-primary" />
+            Aylal Админ
+          </Link>
+          <button onClick={() => setMobileOpen(true)} className="p-2 -mr-2 text-muted-foreground">
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-0 relative">
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            {children}
+          </motion.div>
+        </div>
       </main>
     </div>
   );

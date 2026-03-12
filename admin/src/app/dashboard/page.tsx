@@ -457,7 +457,7 @@ export default async function DashboardPage() {
   const peakMonthlyBookings = Math.max(1, ...stats.monthlyBookings.map((item) => item.count));
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-6 md:space-y-8 p-4 md:p-8">
       <section className="relative overflow-hidden rounded-3xl border border-border/60 bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-8 text-white shadow-2xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.22),transparent_32%),radial-gradient(circle_at_left,rgba(16,185,129,0.18),transparent_28%)]" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -844,7 +844,7 @@ export default async function DashboardPage() {
                         <p className="text-sm text-muted-foreground">Сүүлд шинэчилсэн: {formatDate(post.updated_at)}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 sm:min-w-72">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:min-w-72">
                       <div className="rounded-xl bg-muted/40 p-3 text-center">
                         <p className="text-xs text-muted-foreground">Захиалга</p>
                         <p className="mt-1 text-lg font-semibold">{post._count.bookings}</p>

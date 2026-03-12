@@ -120,14 +120,14 @@ export default function BookingsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto p-4 md:p-8">
         <p>Ачааллаж байна...</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -149,7 +149,7 @@ export default function BookingsPage() {
         </div>
 
         {bookings.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center">
+          <div className="rounded-lg border border-dashed p-4 md:p-8 text-center">
             <Users className="mx-auto h-12 w-12 text-muted-foreground" />
             <h3 className="mt-4 text-lg font-semibold">Одоогоор захиалга алга</h3>
             <p className="text-muted-foreground mt-2">

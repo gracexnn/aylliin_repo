@@ -175,8 +175,8 @@ export default function LocationsLibraryPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 md:mb-8">
         <div>
           <h1 className="text-3xl font-bold">Байршлуудын сан</h1>
           <p className="text-muted-foreground mt-1">Маршрутын цэгүүдэд ашиглах хадгалсан байршлууд</p>
@@ -270,7 +270,7 @@ export default function LocationsLibraryPage() {
             <DialogTitle>{editing ? 'Байршлыг засах' : 'Шинэ байршил'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="col-span-2 space-y-1">
                 <Label>Нэр <span className="text-destructive">*</span></Label>
                 <Input value={form.name} onChange={(e) => handleNameChange(e.target.value)} placeholder="ж.нь., Тяньаньмэний талбай" />

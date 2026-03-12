@@ -68,8 +68,8 @@ export default function PostsPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 md:mb-8">
         <div>
           <h1 className="text-3xl font-bold">Аяллын багцууд</h1>
           <p className="text-muted-foreground mt-1">Аяллын багц болон маршрут удирдах</p>
