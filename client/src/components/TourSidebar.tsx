@@ -14,11 +14,8 @@ interface TourSidebarProps {
 }
 
 function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString('mn-MN', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    })
+    const d = new Date(dateStr);
+    return `${d.getFullYear()} оны ${d.getMonth() + 1}-р сарын ${d.getDate()}`;
 }
 
 function getSeatsLeft(session: DepartureSession) {

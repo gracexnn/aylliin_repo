@@ -8,11 +8,8 @@ interface GuideCardProps {
 }
 
 function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString('mn-MN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    })
+    const d = new Date(dateStr);
+    return `${d.getFullYear()} оны ${d.getMonth() + 1}-р сарын ${d.getDate()}`;
 }
 
 export default function GuideCard({ post }: GuideCardProps) {
