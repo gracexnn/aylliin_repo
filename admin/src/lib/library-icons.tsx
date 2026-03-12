@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 import type { IconType } from 'react-icons';
 import * as Fa6Icons from 'react-icons/fa6';
 import * as FiIcons from 'react-icons/fi';
@@ -132,7 +133,7 @@ export function LibraryIcon({ value, className, size = 16, fallbackClassName }: 
   const IconComponent = findLibraryIconComponent(value);
 
   if (IconComponent) {
-    return <IconComponent className={className} size={size} aria-hidden="true" />;
+    return createElement(IconComponent, { className, size, 'aria-hidden': 'true' });
   }
 
   return (

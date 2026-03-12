@@ -75,8 +75,14 @@ export async function PUT(
         if (discountType === 'FIXED') {
           finalPrice = Number(basePrice) - Number(discountValue);
         } else if (discountType === 'PERCENT') {
+          if (Number(discountValue) > 100) {
+            return NextResponse.json({ error: 'Percent discount cannot exceed 100%' }, { status: 400 });
+          }
           finalPrice = Number(basePrice) - (Number(basePrice) * Number(discountValue) / 100);
         }
+      }
+      if (finalPrice < 0) {
+        return NextResponse.json({ error: 'Discount results in a negative price' }, { status: 400 });
       }
       updateFields.final_price = finalPrice;
     }

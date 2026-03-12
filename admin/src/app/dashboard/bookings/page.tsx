@@ -47,7 +47,7 @@ interface Booking {
     departure_date: string;
     label: string;
   };
-  travelers: any[];
+  travelers: { id: string }[];
 }
 
 const bookingStatusColors: Record<string, string> = {

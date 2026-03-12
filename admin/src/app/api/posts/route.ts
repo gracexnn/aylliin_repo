@@ -15,8 +15,10 @@ export async function GET(request: NextRequest) {
     const session = await getAdminSession();
     const isAdmin = Boolean(session?.user);
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') ?? '1');
-    const limit = parseInt(searchParams.get('limit') ?? '10');
+    const pageRaw = parseInt(searchParams.get('page') ?? '1');
+    const limitRaw = parseInt(searchParams.get('limit') ?? '10');
+    const page = pageRaw > 0 ? pageRaw : 1;
+    const limit = limitRaw > 0 && limitRaw <= 200 ? limitRaw : 10;
     const skip = (page - 1) * limit;
     const published = parseBooleanParam(searchParams.get('published'));
     const highlighted = parseBooleanParam(searchParams.get('highlighted'));

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LogoutButton from '@/components/logout-button';
@@ -30,10 +30,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
-  const isDark = mounted && resolvedTheme === 'dark';
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div className="flex h-dvh bg-background overflow-hidden">
@@ -160,7 +158,8 @@ export default function DashboardLayout({
         <div className={cn('border-t p-2', collapsed ? 'flex flex-col items-center gap-2' : 'space-y-2')}>
           {/* Theme toggle */}
           <button
-            onClick={() => mounted && setTheme(isDark ? 'light' : 'dark')}
+            suppressHydrationWarning
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             className={cn(
               'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground',

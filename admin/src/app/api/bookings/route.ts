@@ -18,14 +18,16 @@ export async function GET(request: NextRequest) {
     const sessionId = searchParams.get('session_id');
     const status = searchParams.get('status');
     const source = searchParams.get('source');
-    const page = parseInt(searchParams.get('page') ?? '1');
-    const limit = parseInt(searchParams.get('limit') ?? '50');
+    const pageRaw = parseInt(searchParams.get('page') ?? '1');
+    const limitRaw = parseInt(searchParams.get('limit') ?? '50');
+    const page = pageRaw > 0 ? pageRaw : 1;
+    const limit = limitRaw > 0 && limitRaw <= 200 ? limitRaw : 50;
     const skip = (page - 1) * limit;
 
     const where = {
       ...(postId ? { post_id: postId } : {}),
       ...(sessionId ? { departure_session_id: sessionId } : {}),
-      ...(status ? { booking_status: status as any } : {}),
+      ...(status ? { booking_status: status as 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' } : {}),
       ...(source ? { source } : {}),
     };
 
@@ -80,25 +82,22 @@ export async function POST(request: NextRequest) {
       codeExists = await prisma.booking.findUnique({ where: { booking_code: bookingCode } });
     }
 
-    // Get departure session to check availability
-    const session = await prisma.departureSession.findUnique({
-      where: { id: data.departure_session_id },
-    });
-
-    if (!session) {
-      return NextResponse.json({ error: 'Departure session not found' }, { status: 404 });
-    }
-
-    const seatsAvailable = session.capacity - session.seats_booked;
-    if (data.passenger_count > seatsAvailable) {
-      return NextResponse.json(
-        { error: `Only ${seatsAvailable} seats available` },
-        { status: 400 }
-      );
-    }
-
-    // Create booking with travelers in a transaction
+    // Create booking with travelers in a transaction, including availability check inside
     const booking = await prisma.$transaction(async (tx) => {
+      // Re-check availability inside transaction to prevent overbooking race condition
+      const session = await tx.departureSession.findUnique({
+        where: { id: data.departure_session_id },
+      });
+
+      if (!session) {
+        throw new Error('DEPARTURE_SESSION_NOT_FOUND');
+      }
+
+      const seatsAvailable = session.capacity - session.seats_booked;
+      if (data.passenger_count > seatsAvailable) {
+        throw new Error(`INSUFFICIENT_SEATS:${seatsAvailable}`);
+      }
+
       const newBooking = await tx.booking.create({
         data: {
           booking_code: bookingCode,
@@ -177,6 +176,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
+    }
+    if (error instanceof Error) {
+      if (error.message === 'DEPARTURE_SESSION_NOT_FOUND') {
+        return NextResponse.json({ error: 'Departure session not found' }, { status: 404 });
+      }
+      if (error.message.startsWith('INSUFFICIENT_SEATS:')) {
+        const available = error.message.split(':')[1];
+        return NextResponse.json({ error: `Only ${available} seats available` }, { status: 400 });
+      }
     }
     console.error('POST /api/bookings error:', error);
     return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });

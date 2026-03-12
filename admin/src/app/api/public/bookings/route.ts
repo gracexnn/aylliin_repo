@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
         }
 
         const seatsNeeded = validatedData.travelers.length
+        // Initial availability check (optimistic, before transaction)
         const seatsAvailable = session.capacity - session.seats_booked
 
         if (seatsNeeded > seatsAvailable) {
@@ -107,6 +108,20 @@ export async function POST(req: NextRequest) {
 
         // Create booking with transaction
         const booking = await prisma.$transaction(async (tx) => {
+            // Re-check availability inside transaction to prevent overbooking race condition
+            const currentSession = await tx.departureSession.findUnique({
+                where: { id: validatedData.departure_session_id },
+            })
+
+            if (!currentSession || currentSession.status !== 'OPEN') {
+                throw new Error('SESSION_UNAVAILABLE')
+            }
+
+            const currentSeatsAvailable = currentSession.capacity - currentSession.seats_booked
+            if (seatsNeeded > currentSeatsAvailable) {
+                throw new Error(`INSUFFICIENT_SEATS:${currentSeatsAvailable}`)
+            }
+
             const newBooking = await tx.booking.create({
                 data: {
                     booking_code: bookingCode,
@@ -239,6 +254,20 @@ export async function POST(req: NextRequest) {
                 error: 'Validation error', 
                 details: error.issues 
             }, { status: 400, headers: corsHeaders })
+        }
+
+        if (error instanceof Error) {
+            if (error.message === 'SESSION_UNAVAILABLE') {
+                return NextResponse.json({
+                    error: 'This departure session is not available for booking'
+                }, { status: 400, headers: corsHeaders })
+            }
+            if (error.message.startsWith('INSUFFICIENT_SEATS:')) {
+                const available = error.message.split(':')[1]
+                return NextResponse.json({
+                    error: `Only ${available} seat(s) available`
+                }, { status: 400, headers: corsHeaders })
+            }
         }
 
         return NextResponse.json({ 
