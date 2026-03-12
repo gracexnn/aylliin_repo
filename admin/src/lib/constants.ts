@@ -132,32 +132,27 @@ export const BASEMAPS: BasemapOption[] = [
   {
     id: 'carto-light',
     label: 'Light',
-    url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-    attribution: '\u00a9 OpenStreetMap contributors \u00a9 CARTO',
+    url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
   },
   {
     id: 'carto-dark',
     label: 'Dark',
-    url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-    attribution: '\u00a9 OpenStreetMap contributors \u00a9 CARTO',
+    url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
   },
   {
     id: 'osm',
     label: 'OSM',
-    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '\u00a9 OpenStreetMap contributors',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
   },
   {
     id: 'satellite',
     label: 'Satellite',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles \u00a9 Esri',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
   },
   {
     id: 'topo',
     label: 'Topo',
-    url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
-    attribution: '\u00a9 OpenStreetMap contributors, SRTM | OpenTopoMap',
+    url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png'
   },
 ];
 

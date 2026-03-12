@@ -24,8 +24,8 @@ function LoginForm() {
     () => getSafeRedirectTarget(searchParams.get('redirectTo')),
     [searchParams]
   );
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('testing123');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
