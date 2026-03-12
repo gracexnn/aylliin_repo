@@ -54,7 +54,7 @@ function toNumber(value: unknown) {
   return Number(value ?? 0);
 }
 
-function formatCurrency(value: number, currency = 'IDR') {
+function formatCurrency(value: number, currency = 'MNT') {
   return `${currency} ${value.toLocaleString()}`;
 }
 

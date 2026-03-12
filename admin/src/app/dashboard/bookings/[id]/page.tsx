@@ -61,7 +61,7 @@ export default function EditBookingPage() {
   const [formData, setFormData] = useState({
     passenger_count: '1',
     total_price_snapshot: '',
-    currency: 'IDR',
+    currency: 'MNT',
     booking_status: 'PENDING',
     payment_status: 'UNPAID',
     admin_note: '',

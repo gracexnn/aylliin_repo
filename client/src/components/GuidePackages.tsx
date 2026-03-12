@@ -175,7 +175,7 @@ export default function GuidePackages({
                                 <div className="grid gap-3 sm:grid-cols-2">
                                     {safeIncludedItems.map((item, index) => (
                                         <div key={`${item}-${index}`} className="flex items-start gap-2 text-sm text-gray-700">
-                                            <FiCheckCircle className="text-emerald-500 mt-0.5 shrink-0" size={14} />
+                                            <FiCheckCircle className="text-primary-500 mt-0.5 shrink-0" size={14} />
                                             <span>{item}</span>
                                         </div>
                                     ))}

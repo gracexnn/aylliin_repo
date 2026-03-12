@@ -157,12 +157,6 @@ export default async function HomePage() {
         ),
     }))
 
-    const why = {
-        label:   s(settings?.why_label,   'Why it works'),
-        heading: s(settings?.why_heading, 'Хүмүүс эндээс зөвхөн санаа биш, шийдвэр гаргах тодорхой байдал авдаг.'),
-        body:    s(settings?.why_body,    'Хэт ерөнхий зөвлөгөө биш — маршрут, цагийн хуваарь, тээврийн сонголт, очих үеийн зөвлөмжийг нэгтгэснээр аяллаа итгэлтэй эхлүүлэхэд тусална.'),
-    }
-
     return (
         <>
             <Navbar />
@@ -274,38 +268,6 @@ export default async function HomePage() {
                             </div>
 
                             <HeroTravelSwiper posts={heroPosts} />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Stats bar */}
-                <div className="relative mx-auto w-full max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
-                    <div className="grid overflow-hidden rounded-[28px] border border-white/10 bg-white/10 backdrop-blur-md sm:grid-cols-[1.25fr_1fr]">
-                        <div className="border-b border-white/10 p-6 sm:border-b-0 sm:border-r">
-                            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary-200/80">
-                                {why.label}
-                            </p>
-                            <h3 className="mb-2 text-2xl font-bold text-white">
-                                {why.heading}
-                            </h3>
-                            <p className="max-w-xl text-sm leading-6 text-white/65 sm:text-base">
-                                {why.body}
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col divide-y divide-white/10 sm:divide-y-0">
-                            <div className="grid flex-1 divide-y divide-white/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-                        {stats.map(({ icon: Icon, value, label }) => (
-                            <div
-                                key={label}
-                                className="flex flex-col items-center justify-center px-6 py-5"
-                            >
-                                <Icon size={20} className="text-primary-300 mb-1" />
-                                <span className="text-2xl font-bold text-white">{value}</span>
-                                <span className="text-xs text-white/60 mt-0.5">{label}</span>
-                            </div>
-                        ))}
-                            </div>
                         </div>
                     </div>
                 </div>

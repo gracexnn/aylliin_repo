@@ -70,7 +70,7 @@ export default function EditDepartureSessionPage() {
     return_date: '',
     label: '',
     base_price: '',
-    currency: 'IDR',
+    currency: 'MNT',
     discount_type: '',
     discount_value: '',
     discount_reason: '',
@@ -331,7 +331,7 @@ export default function EditDepartureSessionPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, currency: e.target.value })
                   }
-                  placeholder="IDR"
+                  placeholder="MNT"
                   required
                 />
               </div>

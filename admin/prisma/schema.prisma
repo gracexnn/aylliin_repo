@@ -204,7 +204,7 @@ model DepartureSession {
   return_date       DateTime?     @db.Date
   label             String        @db.VarChar(300)
   base_price        Decimal       @db.Decimal(10, 2)
-  currency          String        @default("IDR") @db.VarChar(10)
+  currency          String        @default("MNT") @db.VarChar(10)
   discount_type     DiscountType?
   discount_value    Decimal?      @db.Decimal(10, 2)
   discount_reason   String?       @db.VarChar(500)
@@ -251,7 +251,7 @@ model Booking {
   contact_email         String        @db.VarChar(300)
   passenger_count       Int           @default(1)
   total_price_snapshot  Decimal       @db.Decimal(10, 2)
-  currency              String        @default("IDR") @db.VarChar(10)
+  currency              String        @default("MNT") @db.VarChar(10)
   booking_status        BookingStatus @default(PENDING)
   payment_status        PaymentStatus @default(UNPAID)
   admin_note            String?

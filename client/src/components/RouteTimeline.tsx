@@ -174,20 +174,20 @@ function DayGroup({ dayNum, points, dayData, openLightbox, activeDayFilter }: { 
                     )}
 
                     {/* Day Footer / Metadata */}
-                    {dayData && (dayData.meals.length > 0 || dayData.optional_extras.length > 0 || dayData.route_label) && (
+                    {dayData && ((dayData.meals?.length ?? 0) > 0 || (dayData.optional_extras?.length ?? 0) > 0 || dayData.route_label) && (
                         <div className="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-x-6 gap-y-3 pl-3">
                             {dayData.route_label && (
                                 <div className="flex items-center gap-2 text-sm text-gray-700">
                                     <FiFlag className="text-gray-400" /> {dayData.route_label}
                                 </div>
                             )}
-                            {dayData.meals.length > 0 && (
+                            {dayData.meals && dayData.meals.length > 0 && (
                                 <div className="flex items-center gap-2 text-sm text-gray-700">
                                     <FiCoffee className="text-primary-500" /> 
                                     {dayData.meals.join(', ')}
                                 </div>
                             )}
-                            {dayData.optional_extras.length > 0 && (
+                            {dayData.optional_extras && dayData.optional_extras.length > 0 && (
                                 <div className="flex items-center gap-2 text-sm text-gray-700">
                                     <FiStar className="text-amber-500" />
                                     {dayData.optional_extras.join(', ')}
@@ -263,13 +263,13 @@ export default function RouteTimeline({ routes = [], itineraryDays = [], travelT
     return (
         <>
         <div className="space-y-6">
-            {allDays.map(dayNum => {
+            {allDays.map((dayNum, idx) => {
                 const dayData = itineraryDays.find(d => d.day_number === dayNum)
                 const points = dayPoints[dayNum] || []
 
                 return (
                     <DayGroup 
-                        key={dayNum} 
+                        key={`day-${dayNum}-${idx}`} 
                         dayNum={dayNum} 
                         dayData={dayData}
                         points={points} 

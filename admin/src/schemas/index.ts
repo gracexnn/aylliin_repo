@@ -113,7 +113,7 @@ export const DepartureSessionSchema = z.object({
   return_date: z.coerce.date().optional().nullable(),
   label: z.string().min(1, 'Label is required').max(300),
   base_price: z.coerce.number().min(0),
-  currency: z.string().max(10).default('IDR'),
+  currency: z.string().max(10).default('MNT'),
   discount_type: z.enum(DISCOUNT_TYPES).optional().nullable(),
   discount_value: z.coerce.number().min(0).optional().nullable(),
   discount_reason: z.string().max(500).optional().nullable(),
@@ -166,7 +166,7 @@ export const BookingSchema = z.object({
   contact_email: z.string().email('Valid email is required').max(300),
   passenger_count: z.coerce.number().int().min(1, 'At least 1 passenger required'),
   total_price_snapshot: z.coerce.number().min(0),
-  currency: z.string().max(10).default('IDR'),
+  currency: z.string().max(10).default('MNT'),
   booking_status: z.enum(BOOKING_STATUSES).default('PENDING'),
   payment_status: z.enum(PAYMENT_STATUSES).default('UNPAID'),
   admin_note: z.string().optional().nullable(),
@@ -315,10 +315,6 @@ export const LandingSettingsSchema = z.object({
   highlight_2_description: z.string().max(500).optional().nullable(),
   highlight_3_title:       z.string().max(200).optional().nullable(),
   highlight_3_description: z.string().max(500).optional().nullable(),
-  // Why it works
-  why_label:   z.string().max(100).optional().nullable(),
-  why_heading: z.string().max(500).optional().nullable(),
-  why_body:    z.string().max(1000).optional().nullable(),
   // Misc
   announcement_text: z.string().max(500).optional().nullable(),
   footer_blurb:      z.string().max(500).optional().nullable(),

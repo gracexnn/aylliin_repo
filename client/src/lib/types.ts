@@ -33,8 +33,8 @@ export type ItineraryDay = {
     title: string
     route_label?: string | null
     description: string
-    meals: string[]
-    optional_extras: string[]
+    meals?: string[]
+    optional_extras?: string[]
 }
 
 export type Post = {
@@ -47,6 +47,8 @@ export type Post = {
     journey_overview: string | null
     package_options: PackageOption[] | null
     included_items: string[]
+    /** Items explicitly NOT covered by the tour price */
+    excluded_items?: string[] | null
     attraction_items: string[]
     itinerary_days: ItineraryDay[] | null
     travel_tips: string | null
@@ -179,9 +181,6 @@ export type LandingSettings = {
     highlight_2_description: string | null
     highlight_3_title: string | null
     highlight_3_description: string | null
-    why_label: string | null
-    why_heading: string | null
-    why_body: string | null
     announcement_text: string | null
     footer_blurb: string | null
     meta_title: string | null

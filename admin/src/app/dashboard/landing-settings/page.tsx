@@ -45,10 +45,6 @@ type SettingsForm = {
   highlight_2_description: string;
   highlight_3_title: string;
   highlight_3_description: string;
-  // Why it works
-  why_label: string;
-  why_heading: string;
-  why_body: string;
   contact_email: string;
   contact_phone: string;
   contact_address: string;
@@ -76,9 +72,6 @@ const emptyForm: SettingsForm = {
   highlight_2_description: '',
   highlight_3_title: '',
   highlight_3_description: '',
-  why_label: '',
-  why_heading: '',
-  why_body: '',
   contact_email: '',
   contact_phone: '',
   contact_address: '',
@@ -427,38 +420,6 @@ export default function LandingSettingsPage() {
         </div>
       </SectionCard>
 
-      {/* ── Why it works ───────────────────── */}
-      <SectionCard icon={Zap} title={'"Why it works" хэсэг'} description="Hero доорх статистик хэсгийн зүүн талын текст">
-        <FieldGroup id="why_label" label="Дэд шошиво (жижиг тодорхой)" error={errors.why_label}>
-          <Input
-            id="why_label"
-            value={form.why_label}
-            onChange={set('why_label')}
-            placeholder="Why it works"
-            className={errors.why_label ? 'border-destructive' : ''}
-          />
-        </FieldGroup>
-        <FieldGroup id="why_heading" label="Томоохой гарчиг" error={errors.why_heading}>
-          <Textarea
-            id="why_heading"
-            rows={2}
-            value={form.why_heading}
-            onChange={set('why_heading')}
-            placeholder="Хүмүүс эндээс зөвхөн санаа биш, шийдвэр гаргах тодорхой байдал авдаг."
-            className={errors.why_heading ? 'border-destructive' : ''}
-          />
-        </FieldGroup>
-        <FieldGroup id="why_body" label="Тайлбар параграф" error={errors.why_body}>
-          <Textarea
-            id="why_body"
-            rows={3}
-            value={form.why_body}
-            onChange={set('why_body')}
-            placeholder="Хэт ерөнхий зөвлөгөө биш — маршрут, цагийн хуваарь..."
-            className={errors.why_body ? 'border-destructive' : ''}
-          />
-        </FieldGroup>
-      </SectionCard>
       {/* ── Contact ─────────────────────────────── */}
       <SectionCard icon={Phone} title="Холбоо барих мэдээлэл" description="Имэйл, утас, хаяг, WhatsApp">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

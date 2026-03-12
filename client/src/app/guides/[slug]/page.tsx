@@ -1,14 +1,20 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import GuidePackages from '@/components/GuidePackages'
 import RouteSection from '@/components/RouteSection'
 import TourSidebar from '@/components/TourSidebar'
-import { getTravelGuide, getDepartureSessions } from '@/lib/api'
-import { FiArrowLeft, FiClock, FiMap, FiMapPin, FiStar } from 'react-icons/fi'
+import TourHero from '@/components/tour/TourHero'
+import TourQuickFacts from '@/components/tour/TourQuickFacts'
+import TourHighlights from '@/components/tour/TourHighlights'
+import TourIncludedExcluded from '@/components/tour/TourIncludedExcluded'
+import TourGoodToKnow from '@/components/tour/TourGoodToKnow'
+import TourDailyCards from '@/components/tour/TourDailyCards'
+import TourPricingCTA from '@/components/tour/TourPricingCTA'
+import TourStickyCTA from '@/components/tour/TourStickyCTA'
+import { getTravelGuide, getDepartureSessions, getLandingSettings } from '@/lib/api'
+import type { TransportMode } from '@/lib/types'
 
 interface Props {
     params: Promise<{ slug: string }>
@@ -44,105 +50,115 @@ export default async function GuideDetailPage({ params }: Props) {
     }
 
     const { post, routes } = guide
-    const departureSessions = await getDepartureSessions(post.id)
-    const totalPoints = routes.reduce((acc, r) => acc + r.points.length, 0)
-    const includedItems = post.included_items ?? []
+
+    // Fetch sessions and site settings in parallel
+    const [departureSessions, landingSettings] = await Promise.all([
+        getDepartureSessions(post.id),
+        getLandingSettings(),
+    ])
+
+    // ── Derived data ───────────────────────────────────────────
+    const includedItems   = post.included_items  ?? []
+    const excludedItems   = post.excluded_items  ?? []
     const attractionItems = post.attraction_items ?? []
-    const itineraryDays = post.itinerary_days ?? []
+    const itineraryDays   = post.itinerary_days  ?? []
+    const totalPoints     = routes.reduce((acc, r) => acc + r.points.length, 0)
+
+    // Duration label
+    const durationLabel = itineraryDays.length > 0
+        ? `${itineraryDays.length} өдөр / ${itineraryDays.length - 1} шөнө`
+        : null
+
+    // Unique transport modes from route points
+    const transportModes: TransportMode[] = [
+        ...new Set(routes.flatMap((r) => r.points.map((p) => p.transport_type))),
+    ]
+
+    const whatsapp = landingSettings?.contact_whatsapp ?? null
 
     return (
         <>
             <Navbar />
 
-            {/* ── Hero ─────────────────────────────────────────────── */}
-            <section className="relative h-[72vh] min-h-[500px] bg-gray-900 overflow-hidden">
-                {post.cover_image ? (
-                    <Image
-                        src={post.cover_image}
-                        alt={post.title}
-                        fill
-                        priority
-                        className="object-cover opacity-55"
-                        sizes="100vw"
-                    />
-                ) : (
-                    <div className="absolute inset-0 bg-linear-to-br from-slate-900 to-primary-800" />
-                )}
+            {/* ── 1. Hero ─────────────────────────────────────────── */}
+            <TourHero
+                post={post}
+                routes={routes}
+                itineraryDays={itineraryDays}
+                totalPoints={totalPoints}
+                attractionItems={attractionItems}
+            />
 
-                {/* Gradient overlay — heavier at bottom for text legibility */}
-                <div className="absolute inset-0 bg-linear-to-t from-gray-950 via-gray-950/40 to-gray-950/10" />
+            {/* ── 2. Quick Facts strip ────────────────────────────── */}
+            <TourQuickFacts
+                durationDays={itineraryDays.length > 0 ? itineraryDays.length : undefined}
+                transportModes={transportModes}
+                attractionCount={attractionItems.length}
+            />
 
-                <div className="absolute inset-0 flex flex-col justify-end">
-                    <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-12">
-                        <Link
-                            href="/guides"
-                            className="inline-flex items-center gap-1.5 text-white/60 hover:text-white text-sm mb-5 transition-colors"
-                        >
-                            <FiArrowLeft size={14} /> Бүх багц
-                        </Link>
-
-                        <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-3 text-balance max-w-3xl">
-                            {post.title}
-                        </h1>
-
-                        {post.excerpt && (
-                            <p className="text-white/70 text-lg max-w-2xl leading-relaxed mb-5">
-                                {post.excerpt}
-                            </p>
-                        )}
-
-                        {/* Tour quick stats */}
-                        <div className="flex flex-wrap items-center gap-2">
-                            {itineraryDays.length > 0 && (
-                                <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/20">
-                                    <FiClock size={12} />
-                                    {itineraryDays.length} өдөр
-                                </span>
-                            )}
-                            {routes.length > 0 && (
-                                <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/20">
-                                    <FiMap size={12} />
-                                    {routes.length} маршрут · {totalPoints} зогсоол
-                                </span>
-                            )}
-                            {attractionItems.length > 0 && (
-                                <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/20">
-                                    <FiStar size={12} />
-                                    {attractionItems.length} үзвэр
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Main content + sidebar ─────────────────────────── */}
+            {/* ── Main layout: content + sticky sidebar ─────────── */}
             <div className="bg-gray-50 min-h-screen">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <div className="grid gap-8 lg:grid-cols-[1fr_340px] items-start">
 
-                        {/* ── Left: Main content ─────────────────────── */}
-                        <div className="min-w-0 space-y-8">
+                        {/* ── Left: Marketing content ───────────────────── */}
+                        <div className="min-w-0 space-y-8 order-2 lg:order-1">
 
-                            {/* Overview + Attractions + Included (booking moved to sidebar) */}
-                            <GuidePackages
-                                journeyOverview={post.journey_overview}
-                                packages={post.package_options}
-                                includedItems={includedItems}
-                                attractionItems={attractionItems}
-                                departureSessions={[]}
-                            />
-
-                            {/* Itinerary & Route Map Section */}
-                            {(routes.length > 0 || itineraryDays.length > 0) && (
-                                <RouteSection 
-                                    routes={routes} 
-                                    itineraryDays={itineraryDays} 
-                                    travelTips={post.travel_tips}
-                                />
+                            {/* Journey overview */}
+                            {post.journey_overview && (
+                                <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-primary-600 mb-2">
+                                        Аяллын тойм
+                                    </p>
+                                    <p className="text-gray-700 text-base leading-relaxed max-w-3xl">
+                                        {post.journey_overview}
+                                    </p>
+                                </section>
                             )}
 
-                            {/* Article content */}
+                            {/* ── 3. Highlights ──────────────────────────── */}
+                            <TourHighlights items={attractionItems} />
+
+                            {/* ── 5. Included / Excluded ─────────────────── */}
+                            <TourIncludedExcluded
+                                included={includedItems}
+                                excluded={excludedItems}
+                            />
+
+                            {/* ── 4. Interactive Itinerary & Map ─────────── */}
+                            {(routes.length > 0 || itineraryDays.length > 0) && (
+                                <section id="itinerary" className="scroll-mt-24 space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-xl font-bold text-gray-900">
+                                            Аяллын хөтөлбөр
+                                        </h2>
+                                        {itineraryDays.length > 0 && (
+                                            <span className="text-sm text-gray-500">
+                                                {itineraryDays.length} өдөр
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Structured day-by-day overview cards */}
+                                    {itineraryDays.length > 0 && (
+                                        <TourDailyCards days={itineraryDays} />
+                                    )}
+
+                                    {/* Interactive map + synced timeline (preserved) */}
+                                    <RouteSection
+                                        routes={routes}
+                                        itineraryDays={itineraryDays}
+                                        travelTips={null}
+                                    />
+                                </section>
+                            )}
+
+                            {/* ── Good to Know ───────────────────────────── */}
+                            {post.travel_tips && (
+                                <TourGoodToKnow travelTips={post.travel_tips} />
+                            )}
+
+                            {/* Rich-text article body */}
                             {post.content && (
                                 <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
                                     <article
@@ -151,79 +167,84 @@ export default async function GuideDetailPage({ params }: Props) {
                                     />
                                 </section>
                             )}
+
+                            {/* ── 6. Pricing & Close ─────────────────────── */}
+                            <TourPricingCTA
+                                departureSessions={departureSessions}
+                                whatsappNumber={whatsapp}
+                                title="Энэ аяллыг захиалах"
+                            />
                         </div>
 
-                        {/* ── Right: Sticky sidebar ──────────────────── */}
-                        <aside className="lg:sticky lg:top-20 lg:self-start top-24">
-                            <div>
-                                <TourSidebar
-                                    departureSessions={departureSessions}
-                                    itineraryDays={itineraryDays.length}
-                                    routeCount={routes.length}
-                                    totalPoints={totalPoints}
-                                    attractionCount={attractionItems.length}
-                                />
+                        {/* ── Right: Sticky sidebar (desktop) ──────────── */}
+                        <aside className="order-1 lg:order-2 lg:sticky lg:top-20 lg:self-start">
+                            <TourSidebar
+                                departureSessions={departureSessions}
+                                itineraryDays={itineraryDays.length}
+                                routeCount={routes.length}
+                                totalPoints={totalPoints}
+                                attractionCount={attractionItems.length}
+                            />
 
-                                {/* Quick summary */}
-                                <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                                    <h3 className="font-bold text-gray-900 mb-4 text-sm">
-                                        Товч мэдээлэл
-                                    </h3>
-                                    <dl className="space-y-2.5">
+                            {/* Quick summary card */}
+                            <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                <h3 className="font-bold text-gray-900 mb-4 text-sm">
+                                    Товч мэдээлэл
+                                </h3>
+                                <dl className="space-y-2.5">
+                                    {itineraryDays.length > 0 && (
+                                        <div className="flex justify-between text-sm">
+                                            <dt className="text-gray-500">Хугацаа</dt>
+                                            <dd className="font-medium text-gray-800">
+                                                {itineraryDays.length} өдөр
+                                            </dd>
+                                        </div>
+                                    )}
+                                    {routes.length > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <dt className="text-gray-500">Маршрут</dt>
                                             <dd className="font-medium text-gray-800">{routes.length}</dd>
                                         </div>
-                                        {itineraryDays.length > 0 && (
-                                            <div className="flex justify-between text-sm">
-                                                <dt className="text-gray-500">Хөтөлбөрийн өдөр</dt>
-                                                <dd className="font-medium text-gray-800">
-                                                    {itineraryDays.length}
-                                                </dd>
-                                            </div>
-                                        )}
-                                        <div className="flex justify-between text-sm">
-                                            <dt className="text-gray-500">Нийт зогсоол</dt>
-                                            <dd className="font-medium text-gray-800">{totalPoints}</dd>
-                                        </div>
-                                        {routes.length > 0 && (
-                                            <div className="flex justify-between text-sm">
-                                                <dt className="text-gray-500">Тээвэр</dt>
-                                                <dd className="font-medium text-gray-800 capitalize text-right max-w-36 truncate">
-                                                    {[
-                                                        ...new Set(
-                                                            routes
-                                                                .flatMap((r) => r.points)
-                                                                .map(
-                                                                    (p) =>
-                                                                        p.transport_type
-                                                                            .charAt(0)
-                                                                            .toUpperCase() +
-                                                                        p.transport_type
-                                                                            .slice(1)
-                                                                            .toLowerCase(),
-                                                                ),
-                                                        ),
-                                                    ].join(', ')}
-                                                </dd>
-                                            </div>
-                                        )}
-                                    </dl>
-
-                                    <div className="mt-4 pt-4 border-t border-gray-100">
-                                        <Link
-                                            href="/guides"
-                                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
-                                        >
-                                            <FiArrowLeft size={13} /> Багцууд руу буцах
-                                        </Link>
+                                    )}
+                                    <div className="flex justify-between text-sm">
+                                        <dt className="text-gray-500">Нийт зогсоол</dt>
+                                        <dd className="font-medium text-gray-800">{totalPoints}</dd>
                                     </div>
+                                    {transportModes.length > 0 && (
+                                        <div className="flex justify-between text-sm">
+                                            <dt className="text-gray-500">Тээвэр</dt>
+                                            <dd className="font-medium text-gray-800 capitalize text-right max-w-36 truncate">
+                                                {transportModes
+                                                    .map(
+                                                        (m) =>
+                                                            m.charAt(0).toUpperCase() +
+                                                            m.slice(1).toLowerCase(),
+                                                    )
+                                                    .join(', ')}
+                                            </dd>
+                                        </div>
+                                    )}
+                                </dl>
+                                <div className="mt-4 pt-4 border-t border-gray-100">
+                                    <Link
+                                        href="/guides"
+                                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
+                                    >
+                                        ← Багцууд руу буцах
+                                    </Link>
                                 </div>
                             </div>
                         </aside>
                     </div>
                 </div>
             </div>
+
+            {/* ── 7. Sticky mobile bottom CTA ───────────────────── */}
+            <TourStickyCTA
+                departureSessions={departureSessions}
+                title={post.title}
+                whatsappNumber={whatsapp}
+            />
 
             <Footer />
         </>
