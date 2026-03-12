@@ -5,9 +5,7 @@ import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import GuidePackages from '@/components/GuidePackages'
-import ItineraryTimeline from '@/components/ItineraryTimeline'
-import RouteTimeline from '@/components/RouteTimeline'
-import RouteMap from '@/components/RouteMap'
+import RouteSection from '@/components/RouteSection'
 import TourSidebar from '@/components/TourSidebar'
 import { getTravelGuide, getDepartureSessions } from '@/lib/api'
 import { FiArrowLeft, FiClock, FiMap, FiMapPin, FiStar } from 'react-icons/fi'
@@ -135,54 +133,13 @@ export default async function GuideDetailPage({ params }: Props) {
                                 departureSessions={[]}
                             />
 
-                            {/* Itinerary */}
-                            {itineraryDays.length > 0 && (
-                                <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
-                                            <FiClock size={15} className="text-primary-600" />
-                                        </div>
-                                        <h2 className="text-xl font-bold text-gray-900">
-                                            Аяллын хөтөлбөр
-                                        </h2>
-                                    </div>
-                                    <ItineraryTimeline
-                                        days={itineraryDays}
-                                        travelTips={post.travel_tips}
-                                    />
-                                </section>
-                            )}
-
-                            {/* Interactive Route Map */}
-                            {routes.length > 0 && (
-                                <section className="bg-gray-950 rounded-3xl overflow-hidden shadow-sm">
-                                    <div className="px-6 pt-6 pb-4 flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-primary-600/20 flex items-center justify-center">
-                                            <FiMapPin size={15} className="text-primary-400" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-white font-bold text-lg leading-none">
-                                                Маршрут
-                                            </h2>
-                                        </div>
-                                    </div>
-                                    <RouteMap routes={routes} itineraryDays={itineraryDays} />
-                                </section>
-                            )}
-
-                            {/* Route details */}
-                            {routes.length > 0 && (
-                                <section className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center">
-                                            <FiMap size={15} className="text-primary-600" />
-                                        </div>
-                                        <h2 className="text-xl font-bold text-gray-900">
-                                            Маршрутын дэлгэрэнгүй
-                                        </h2>
-                                    </div>
-                                    <RouteTimeline routes={routes} />
-                                </section>
+                            {/* Itinerary & Route Map Section */}
+                            {(routes.length > 0 || itineraryDays.length > 0) && (
+                                <RouteSection 
+                                    routes={routes} 
+                                    itineraryDays={itineraryDays} 
+                                    travelTips={post.travel_tips}
+                                />
                             )}
 
                             {/* Article content */}

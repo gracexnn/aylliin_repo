@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Route, RoutePoint, TransportMode, ItineraryDay } from '@/lib/types'
 
+import { getDayColor, getTransportVisual, getPointColor, DAY_COLORS } from '@/lib/route-utils'
+
 const BASEMAPS = [
     { id: 'carto-dark',  label: 'Харанхуй', url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',  tilePixelRatio: 2 },
     { id: 'carto-light', label: 'Цайвар',   url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', tilePixelRatio: 2 },
@@ -12,49 +14,6 @@ const BASEMAPS = [
 type BasemapId = typeof BASEMAPS[number]['id']
 
 const LS_KEY = 'aylliin_basemap'
-
-const TRANSPORT_VISUALS: Record<TransportMode, {
-    color: string
-    icon: string
-    curve: number
-    dash?: number[]
-    width: number
-    glow: number
-    badge?: boolean
-}> = {
-    WALKING:    { color: '#22c55e', icon: '🚶', curve: 0.04, width: 3, glow: 12, dash: [4, 6] },
-    DRIVING:    { color: '#f97316', icon: '🚗', curve: 0.02, width: 3, glow: 12 },
-    CYCLING:    { color: '#84cc16', icon: '🚴', curve: 0.03, width: 3, glow: 12, dash: [8, 5] },
-    BUS:        { color: '#eab308', icon: '🚌', curve: 0.03, width: 3, glow: 12, dash: [10, 5] },
-    TRAIN:      { color: '#6366f1', icon: '🚂', curve: 0.07, width: 3, glow: 14, dash: [12, 4] },
-    TRAM:       { color: '#06b6d4', icon: '🚊', curve: 0.06, width: 3, glow: 14, dash: [10, 4] },
-    SUBWAY:     { color: '#8b5cf6', icon: '🚇', curve: 0.05, width: 3, glow: 14, dash: [6, 4] },
-    BOAT:       { color: '#3b82f6', icon: '⛵', curve: 0.16, width: 3, glow: 16, dash: [7, 7], badge: true },
-    FERRY:      { color: '#0ea5e9', icon: '⛴️', curve: 0.14, width: 3, glow: 16, dash: [9, 7], badge: true },
-    PLANE:      { color: '#ec4899', icon: '✈️', curve: 0.28, width: 3, glow: 18, dash: [12, 8], badge: true },
-    HELICOPTER: { color: '#f43f5e', icon: '🚁', curve: 0.22, width: 3, glow: 18, dash: [8, 8], badge: true },
-}
-
-/** One distinct color per itinerary day (1-indexed, repeating). */
-const DAY_COLORS = [
-    '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4',
-    '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f59e0b',
-    '#10b981', '#6366f1', '#d946ef', '#84cc16',
-]
-
-function getDayColor(dayNumber: number): string {
-    return DAY_COLORS[(dayNumber - 1) % DAY_COLORS.length]
-}
-
-function getTransportVisual(mode?: TransportMode) {
-    return TRANSPORT_VISUALS[mode ?? 'WALKING']
-}
-
-/** Day color if assigned, otherwise transport color. */
-function getPointColor(point: RoutePoint): string {
-    if (point.day_number != null) return getDayColor(point.day_number)
-    return getTransportVisual(point.transport_type).color
-}
 
 function buildSegmentPath(
     from: Pick<RoutePoint, 'longitude' | 'latitude'>,
@@ -115,9 +74,11 @@ type OLModules = {
 interface RouteMapProps {
     routes: Route[]
     itineraryDays?: ItineraryDay[]
+    activeDayFilter?: number | null
+    onDayFilterChange?: (day: number | null) => void
 }
 
-export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) {
+export default function RouteMap({ routes, itineraryDays = [], activeDayFilter = null, onDayFilterChange }: RouteMapProps) {
     const mapRef          = useRef<HTMLDivElement>(null)
     const mapInstanceRef  = useRef<import('ol/Map').default | null>(null)
     const tileLayerRef    = useRef<import('ol/layer/Tile').default<import('ol/source/XYZ').default> | null>(null)
@@ -127,7 +88,6 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
     const [loaded,          setLoaded]         = useState(false)
     const [mapReady,        setMapReady]        = useState(false)
     const [popup,           setPopup]           = useState<PopupState>(null)
-    const [activeDayFilter, setActiveDayFilter] = useState<number | null>(null)
     const [basemap,         setBasemap]         = useState<BasemapId>(() => {
         if (typeof window === 'undefined') return 'carto-dark'
         const saved = localStorage.getItem(LS_KEY)
@@ -317,7 +277,8 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
 
             pts.forEach((pt, idx) => {
                 const active  = isPointActive(pt)
-                const color   = getPointColor(pt)
+                const fillColor   = active ? getPointColor(pt) : '#374151'
+                const outlineColor = active ? '#ffffff' : '#4b5563'
                 const isFirst = idx === 0
                 const isLast  = idx === pts.length - 1
                 const radius  = (isFirst || isLast) ? 16 : (active ? 13 : 8)
@@ -330,8 +291,8 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
                 f.setStyle(new Style({
                     image: new CircleStyle({
                         radius,
-                        fill:   new Fill({ color: active ? color : '#374151' }),
-                        stroke: new Stroke({ color: active ? '#ffffff' : '#4b5563', width: active ? 2.5 : 1.5 }),
+                        fill:   new Fill({ color: fillColor }),
+                        stroke: new Stroke({ color: outlineColor, width: active ? 3 : 1.5 }),
                     }),
                     text: new Text({
                         text:    String(idx + 1),
@@ -390,7 +351,7 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
             {sortedDays.length > 0 && loaded && (
                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-gray-950/85 backdrop-blur-md px-3 py-2 rounded-full shadow-lg">
                     <button
-                        onClick={() => setActiveDayFilter(null)}
+                        onClick={() => onDayFilterChange?.(null)}
                         className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                             activeDayFilter === null
                                 ? 'bg-white text-gray-900 shadow'
@@ -405,7 +366,7 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
                         return (
                             <button
                                 key={day.day_number}
-                                onClick={() => setActiveDayFilter(isActive ? null : day.day_number)}
+                                onClick={() => onDayFilterChange?.(isActive ? null : day.day_number)}
                                 title={day.title || `Өдөр ${day.day_number}`}
                                 className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
                                 style={{

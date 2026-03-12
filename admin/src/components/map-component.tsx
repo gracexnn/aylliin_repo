@@ -194,7 +194,6 @@ export default function MapComponent({
       TRANSPORT_MODE_MAP[mode as keyof typeof TRANSPORT_MODE_MAP]?.color ?? '#3b82f6';
 
     const getPointColor = (point: RoutePoint) => {
-      if (point.day_number != null) return getDayColor(point.day_number);
       return getTransportColor(point.transport_type);
     };
 
@@ -234,6 +233,7 @@ export default function MapComponent({
       const isSelected = i === selectedIndex;
       const active = isPointActive(point);
       const color = active ? getPointColor(point) : '#9ca3af';
+      const outlineColor = '#ffffff';
       const radius = isSelected ? 13 : active ? 10 : 7;
       const fillColor = isSelected ? '#ef4444' : color;
       const pf = new Feature(new Point(fromLonLat([point.longitude, point.latitude])));
@@ -244,7 +244,7 @@ export default function MapComponent({
             radius,
             fill: new Fill({ color: fillColor }),
             stroke: new Stroke({
-              color: '#ffffff',
+              color: outlineColor,
               width: isSelected ? 3 : active ? 2 : 1,
             }),
           }),
