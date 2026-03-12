@@ -18,6 +18,49 @@ npm run db:migrate
 npm run auth:seed-admin
 ```
 
+## Landing Page Settings
+
+Non-technical admins can edit key landing-page content from **Admin → Тохиргоо → Нүүр тохиргоо** without any code changes.
+
+### Editable sections
+
+| Section | Fields |
+|---|---|
+| **Hero** | Title, subtitle, primary CTA (text + URL), secondary CTA (text + URL) |
+| **Contact** | Email, phone, address, WhatsApp |
+| **Social** | Facebook URL, Instagram URL, LinkedIn URL |
+| **Footer & Announcement** | Announcement banner text, footer blurb |
+| **SEO** | Meta title, meta description, OG image URL |
+
+### How changes propagate
+
+1. Admin saves settings via `PUT /api/admin/landing-settings`.
+2. Settings are stored as a single row in the `landing_page_settings` table (singleton pattern with a fixed UUID).
+3. The client fetches the latest settings from the public endpoint `GET /api/public/landing-settings` on each server-render (revalidated every 5 minutes via Next.js ISR).
+4. Changes appear on the public landing page within **≤5 minutes** of saving.
+
+### Fallback behaviour
+
+If no settings have been saved yet (fresh install), or a field is blank, the client automatically falls back to the defaults defined in `client/src/app/page.tsx` (`DEFAULTS`) and `client/src/site.config.ts`. The landing page will never break due to missing settings.
+
+### Adding a new field
+
+1. **Schema** — add the column to `model LandingPageSettings` in `admin/prisma/schema.prisma`.
+2. **Migration** — create a new migration file under `admin/prisma/migrations/`.
+3. **Zod** — add the field to `LandingSettingsSchema` in `admin/src/schemas/index.ts`.
+4. **Client type** — add the field to `LandingSettings` in `client/src/lib/types.ts`.
+5. **Admin UI** — add an input inside the relevant `SectionCard` in `admin/src/app/dashboard/landing-settings/page.tsx`.
+6. **Client rendering** — read the new field in `client/src/app/page.tsx` (or whichever component needs it) with a fallback value.
+7. Run `npx prisma generate` inside `admin/` after the schema change.
+
+### API endpoints
+
+| Method | Route | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/admin/landing-settings` | Required | Fetch current settings (admin use) |
+| `PUT` | `/api/admin/landing-settings` | Required | Save / update settings |
+| `GET` | `/api/public/landing-settings` | Public | Fetch settings for client rendering |
+
 ## Getting Started
 
 First, run the development server:

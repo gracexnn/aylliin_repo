@@ -1,11 +1,22 @@
 import Link from 'next/link'
 import { MdExplore } from 'react-icons/md'
-import { FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi'
+import { FiInstagram, FiFacebook, FiLinkedin } from 'react-icons/fi'
 import siteConfig from '@/site.config'
+import type { LandingSettings } from '@/lib/types'
 
 const footerLinks = siteConfig.footer.links
 
-export default function Footer() {
+export default function Footer({ settings }: { settings?: LandingSettings | null }) {
+    const footerBlurb = settings?.footer_blurb ?? siteConfig.footer.description
+    const instagramUrl = settings?.instagram_url ?? siteConfig.social.instagram
+    const facebookUrl = settings?.facebook_url ?? siteConfig.social.facebook
+    const linkedinUrl = settings?.linkedin_url ?? null
+
+    const socialLinks = [
+        { Icon: FiInstagram, href: instagramUrl },
+        { Icon: FiFacebook, href: facebookUrl },
+        { Icon: FiLinkedin, href: linkedinUrl },
+    ]
     return (
         <footer className="bg-gray-900 text-gray-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -19,24 +30,20 @@ export default function Footer() {
                             <span className="font-bold text-xl text-white">{siteConfig.name}</span>
                         </Link>
                         <p className="text-sm text-gray-400 leading-relaxed max-w-sm">
-                            {siteConfig.footer.description}
+                            {footerBlurb}
                         </p>
                         <div className="flex items-center gap-3 mt-6">
-                            {(
-                                [
-                                    [FiInstagram, siteConfig.social.instagram],
-                                    [FiTwitter, siteConfig.social.twitter],
-                                    [FiFacebook, siteConfig.social.facebook],
-                                ] as const
-                            ).map(([Icon, href], i) => (
-                                <a
-                                    key={i}
-                                    href={href}
-                                    className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary-600 hover:text-white transition-all"
-                                >
-                                    <Icon size={16} />
-                                </a>
-                            ))}
+                            {socialLinks.map(({ Icon, href }, index) =>
+                                href ? (
+                                    <a
+                                        key={index}
+                                        href={href}
+                                        className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-primary-600 hover:text-white transition-all"
+                                    >
+                                        <Icon size={16} />
+                                    </a>
+                                ) : null
+                            )}
                         </div>
                     </div>
 

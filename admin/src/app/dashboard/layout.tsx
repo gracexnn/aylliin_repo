@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LogoutButton from '@/components/logout-button';
-import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon, Library, MapPin, Sparkles, ListChecks } from 'lucide-react';
+import { LayoutDashboard, FileText, Map, Calendar, Users, ChevronLeft, ChevronRight, Sun, Moon, Library, MapPin, Sparkles, ListChecks, Globe } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 const navItems = [
@@ -14,6 +14,10 @@ const navItems = [
   { href: '/dashboard/posts', label: 'Багцууд', icon: FileText },
   { href: '/dashboard/departure-sessions', label: 'Явах товууд', icon: Calendar },
   { href: '/dashboard/bookings', label: 'Захиалгууд', icon: Users },
+];
+
+const settingsNavItems = [
+  { href: '/dashboard/landing-settings', label: 'Нүүр тохиргоо', icon: Globe },
 ];
 
 const libraryNavItems = [
@@ -30,15 +34,17 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  const isDark = resolvedTheme === 'dark';
+  const isDark = mounted && resolvedTheme === 'dark';
 
   return (
-    <div className="flex h-dvh bg-background overflow-hidden">
+    <div className="flex h-full w-full bg-background overflow-hidden">
       {/* Sidebar */}
       <aside
         className={cn(
-          'relative flex h-dvh flex-col border-r bg-card transition-all duration-300 shrink-0',
+          'relative flex h-full flex-col border-r bg-card transition-all duration-300 shrink-0',
           collapsed ? 'w-16' : 'w-64'
         )}
       >
@@ -99,6 +105,59 @@ export default function DashboardLayout({
               </Link>
             );
           })}
+
+          {/* Settings section */}
+          <div className={cn('pt-3', collapsed ? 'flex flex-col items-center' : '')}>
+            <AnimatePresence initial={false}>
+              {!collapsed && (
+                <motion.div
+                  key="settings-label"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="flex items-center gap-1 px-3 pb-1"
+                >
+                  <Globe className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Тохиргоо</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {settingsNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    collapsed ? 'justify-center' : '',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <AnimatePresence initial={false}>
+                    {!collapsed && (
+                      <motion.span
+                        key={`settings-label-${item.href}`}
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="whitespace-nowrap overflow-hidden"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Link>
+              );
+            })}
+          </div>
 
           {/* Library section */}
           <div className={cn('pt-3', collapsed ? 'flex flex-col items-center' : '')}>
@@ -166,7 +225,9 @@ export default function DashboardLayout({
               collapsed ? 'w-full justify-center px-0' : 'w-full'
             )}
           >
-            {isDark ? (
+            {!mounted ? (
+              <Sun className="h-4 w-4 shrink-0 opacity-0" aria-hidden />
+            ) : isDark ? (
               <Sun className="h-4 w-4 shrink-0" />
             ) : (
               <Moon className="h-4 w-4 shrink-0" />
@@ -221,7 +282,6 @@ export default function DashboardLayout({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="min-h-full"
         >
           {children}
         </motion.div>

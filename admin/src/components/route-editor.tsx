@@ -291,6 +291,30 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
     }
   };
 
+  const quickUpdatePointDay = async (point: RoutePoint, dayNumber: number | null) => {
+    if (!point.id || !route) return;
+    try {
+      const res = await fetch(`/api/route-points/${point.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...point, day_number: dayNumber }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setRoute((prev) =>
+          prev
+            ? {
+                ...prev,
+                points: prev.points.map((p) => (p.id === updated.id ? updated : p)),
+              }
+            : prev
+        );
+      }
+    } catch (error) {
+      console.error('Failed to quick update point day:', error);
+    }
+  };
+
   const deletePoint = async (pointId: string) => {
     try {
       await fetch(`/api/route-points/${pointId}`, { method: 'DELETE' });
@@ -499,15 +523,32 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                           {point.latitude.toFixed(4)}, {point.longitude.toFixed(4)}
                         </p>
                       </div>
-                      {point.day_number != null && (
-                        <Badge
-                          variant="outline"
-                          className="shrink-0 text-xs"
-                          style={{ borderColor: getDayColor(point.day_number), color: getDayColor(point.day_number) }}
+                      <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <Select
+                          value={point.day_number != null ? String(point.day_number) : 'none'}
+                          onValueChange={(v) => quickUpdatePointDay(point, v === 'none' ? null : Number(v))}
                         >
-                          Өдөр {point.day_number}
-                        </Badge>
-                      )}
+                          <SelectTrigger 
+                            className="h-8 w-28 text-xs font-medium" 
+                            style={point.day_number != null ? {
+                              borderColor: getDayColor(point.day_number),
+                              color: getDayColor(point.day_number)
+                            } : {}}
+                          >
+                            <SelectValue placeholder="Өдөргүй" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">
+                              <span className="text-muted-foreground">— Өдөргүй —</span>
+                            </SelectItem>
+                            {itineraryDays.map((day) => (
+                              <SelectItem key={day.day_number} value={String(day.day_number)}>
+                                Өдөр {day.day_number}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <Badge
                         variant="outline"
                         className="shrink-0 gap-1 text-xs"

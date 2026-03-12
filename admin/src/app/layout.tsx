@@ -2,11 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
-import siteConfig from '@/site.config';
 
 export const metadata: Metadata = {
-  title: siteConfig.admin.title,
-  description: siteConfig.admin.description,
+  title: 'Аяллын админ',
+  description: 'Аяллын багцуудыг удирдах админ самбар',
   robots: {
     index: false,
     follow: false,
@@ -25,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
+      <body className="h-screen overflow-hidden bg-background font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />

@@ -423,19 +423,19 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
 
             {/* Route legend — top-left */}
             {routes.length >= 1 && loaded && (
-                <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none">
+                <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none max-w-[calc(100vw-8rem)] sm:max-w-[240px]">
                     {routes.map((route, idx) => (
                         <div
                             key={route.id}
-                            className="flex items-center gap-2 bg-gray-950/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-white font-medium shadow"
+                            className="flex items-center gap-2 bg-gray-950/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-white font-medium shadow min-w-0"
                         >
                             <span
                                 className="w-2.5 h-2.5 rounded-full shrink-0"
                                 style={{ backgroundColor: DAY_COLORS[idx % DAY_COLORS.length] }}
                             />
-                            {route.title}
-                            <span className="text-white/40">·</span>
-                            <span className="text-white/50">{route.points.length} цэг</span>
+                            <span className="truncate">{route.title}</span>
+                            <span className="text-white/40 shrink-0">·</span>
+                            <span className="text-white/50 shrink-0">{route.points.length} цэг</span>
                         </div>
                     ))}
                 </div>
@@ -444,18 +444,20 @@ export default function RouteMap({ routes, itineraryDays = [] }: RouteMapProps) 
             {/* Top-right: basemap chooser */}
             {loaded && (
                 <div className="absolute top-3 right-3">
-                    <div className="flex items-center gap-1 bg-gray-950/80 backdrop-blur-md p-1 rounded-full shadow">
+                    <div className="flex items-center gap-0.5 bg-gray-950/80 backdrop-blur-md p-1 rounded-full shadow">
                         {BASEMAPS.map((bm) => (
                             <button
                                 key={bm.id}
                                 onClick={() => setBasemap(bm.id)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                                title={bm.label}
+                                className={`px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium transition-all ${
                                     basemap === bm.id
                                         ? 'bg-primary-600 text-white shadow-sm'
                                         : 'text-white/50 hover:text-white hover:bg-white/10'
                                 }`}
                             >
-                                {bm.label}
+                                <span className="hidden sm:inline">{bm.label}</span>
+                                <span className="sm:hidden">{bm.label.charAt(0)}</span>
                             </button>
                         ))}
                     </div>
