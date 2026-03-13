@@ -185,55 +185,6 @@ export default async function GuideDetailPage({ params }: Props) {
                                 totalPoints={totalPoints}
                                 attractionCount={attractionItems.length}
                             />
-
-                            {/* Quick summary card */}
-                            <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                                <h3 className="font-bold text-gray-900 mb-4 text-sm">
-                                    Товч мэдээлэл
-                                </h3>
-                                <dl className="space-y-2.5">
-                                    {itineraryDays.length > 0 && (
-                                        <div className="flex justify-between text-sm">
-                                            <dt className="text-gray-500">Хугацаа</dt>
-                                            <dd className="font-medium text-gray-800">
-                                                {itineraryDays.length} өдөр
-                                            </dd>
-                                        </div>
-                                    )}
-                                    {routes.length > 0 && (
-                                        <div className="flex justify-between text-sm">
-                                            <dt className="text-gray-500">Маршрут</dt>
-                                            <dd className="font-medium text-gray-800">{routes.length}</dd>
-                                        </div>
-                                    )}
-                                    <div className="flex justify-between text-sm">
-                                        <dt className="text-gray-500">Нийт зогсоол</dt>
-                                        <dd className="font-medium text-gray-800">{totalPoints}</dd>
-                                    </div>
-                                    {transportModes.length > 0 && (
-                                        <div className="flex justify-between text-sm">
-                                            <dt className="text-gray-500">Тээвэр</dt>
-                                            <dd className="font-medium text-gray-800 capitalize text-right max-w-36 truncate">
-                                                {transportModes
-                                                    .map(
-                                                        (m) =>
-                                                            m.charAt(0).toUpperCase() +
-                                                            m.slice(1).toLowerCase(),
-                                                    )
-                                                    .join(', ')}
-                                            </dd>
-                                        </div>
-                                    )}
-                                </dl>
-                                <div className="mt-4 pt-4 border-t border-gray-100">
-                                    <Link
-                                        href="/guides"
-                                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
-                                    >
-                                        ← Багцууд руу буцах
-                                    </Link>
-                                </div>
-                            </div>
                         </aside>
                     </div>
                 </div>
