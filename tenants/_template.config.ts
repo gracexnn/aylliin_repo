@@ -14,21 +14,25 @@
  *       client/public/  (e.g. favicon.ico, apple-touch-icon.png, logo.png)
  *     (You can keep separate asset sets per tenant in  client/public/<agency-id>/)
  *
- *  4. Provision a fresh PostgreSQL database for this agency and note the URL.
+ *  4. Copy  tenants/<agency-id>.config.ts  into both app config locations:
+ *       cp tenants/<agency-id>.config.ts admin/src/site.config.ts
+ *       cp tenants/<agency-id>.config.ts client/src/site.config.ts
+ *     Commit these files — they are tracked in git and deployed as-is.
+ *
+ *  5. Provision a fresh PostgreSQL database for this agency and note the URL.
  *     Each agency gets its own completely isolated database — no data mixing.
  *
- *  5. Copy  admin/.env.example → admin/.env.local  for the new deployment and
+ *  6. Copy  admin/.env.example → admin/.env.local  for the new deployment and
  *     set at minimum:
- *       TENANT_ID=<agency-id>
  *       DATABASE_URL=postgresql://user:pass@host:5432/<agency_db>
  *     See admin/.env.example for all required variables.
  *
- *  6. Bootstrap the new database:
+ *  7. Bootstrap the new database:
  *       cd admin
  *       npm run db:migrateprod   # apply schema to the new DB
  *       npm run auth:seed-admin  # create the first admin user
  *
- *  7. That's it! You share the exact same codebase for every agency.
+ *  8. That's it! You share the exact same codebase for every agency.
  *     To push a code update to all agencies, just update the shared code —
  *     each tenant's next build picks it up automatically.
  *
