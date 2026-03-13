@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import siteConfig from '@/site.config';
 
 function getSafeRedirectTarget(value: string | null) {
   if (!value || !value.startsWith('/')) {
@@ -64,7 +65,7 @@ function LoginForm() {
             <Map className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-2xl">Aylal Админ</CardTitle>
+            <CardTitle className="text-2xl">{siteConfig.name} Админ</CardTitle>
             <CardDescription>Админ хэсэг рүү нэвтрэхийн тулд имэйл хаяг болон нууц үгээ оруулна уу.</CardDescription>
           </div>
         </CardHeader>
