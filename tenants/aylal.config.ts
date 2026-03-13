@@ -1,7 +1,13 @@
-// ─── Active tenant configuration ──────────────────────────────────────────
-// This is the Aylal brand config. To deploy for a different agency, replace
-// this file's contents with the appropriate config from tenants/<id>.config.ts
-// ──────────────────────────────────────────────────────────────────────────
+/**
+ * Tenant configuration for "Aylal" (the default/demo agency).
+ *
+ * To deploy for a different agency, copy the relevant config from this
+ * tenants/ directory into admin/src/site.config.ts and client/src/site.config.ts.
+ *
+ * Each agency deployment also needs its own environment variables, including a
+ * dedicated DATABASE_URL for an isolated PostgreSQL database.
+ * See admin/.env.example for all required variables.
+ */
 
 // ─── Theme ─────────────────────────────────────────────────────────────────
 // Exported separately (not `as const`) so tailwind.config.ts can consume it

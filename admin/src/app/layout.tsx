@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
+import siteConfig from '@/site.config';
 
 export const metadata: Metadata = {
-  title: 'Аяллын админ',
-  description: 'Аяллын багцуудыг удирдах админ самбар',
+  title: siteConfig.admin.title,
+  description: siteConfig.admin.description,
   robots: {
     index: false,
     follow: false,
