@@ -160,7 +160,7 @@ export default async function HomePage() {
     return (
         <>
             <Navbar />
-            <AnnouncementBanner text={settings?.announcement_text ?? null} />
+            {/* <AnnouncementBanner text={settings?.announcement_text ?? null} /> */}
 
             {/* ─── Hero ─────────────────────────────────────────── */}
             <section className="relative overflow-hidden bg-hero-gradient">
