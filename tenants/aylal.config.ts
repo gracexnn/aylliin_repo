@@ -1,11 +1,12 @@
 /**
  * Tenant configuration for "Aylal" (the default/demo agency).
  *
- * To create a new agency, copy this file and rename it:
+ * To create a new agency, copy tenants/_template.config.ts and rename it:
  *   tenants/<agency-id>.config.ts
  *
- * Then deploy with the environment variable:
- *   TENANT_ID=<agency-id>
+ * Each agency deployment also needs its own environment variables, including a
+ * dedicated DATABASE_URL for an isolated PostgreSQL database.
+ * See admin/.env.example for all required variables.
  *
  * Run `node sync-config.mjs` (or let the predev/prebuild hook do it) to
  * propagate the selected config to both apps before building/running.
