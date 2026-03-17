@@ -77,13 +77,19 @@ export async function POST(req: NextRequest) {
                 }
 
                 // Release reserved seats (guard against underflow)
-                await tx.departureSession.updateMany({
+                const seatReleaseResult = await tx.departureSession.updateMany({
                     where: {
                         id: booking.departure_session_id,
                         seats_booked: { gte: booking.passenger_count },
                     },
                     data: { seats_booked: { decrement: booking.passenger_count } },
                 })
+
+                if (seatReleaseResult.count === 0) {
+                    throw new Error(
+                        `Failed to release seats for booking ${booking.booking_code}: seats_booked < passenger_count`
+                    )
+                }
 
                 // Re-open the session if it was FULL and now has available capacity
                 const sessionAfterRelease = await tx.departureSession.findUnique({
