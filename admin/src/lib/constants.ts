@@ -7,91 +7,152 @@ export interface TransportModeOption {
   description: string;
   /** Hex color used to render the route line and markers on the map */
   color: string;
+  /** Curvature strength used for segment rendering. */
+  curve: number;
+  /** Optional dash pattern for route segments. */
+  dash?: number[];
+  /** Segment stroke width in px. */
+  width: number;
+  /** Glow stroke width in px for active segments. */
+  glow: number;
+  /** Whether to render an icon badge on the segment midpoint. */
+  badge?: boolean;
 }
 
 export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
   {
     value: 'WALKING',
-    label: 'Walking',
+    label: 'Явган',
     icon: '🚶',
-    description: 'On foot',
+    description: 'Алхалт',
     color: '#22c55e', // green
+    curve: 0.04,
+    dash: [4, 6],
+    width: 3,
+    glow: 12,
   },
   {
     value: 'CYCLING',
-    label: 'Cycling',
+    label: 'Дугуй',
     icon: '🚴',
-    description: 'By bicycle',
+    description: 'Унадаг дугуй',
     color: '#84cc16', // lime
+    curve: 0.03,
+    dash: [8, 5],
+    width: 3,
+    glow: 12,
   },
   {
     value: 'DRIVING',
-    label: 'Driving',
+    label: 'Машин',
     icon: '🚗',
     description: 'By car',
     color: '#f97316', // orange
+    curve: 0.02,
+    width: 3,
+    glow: 12,
   },
   {
     value: 'BUS',
-    label: 'Bus',
+    label: 'Автобус',
     icon: '🚌',
     description: 'By bus',
     color: '#eab308', // yellow
+    curve: 0.03,
+    dash: [10, 5],
+    width: 3,
+    glow: 12,
   },
   {
     value: 'TRAM',
-    label: 'Tram',
+    label: 'Трамвай',
     icon: '🚊',
     description: 'By tram or streetcar',
     color: '#06b6d4', // cyan
+    curve: 0.06,
+    dash: [10, 4],
+    width: 3,
+    glow: 14,
   },
   {
     value: 'SUBWAY',
-    label: 'Subway / Metro',
+    label: 'Метро',
     icon: '🚇',
     description: 'By underground rail',
     color: '#8b5cf6', // violet
+    curve: 0.05,
+    dash: [6, 4],
+    width: 3,
+    glow: 14,
   },
   {
     value: 'TRAIN',
-    label: 'Train',
+    label: 'Галт тэрэг',
     icon: '🚂',
     description: 'By train or rail',
     color: '#6366f1', // indigo
+    curve: 0.07,
+    dash: [12, 4],
+    width: 3,
+    glow: 14,
   },
   {
     value: 'BOAT',
-    label: 'Boat',
+    label: 'Завь',
     icon: '⛵',
     description: 'By boat or sailboat',
     color: '#3b82f6', // blue
+    curve: 0.16,
+    dash: [7, 7],
+    width: 3,
+    glow: 16,
+    badge: true,
   },
   {
     value: 'FERRY',
-    label: 'Ferry',
+    label: 'Усан онгоц',
     icon: '⛴️',
     description: 'By ferry or water taxi',
     color: '#0ea5e9', // sky
+    curve: 0.14,
+    dash: [9, 7],
+    width: 3,
+    glow: 16,
+    badge: true,
   },
   {
     value: 'PLANE',
-    label: 'Plane',
+    label: 'Нислэг',
     icon: '✈️',
     description: 'By airplane',
     color: '#ec4899', // pink
+    curve: 0.28,
+    dash: [12, 8],
+    width: 3,
+    glow: 18,
+    badge: true,
   },
   {
     value: 'HELICOPTER',
-    label: 'Helicopter',
+    label: 'Нисдэг тэрэг',
     icon: '🚁',
     description: 'By helicopter',
     color: '#f43f5e', // rose
+    curve: 0.22,
+    dash: [8, 8],
+    width: 3,
+    glow: 18,
+    badge: true,
   },
 ];
 
 export const TRANSPORT_MODE_MAP = Object.fromEntries(
   TRANSPORT_MODE_OPTIONS.map((opt) => [opt.value, opt])
 ) as Record<TransportMode, TransportModeOption>;
+
+export function getTransportVisual(mode?: TransportMode): TransportModeOption {
+  return TRANSPORT_MODE_MAP[mode ?? 'WALKING'];
+}
 
 /** A repeating palette of colors for itinerary day numbers (1-indexed). */
 export const DAY_COLORS = [

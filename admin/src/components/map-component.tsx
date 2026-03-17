@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { TRANSPORT_MODE_MAP, getDayColor } from '@/lib/constants';
+import { getTransportVisual } from '@/lib/constants';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -20,6 +20,43 @@ interface RoutePoint {
   order_index: number;
   transport_type?: string;
   day_number?: number | null;
+}
+
+function buildSegmentPath(
+  from: Pick<RoutePoint, 'longitude' | 'latitude'>,
+  to: Pick<RoutePoint, 'longitude' | 'latitude'>,
+  curveStrength: number,
+  steps = 28
+) {
+  const start: [number, number] = [from.longitude, from.latitude];
+  const end: [number, number] = [to.longitude, to.latitude];
+
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  const distance = Math.max(Math.hypot(dx, dy), 0.0001);
+
+  if (curveStrength <= 0.025) {
+    return [start, end];
+  }
+
+  const nx = -dy / distance;
+  const ny = dx / distance;
+  const bendDirection = Math.sin(start[0] * 7.13 + start[1] * 5.71 + end[0] * 3.17) >= 0 ? 1 : -1;
+  const bend = distance * curveStrength * bendDirection;
+
+  const control: [number, number] = [
+    (start[0] + end[0]) / 2 + nx * bend,
+    (start[1] + end[1]) / 2 + ny * bend,
+  ];
+
+  return Array.from({ length: steps }, (_, index) => {
+    const t = index / (steps - 1);
+    const mt = 1 - t;
+    return [
+      mt * mt * start[0] + 2 * mt * t * control[0] + t * t * end[0],
+      mt * mt * start[1] + 2 * mt * t * control[1] + t * t * end[1],
+    ] as [number, number];
+  });
 }
 
 interface MapComponentProps {
@@ -139,11 +176,31 @@ export default function MapComponent({
       mapInstanceRef.current = map;
       setMapReady(true);
 
+      const findClickedPointIndex = (pixel: number[]): number | null => {
+        let clickedPointIndex: number | null = null;
+
+        map.forEachFeatureAtPixel(
+          pixel,
+          (feature) => {
+            const pointIndex = feature.get('pointIndex');
+            if (pointIndex !== undefined) {
+              clickedPointIndex = Number(pointIndex);
+              return true;
+            }
+            return false;
+          },
+          { hitTolerance: 10 }
+        );
+
+        return clickedPointIndex;
+      };
+
       if (interactive && onMapClick) {
         map.on('click', (evt) => {
-          const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
-          if (feature && feature.get('pointIndex') !== undefined) {
-            onPointClick?.(feature.get('pointIndex') as number);
+          const clickedPointIndex = findClickedPointIndex(evt.pixel as number[]);
+
+          if (clickedPointIndex !== null) {
+            onPointClick?.(clickedPointIndex);
           } else {
             const lonLat = toLonLat(evt.coordinate);
             onMapClick(lonLat[1], lonLat[0]);
@@ -151,9 +208,9 @@ export default function MapComponent({
         });
       } else if (onPointClick) {
         map.on('click', (evt) => {
-          const feature = map.forEachFeatureAtPixel(evt.pixel, (f) => f);
-          if (feature && feature.get('pointIndex') !== undefined) {
-            onPointClick(feature.get('pointIndex') as number);
+          const clickedPointIndex = findClickedPointIndex(evt.pixel as number[]);
+          if (clickedPointIndex !== null) {
+            onPointClick(clickedPointIndex);
           }
         });
       }
@@ -190,11 +247,8 @@ export default function MapComponent({
 
     const { Feature, Point, LineString, fromLonLat, Style, CircleStyle, Fill, Stroke, Text } = m;
 
-    const getTransportColor = (mode?: string) =>
-      TRANSPORT_MODE_MAP[mode as keyof typeof TRANSPORT_MODE_MAP]?.color ?? '#3b82f6';
-
     const getPointColor = (point: RoutePoint) => {
-      return getTransportColor(point.transport_type);
+      return getTransportVisual(point.transport_type as Parameters<typeof getTransportVisual>[0]).color;
     };
 
     vs.clear();
@@ -210,22 +264,67 @@ export default function MapComponent({
 
     // Per-segment lines
     for (let i = 0; i < sorted.length - 1; i++) {
-      const from = fromLonLat([sorted[i].longitude, sorted[i].latitude]);
-      const to = fromLonLat([sorted[i + 1].longitude, sorted[i + 1].latitude]);
+      const fromPoint = sorted[i];
+      const toPoint = sorted[i + 1];
+      const visual = getTransportVisual(fromPoint.transport_type as Parameters<typeof getTransportVisual>[0]);
       const segActive = !isDayFilterActive ||
-        (sorted[i].day_number === activeDayFilter && sorted[i + 1].day_number === activeDayFilter);
-      const color = segActive ? getPointColor(sorted[i]) : '#d1d5db';
-      const seg = new Feature(new LineString([from, to]));
+        (fromPoint.day_number === activeDayFilter && toPoint.day_number === activeDayFilter);
+      const color = segActive ? getPointColor(fromPoint) : '#9ca3af';
+
+      const lonLatPath = buildSegmentPath(fromPoint, toPoint, visual.curve);
+      const coords = lonLatPath.map(([lon, lat]) => fromLonLat([lon, lat]));
+
+      if (segActive) {
+        const glow = new Feature(new LineString(coords));
+        glow.setStyle(
+          new Style({
+            stroke: new Stroke({
+              color: `${color}33`,
+              width: visual.glow,
+              lineCap: 'round',
+              lineJoin: 'round',
+            }),
+            zIndex: 1,
+          })
+        );
+        vs.addFeature(glow);
+      }
+
+      const seg = new Feature(new LineString(coords));
       seg.setStyle(
         new Style({
           stroke: new Stroke({
-            color,
-            width: segActive ? 3 : 1.5,
-            lineDash: [6, 4],
+            color: segActive ? color : `${color}88`,
+            width: segActive ? visual.width : 1.5,
+            lineDash: visual.dash,
+            lineCap: 'round',
+            lineJoin: 'round',
           }),
+          zIndex: 2,
         })
       );
       vs.addFeature(seg);
+
+      if (visual.badge && segActive) {
+        const midCoord = coords[Math.floor(coords.length / 2)];
+        const badge = new Feature(new Point(midCoord));
+        badge.setStyle(
+          new Style({
+            image: new CircleStyle({
+              radius: 11,
+              fill: new Fill({ color: '#020617dd' }),
+              stroke: new Stroke({ color, width: 2 }),
+            }),
+            text: new Text({
+              text: visual.icon,
+              font: '12px "Apple Color Emoji", "Segoe UI Emoji", sans-serif',
+              offsetY: 0.5,
+            }),
+            zIndex: 4,
+          })
+        );
+        vs.addFeature(badge);
+      }
     }
 
     // Point markers

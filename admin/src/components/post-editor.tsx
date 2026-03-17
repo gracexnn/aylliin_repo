@@ -559,7 +559,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
                       </Button>
                     </div>
 
-                    {pkg.departures.map((departure, departureIndex) => (
+                    {(pkg && pkg?.departures) && pkg.departures.map((departure, departureIndex) => (
                       <div key={`departure-${packageIndex}-${departureIndex}`} className="grid gap-2 md:grid-cols-[1.5fr_1fr_1fr_auto]">
                         <Input
                           value={departure.label}
@@ -592,7 +592,7 @@ export default function PostEditor({ initialData, postId, onSave }: PostEditorPr
                       </Button>
                     </div>
 
-                    {pkg.notes.map((note, noteIndex) => (
+                    { (pkg && pkg?.notes) && pkg.notes.map((note, noteIndex) => (
                       <div key={`note-${packageIndex}-${noteIndex}`} className="flex gap-2">
                         <Input
                           value={note}

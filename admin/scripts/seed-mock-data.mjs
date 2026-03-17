@@ -42,7 +42,7 @@ async function main() {
       data: {
         title: 'Мэргэжлийн хөтөч',
         description: 'Аяллын турш туршлагатай хөтөч дагалдана',
-        icon: 'user-check',
+        icon: 'FaUserCheck',
         active: true,
       },
     }),
@@ -50,7 +50,7 @@ async function main() {
       data: {
         title: 'Байр, байрлах үйлчилгээ',
         description: 'Тав тухтай зочид буудал болон уламжлалт гэр кемп',
-        icon: 'hotel',
+        icon: 'FaHotel',
         active: true,
       },
     }),
@@ -58,7 +58,7 @@ async function main() {
       data: {
         title: 'Өдөр бүрийн хоол',
         description: 'Өглөөний цай, өдрийн хоол, оройн хоол',
-        icon: 'utensils',
+        icon: 'FaUtensils',
         active: true,
       },
     }),
@@ -66,7 +66,7 @@ async function main() {
       data: {
         title: 'Хувийн тээвэр',
         description: 'Туршлагатай жолоочтой тав тухтай унаа',
-        icon: 'car',
+        icon: 'FaCar',
         active: true,
       },
     }),
@@ -74,7 +74,7 @@ async function main() {
       data: {
         title: 'Орох тасалбар',
         description: 'Үзмэр, үндэсний парк, хамгаалалтын бүсийн тасалбар',
-        icon: 'ticket',
+        icon: 'FaTicket',
         active: true,
       },
     }),
@@ -82,7 +82,7 @@ async function main() {
       data: {
         title: 'Аяллын даатгал',
         description: 'Илүү өргөн хүрээтэй аяллын даатгал',
-        icon: 'shield-check',
+        icon: 'FaShieldHalved',
         active: true,
       },
     }),
@@ -90,7 +90,7 @@ async function main() {
       data: {
         title: 'Нисэх буудлын трансфер',
         description: 'Нисэх буудлаас тосох, хүргэх үйлчилгээ',
-        icon: 'plane-arrival',
+        icon: 'FaPlaneArrival',
         active: true,
       },
     }),

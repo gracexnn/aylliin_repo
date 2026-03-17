@@ -3,6 +3,7 @@ import prisma from '@/db/client';
 import { getAdminSession } from '@/auth';
 import { CreateDepartureSessionSchema } from '@/schemas';
 import { ZodError } from 'zod';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,15 +12,37 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const postId = searchParams.get('post_id');
     const status = searchParams.get('status');
+    const month = searchParams.get('month');
     const pageRaw = parseInt(searchParams.get('page') ?? '1');
-    const limitRaw = parseInt(searchParams.get('limit') ?? '50');
+    const limitParam = searchParams.get('limit') ?? '50';
+    const limitRaw = parseInt(limitParam);
+    const isUnlimited = limitParam.toLowerCase() === 'all';
     const page = pageRaw > 0 ? pageRaw : 1;
-    const limit = limitRaw > 0 && limitRaw <= 200 ? limitRaw : 50;
+    const limit = isUnlimited ? 0 : (limitRaw > 0 && limitRaw <= 200 ? limitRaw : 50);
     const skip = (page - 1) * limit;
 
-    const where = {
+    let monthFilter: Prisma.DateTimeFilter | undefined;
+    if (month) {
+      const monthMatch = /^(\d{4})-(\d{2})$/.exec(month);
+      if (!monthMatch) {
+        return NextResponse.json({ error: 'Invalid month format. Use YYYY-MM' }, { status: 400 });
+      }
+
+      const year = Number(monthMatch[1]);
+      const monthIndex = Number(monthMatch[2]) - 1;
+      if (monthIndex < 0 || monthIndex > 11) {
+        return NextResponse.json({ error: 'Invalid month value. Use 01-12' }, { status: 400 });
+      }
+
+      const start = new Date(Date.UTC(year, monthIndex, 1));
+      const end = new Date(Date.UTC(year, monthIndex + 1, 1));
+      monthFilter = { gte: start, lt: end };
+    }
+
+    const where: Prisma.DepartureSessionWhereInput = {
       ...(postId ? { post_id: postId } : {}),
       ...(isAdmin ? (status ? { status: status as 'DRAFT' | 'OPEN' | 'FULL' | 'CANCELLED' } : {}) : { status: 'OPEN' as const }),
+      ...(monthFilter ? { departure_date: monthFilter } : {}),
     };
 
     const [sessions, total] = await Promise.all([
@@ -42,8 +65,7 @@ export async function GET(request: NextRequest) {
         orderBy: [
           { departure_date: 'asc' },
         ],
-        skip,
-        take: limit,
+        ...(isUnlimited ? {} : { skip, take: limit }),
       }),
       prisma.departureSession.count({ where }),
     ]);
@@ -55,7 +77,7 @@ export async function GET(request: NextRequest) {
           internal_note: null,
         }));
 
-    return NextResponse.json({ sessions: normalizedSessions, total, page, limit });
+    return NextResponse.json({ sessions: normalizedSessions, total, page, limit: isUnlimited ? null : limit });
   } catch (error) {
     console.error('GET /api/departure-sessions error:', error);
     return NextResponse.json({ error: 'Failed to fetch departure sessions' }, { status: 500 });

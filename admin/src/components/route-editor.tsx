@@ -385,14 +385,6 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
               <Save className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Газрын зураг дээр дарж маршрутын цэг нэмнэ. Цэг дээр дарж нэр, тайлбар, тээврийн төрлийг засна.
-            {activeDayFilter != null && (
-              <span className="ml-1 font-medium" style={{ color: getDayColor(activeDayFilter) }}>
-                Шүүлтүүр: Өдөр {activeDayFilter} — Дарах газар {activeDayFilter}-р өдөрт нэмэгдэнэ.
-              </span>
-            )}
-          </p>
           <div className="grid gap-2 md:max-w-md">
             <Label>Хадгалсан байршлаас шууд цэг нэмэх</Label>
             <Select
@@ -414,9 +406,6 @@ export default function RouteEditor({ postId }: RouteEditorProps) {
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
-              Сонголтоос сонгоход шинэ цэг автоматаар нэмэгдэнэ.
-            </p>
           </div>
           {/* Day filter bar */}
           {itineraryDays.length > 0 && (

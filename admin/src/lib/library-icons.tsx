@@ -106,18 +106,35 @@ const iconComponentMap = new Map(
   )
 );
 
+const LEGACY_ICON_ALIASES: Record<string, string> = {
+  'user-check': 'FaUserCheck',
+  hotel: 'FaHotel',
+  utensils: 'FaUtensils',
+  car: 'FaCar',
+  ticket: 'FaTicket',
+  'shield-check': 'FaShieldHalved',
+  'plane-arrival': 'FaPlaneArrival',
+};
+
+function resolveLibraryIconValue(value?: string | null): string | null {
+  if (!value) return null;
+  return LEGACY_ICON_ALIASES[value] ?? value;
+}
+
 export const SUGGESTED_LIBRARY_ICON_OPTIONS = TRAVEL_ICON_NAMES.map((value) => iconOptionMap.get(value)).filter(
   (option): option is LibraryIconOption => Boolean(option)
 );
 
 export function findLibraryIconComponent(value?: string | null): IconType | null {
-  if (!value) return null;
-  return iconComponentMap.get(value) ?? null;
+  const resolvedValue = resolveLibraryIconValue(value);
+  if (!resolvedValue) return null;
+  return iconComponentMap.get(resolvedValue) ?? null;
 }
 
 export function getLibraryIconOption(value?: string | null): LibraryIconOption | null {
-  if (!value) return null;
-  return iconOptionMap.get(value) ?? null;
+  const resolvedValue = resolveLibraryIconValue(value);
+  if (!resolvedValue) return null;
+  return iconOptionMap.get(resolvedValue) ?? null;
 }
 
 interface LibraryIconProps {

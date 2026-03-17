@@ -104,3 +104,34 @@
   height: 0;
 }
 
+/* Dialog Overlay Blur Animation */
+.dialog-overlay-anim[data-state="open"] {
+  animation: overlayFadeIn 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dialog-overlay-anim[data-state="closed"] {
+  animation: overlayFadeOut 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0.5;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes overlayFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
