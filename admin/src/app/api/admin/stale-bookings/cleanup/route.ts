@@ -32,7 +32,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const cutoffHours = Math.max(1, parseInt(process.env.STALE_BOOKING_HOURS ?? '24', 10))
+    const rawCutoffHours = parseInt(process.env.STALE_BOOKING_HOURS ?? '24', 10)
+    const cutoffHours =
+        Number.isFinite(rawCutoffHours) && rawCutoffHours > 0 ? rawCutoffHours : 24
     const cutoffDate = new Date(Date.now() - cutoffHours * 60 * 60 * 1000)
 
     // Find all stale bookings (PENDING status + UNPAID + older than cutoff)
