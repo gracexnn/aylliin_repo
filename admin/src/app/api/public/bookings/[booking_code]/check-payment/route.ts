@@ -15,6 +15,26 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type',
 }
 
+/**
+ * Fallback parser for legacy bookings where the QPay invoice ID
+ * is stored only in the admin_note field.
+ */
+function extractQpayInvoiceIdFromAdminNote(
+    adminNote?: string | null
+): string | null {
+    if (!adminNote) {
+        return null
+    }
+
+    // Example patterns handled:
+    // "QPay invoice: <ID>", "QPay invoice-<ID>", etc.
+    const match = adminNote.match(
+        /qpay\s*invoice\s*[:\-]?\s*([A-Za-z0-9_-]+)/i
+    )
+
+    return match ? match[1] : null
+}
+
 export async function OPTIONS() {
     return NextResponse.json({}, { headers: corsHeaders })
 }
@@ -54,8 +74,12 @@ export async function POST(
             )
         }
 
-        // Use dedicated qpay_invoice_id column — avoids brittle regex parsing of admin_note
-        const invoiceId = booking.qpay_invoice_id
+        // Prefer dedicated qpay_invoice_id column, but fall back to parsing admin_note
+        let invoiceId = booking.qpay_invoice_id as string | null
+
+        if (!invoiceId) {
+            invoiceId = extractQpayInvoiceIdFromAdminNote(booking.admin_note)
+        }
         
         if (!invoiceId) {
             return NextResponse.json(
