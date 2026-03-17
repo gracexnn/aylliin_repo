@@ -59,12 +59,6 @@ export default function HeroTravelSwiper({ posts }: HeroTravelSwiperProps) {
                     <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-200/80">
                         Hero highlight
                     </p>
-                    <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
-                        Онцлох аяллуудаа admin дээрээс сонгоод энд харуулаарай.
-                    </h2>
-                    <p className="text-sm leading-7 text-white/65 sm:text-base">
-                        “Hero-д онцлох” сонголтыг асаасан нийтлэгдсэн багцууд энд автоматаар slider байдлаар гарна.
-                    </p>
                 </div>
             </div>
         )
