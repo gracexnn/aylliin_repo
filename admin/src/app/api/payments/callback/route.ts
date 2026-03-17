@@ -40,8 +40,27 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Booking not found' }, { status: 404, headers: corsHeaders })
         }
 
-        // Use dedicated qpay_invoice_id column — avoids brittle regex parsing of admin_note
-        const invoiceId = booking.qpay_invoice_id
+        // Prefer dedicated qpay_invoice_id column; fall back to legacy admin_note parsing for backward compatibility
+        let invoiceId = booking.qpay_invoice_id as string | null | undefined
+
+        // Backward-compatible fallback: attempt to extract invoice ID from admin_note if column is empty
+        if (!invoiceId && booking.admin_note) {
+            // Try common patterns like "Invoice ID: <id>" or "QPay Invoice ID: <id>"
+            const note = booking.admin_note
+
+            // Match the first plausible invoice-like token after "Invoice ID" / "QPay Invoice ID"
+            const labeledMatch = note.match(/(?:QPay\s+Invoice\s+ID|Invoice\s+ID)\s*[:\-]\s*([A-Za-z0-9_-]+)/i)
+            if (labeledMatch && labeledMatch[1]) {
+                invoiceId = labeledMatch[1]
+            } else {
+                // Fallback: look for "invoice_id=<id>" style tokens if present
+                const kvMatch = note.match(/invoice[_-]?id\s*=\s*([A-Za-z0-9_-]+)/i)
+                if (kvMatch && kvMatch[1]) {
+                    invoiceId = kvMatch[1]
+                }
+            }
+        }
+
         if (!invoiceId) {
             return NextResponse.json({ error: 'Invoice ID not found for this booking' }, { status: 400, headers: corsHeaders })
         }
