@@ -82,12 +82,22 @@ export async function POST(req: NextRequest) {
             }, { status: 400, headers: corsHeaders })
         }
 
-        // Generate unique booking code — retry on collision
+        // Generate unique booking code — retry on collision (with bounded retries)
+        const MAX_BOOKING_CODE_RETRIES = 10
         let bookingCode = generateBookingCode()
         let codeExists = await prisma.booking.findUnique({ where: { booking_code: bookingCode } })
-        while (codeExists) {
+        let bookingCodeAttempts = 0
+        while (codeExists && bookingCodeAttempts < MAX_BOOKING_CODE_RETRIES) {
+            bookingCodeAttempts++
             bookingCode = generateBookingCode()
             codeExists = await prisma.booking.findUnique({ where: { booking_code: bookingCode } })
+        }
+
+        if (codeExists) {
+            return NextResponse.json(
+                { error: 'Could not generate a unique booking code. Please try again later.' },
+                { status: 500, headers: corsHeaders },
+            )
         }
 
         const unitPrice = Number(session.final_price)
