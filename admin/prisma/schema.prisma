@@ -254,6 +254,7 @@ model Booking {
   currency              String        @default("MNT") @db.VarChar(10)
   booking_status        BookingStatus @default(PENDING)
   payment_status        PaymentStatus @default(UNPAID)
+  qpay_invoice_id       String?       @db.VarChar(200)
   admin_note            String?
   source                String        @default("admin") @db.VarChar(50)
   created_at            DateTime      @default(now()) @db.Timestamptz(6)

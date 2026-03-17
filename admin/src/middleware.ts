@@ -15,6 +15,14 @@ function isPublicApiRequest(request: NextRequest) {
     return true;
   }
 
+  // Cleanup endpoint uses its own Bearer token auth (for cron job access)
+  if (
+    request.method === 'POST' &&
+    pathname === '/api/admin/stale-bookings/cleanup'
+  ) {
+    return true;
+  }
+
   if (request.method === 'GET' && pathname.startsWith('/api/travel/')) {
     return true;
   }

@@ -8,9 +8,31 @@ import prisma from '@/db/client'
 import { qpayService } from '@/lib/qpay'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+        ? (process.env.CLIENT_ORIGIN ?? 'https://aylal-client.vercel.app')
+        : '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+/**
+ * Fallback parser for legacy bookings where the QPay invoice ID
+ * is stored only in the admin_note field.
+ */
+function extractQpayInvoiceIdFromAdminNote(
+    adminNote?: string | null
+): string | null {
+    if (!adminNote) {
+        return null
+    }
+
+    // Example patterns handled:
+    // "QPay invoice: <ID>", "QPay invoice-<ID>", etc.
+    const match = adminNote.match(
+        /qpay\s*invoice\s*[:\-]?\s*([A-Za-z0-9_-]+)/i
+    )
+
+    return match ? match[1] : null
 }
 
 export async function OPTIONS() {
@@ -52,10 +74,14 @@ export async function POST(
             )
         }
 
-        // Extract invoice ID from admin_note
-        const invoiceMatch = booking.admin_note?.match(/QPay Invoice ID: ([a-f0-9-]+)/)
+        // Prefer dedicated qpay_invoice_id column, but fall back to parsing admin_note
+        let invoiceId = booking.qpay_invoice_id as string | null
+
+        if (!invoiceId) {
+            invoiceId = extractQpayInvoiceIdFromAdminNote(booking.admin_note)
+        }
         
-        if (!invoiceMatch) {
+        if (!invoiceId) {
             return NextResponse.json(
                 {
                     success: true,
@@ -65,8 +91,6 @@ export async function POST(
                 { headers: corsHeaders }
             )
         }
-
-        const invoiceId = invoiceMatch[1]
 
         // Check payment with QPay
         const isPaid = await qpayService.verifyPayment(invoiceId)

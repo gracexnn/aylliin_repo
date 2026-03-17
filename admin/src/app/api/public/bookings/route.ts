@@ -8,9 +8,11 @@ import prisma from '@/db/client'
 import { z } from 'zod'
 import { qpayService } from '@/lib/qpay'
 
-// CORS headers for client access
+// CORS headers for client access — origin is configurable via CLIENT_ORIGIN env var
 const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+        ? (process.env.CLIENT_ORIGIN ?? 'https://aylal-client.vercel.app')
+        : '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
@@ -80,7 +82,24 @@ export async function POST(req: NextRequest) {
             }, { status: 400, headers: corsHeaders })
         }
 
-        const bookingCode = generateBookingCode()
+        // Generate unique booking code — retry on collision (with bounded retries)
+        const MAX_BOOKING_CODE_RETRIES = 10
+        let bookingCode = generateBookingCode()
+        let codeExists = await prisma.booking.findUnique({ where: { booking_code: bookingCode } })
+        let bookingCodeAttempts = 0
+        while (codeExists && bookingCodeAttempts < MAX_BOOKING_CODE_RETRIES) {
+            bookingCodeAttempts++
+            bookingCode = generateBookingCode()
+            codeExists = await prisma.booking.findUnique({ where: { booking_code: bookingCode } })
+        }
+
+        if (codeExists) {
+            return NextResponse.json(
+                { error: 'Could not generate a unique booking code. Please try again later.' },
+                { status: 500, headers: corsHeaders },
+            )
+        }
+
         const unitPrice = Number(session.final_price)
         const totalPrice = unitPrice * seatsNeeded
 
@@ -108,7 +127,9 @@ export async function POST(req: NextRequest) {
 
         // Create booking with transaction
         const booking = await prisma.$transaction(async (tx) => {
-            // Re-check availability inside transaction to prevent overbooking race condition
+            // Re-check availability inside transaction to prevent overbooking race condition.
+            // Use an atomic conditional updateMany: the WHERE clause checks seats_booked at
+            // update time, so two concurrent transactions cannot both pass simultaneously.
             const currentSession = await tx.departureSession.findUnique({
                 where: { id: validatedData.departure_session_id },
             })
@@ -117,9 +138,24 @@ export async function POST(req: NextRequest) {
                 throw new Error('SESSION_UNAVAILABLE')
             }
 
-            const currentSeatsAvailable = currentSession.capacity - currentSession.seats_booked
-            if (seatsNeeded > currentSeatsAvailable) {
-                throw new Error(`INSUFFICIENT_SEATS:${currentSeatsAvailable}`)
+            // Atomic seat reservation: increment only if enough seats remain
+            const seatUpdate = await tx.departureSession.updateMany({
+                where: {
+                    id: validatedData.departure_session_id,
+                    status: 'OPEN',
+                    seats_booked: { lte: currentSession.capacity - seatsNeeded },
+                },
+                data: { seats_booked: { increment: seatsNeeded } },
+            })
+
+            if (seatUpdate.count === 0) {
+                // Another concurrent request consumed the remaining seats
+                const refetch = await tx.departureSession.findUnique({
+                    where: { id: validatedData.departure_session_id },
+                    select: { capacity: true, seats_booked: true },
+                })
+                const remaining = refetch ? refetch.capacity - refetch.seats_booked : 0
+                throw new Error(`INSUFFICIENT_SEATS:${remaining}`)
             }
 
             const newBooking = await tx.booking.create({
@@ -167,12 +203,14 @@ export async function POST(req: NextRequest) {
                 }
             })
 
-            // Update seats booked
-            await tx.departureSession.update({
-                where: { id: validatedData.departure_session_id },
-                data: {
-                    seats_booked: { increment: seatsNeeded }
-                }
+            // Auto-transition session to FULL if capacity is now reached
+            await tx.departureSession.updateMany({
+                where: {
+                    id: validatedData.departure_session_id,
+                    status: 'OPEN',
+                    seats_booked: { gte: currentSession.capacity },
+                },
+                data: { status: 'FULL' },
             })
 
             return newBooking
@@ -195,12 +233,10 @@ export async function POST(req: NextRequest) {
                     urls: invoice.urls,
                 }
 
-                // Store invoice ID in booking for reference
+                // Store invoice ID in dedicated column for reliable retrieval
                 await prisma.booking.update({
                     where: { id: booking.id },
-                    data: {
-                        admin_note: `${booking.admin_note}\nQPay Invoice ID: ${invoice.invoice_id}`
-                    }
+                    data: { qpay_invoice_id: invoice.invoice_id }
                 })
             } catch (error) {
                 console.error('QPay invoice creation failed:', error)

@@ -105,6 +105,38 @@ export async function PUT(
             },
           },
         });
+
+        // If seats increased, check if session should become FULL
+        if (countDiff > 0) {
+          const updatedSession = await tx.departureSession.findUnique({
+            where: { id: currentBooking.departure_session_id },
+            select: { capacity: true, seats_booked: true },
+          });
+          if (updatedSession && updatedSession.seats_booked >= updatedSession.capacity) {
+            await tx.departureSession.updateMany({
+              where: { id: currentBooking.departure_session_id, status: 'OPEN' },
+              data: { status: 'FULL' },
+            });
+          }
+        }
+
+        // If seats decreased, check if session should reopen (FULL -> OPEN)
+        if (countDiff < 0) {
+          const sessionAfterUpdate = await tx.departureSession.findUnique({
+            where: { id: currentBooking.departure_session_id },
+            select: { capacity: true, seats_booked: true, status: true },
+          });
+          if (
+            sessionAfterUpdate &&
+            sessionAfterUpdate.status === 'FULL' &&
+            sessionAfterUpdate.seats_booked < sessionAfterUpdate.capacity
+          ) {
+            await tx.departureSession.update({
+              where: { id: currentBooking.departure_session_id },
+              data: { status: 'OPEN' },
+            });
+          }
+        }
       }
 
       // Handle travelers update if provided
@@ -196,6 +228,22 @@ export async function DELETE(
           },
         },
       });
+
+      // Re-open the session if it was FULL and now has available capacity
+      const sessionAfterDelete = await tx.departureSession.findUnique({
+        where: { id: booking.departure_session_id },
+        select: { capacity: true, seats_booked: true, status: true },
+      });
+      if (
+        sessionAfterDelete &&
+        sessionAfterDelete.status === 'FULL' &&
+        sessionAfterDelete.seats_booked < sessionAfterDelete.capacity
+      ) {
+        await tx.departureSession.update({
+          where: { id: booking.departure_session_id },
+          data: { status: 'OPEN' },
+        });
+      }
     });
 
     return NextResponse.json({ message: 'Booking deleted successfully' });

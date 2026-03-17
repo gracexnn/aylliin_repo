@@ -7,9 +7,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/db/client'
 import { qpayService } from '@/lib/qpay'
 
-// CORS headers
+// CORS headers — origin is configurable via CLIENT_ORIGIN env var
 const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+        ? (process.env.CLIENT_ORIGIN ?? 'https://aylal-client.vercel.app')
+        : '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
@@ -38,13 +40,30 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Booking not found' }, { status: 404, headers: corsHeaders })
         }
 
-        // Extract invoice ID from booking notes (use precise regex to avoid greedy match issues)
-        const invoiceIdMatch = booking.admin_note?.match(/QPay Invoice ID: ([a-f0-9-]+)/)
-        if (!invoiceIdMatch) {
-            return NextResponse.json({ error: 'Invoice ID not found in booking' }, { status: 400, headers: corsHeaders })
+        // Prefer dedicated qpay_invoice_id column; fall back to legacy admin_note parsing for backward compatibility
+        let invoiceId = booking.qpay_invoice_id as string | null | undefined
+
+        // Backward-compatible fallback: attempt to extract invoice ID from admin_note if column is empty
+        if (!invoiceId && booking.admin_note) {
+            // Try common patterns like "Invoice ID: <id>" or "QPay Invoice ID: <id>"
+            const note = booking.admin_note
+
+            // Match the first plausible invoice-like token after "Invoice ID" / "QPay Invoice ID"
+            const labeledMatch = note.match(/(?:QPay\s+Invoice\s+ID|Invoice\s+ID)\s*[:\-]\s*([A-Za-z0-9_-]+)/i)
+            if (labeledMatch && labeledMatch[1]) {
+                invoiceId = labeledMatch[1]
+            } else {
+                // Fallback: look for "invoice_id=<id>" style tokens if present
+                const kvMatch = note.match(/invoice[_-]?id\s*=\s*([A-Za-z0-9_-]+)/i)
+                if (kvMatch && kvMatch[1]) {
+                    invoiceId = kvMatch[1]
+                }
+            }
         }
 
-        const invoiceId = invoiceIdMatch[1]
+        if (!invoiceId) {
+            return NextResponse.json({ error: 'Invoice ID not found for this booking' }, { status: 400, headers: corsHeaders })
+        }
 
         // Verify payment with QPay
         const isPaid = await qpayService.verifyPayment(invoiceId)
@@ -110,7 +129,7 @@ export async function GET(req: NextRequest) {
                 payment_status: true,
                 total_price_snapshot: true,
                 currency: true,
-                admin_note: true,
+                qpay_invoice_id: true,
             }
         })
 
