@@ -254,294 +254,266 @@ async function main() {
   // ─── Travel Guide Posts ─────────────────────────────────────────────────────
   console.log('✈️ Creating travel guide posts...');
 
-  // Post 1: Classic Gobi Desert Adventure
+  // Post 1: Turkey Riviera and Istanbul Journey
   const post1 = await prisma.post.create({
     data: {
-      title: 'Сонгодог Говийн адал явдал – 7 өдөр',
-      slug: 'classic-gobi-desert-adventure',
-      cover_image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600',
-      excerpt: 'Говийн уудам тал, элсэн манхан, нүүдэлчдийн ахуй, тэмээ унах, эртний хавцалтай танилцах 7 өдрийн мартагдашгүй аялал.',
-      journey_overview: 'Монголын домогт Говьд аялан, гэр кемпэд бууж, онгон байгаль, ховор амьтдыг ажиглан, дэлхийн өвөрмөц цөлийн тогтоцуудаар аялна.',
-      content: `<h2>Аяллын товч</h2>
-<p>Дэлхийн хамгийн сонирхолтой бүсүүдийн нэг болох домогт Говь цөлөөр 7 өдрийн адал явдалтай аялалд гараарай. Энэ аялал таныг Монголын өмнөд гүн рүү хөтөлж, хязгааргүй уудам тал, өвөрмөц тогтоц, нүүдэлчдийн уламжлалтай танилцуулна.</p>
+      title: 'Турк улсын аялал – 8 өдөр / 7 шөнө',
+      slug: 'turkey-antalya-pamukkale-istanbul',
+      cover_image: 'https://hogiinsaw.wenly.space/covers/pexels-smuldur-2048865.jpg',
+      excerpt: 'Анталья, Памуккале, Истанбулыг хамарсан далайн амралт + түүх, соёлын хосолсон аялал.',
+      journey_overview: 'Улаанбаатар хотоос Турк руу нисэж, Антальягийн эрэг, Памуккалегийн хөвөн цайз, Истанбулын түүхэн дурсгал, Босфорын усан аяллыг нэг хөтөлбөрөөр үзнэ.',
+      content: `<h2>Аяллын танилцуулга</h2>
+<p>Энэ аялал нь Туркийн аялал жуулчлалын хамгийн алдартай 3 чиглэлийг нэгтгэсэн багц юм. Антальягийн эргийн амралтаас эхлээд Памуккалегийн өвөрмөц шохойн тогтоц, Истанбулын түүхэн төв хүртэл жинхэнэ олон өнгийн туршлага танд өгнө.</p>
 
-<h2>Юугаараа онцгой вэ?</h2>
-<p>Говь бол өөр хаана ч байхгүй мэдрэмж. Салхинд “дуулдаг” Хонгорын элсэн манхан, үлэг гүрвэлийн олдвороороо алдартай Баянзаг ("Галууны хошуу") зэрэг гайхамшиг өдөр бүр таныг хүлээж байна. Та тав тухтай гэр кемпэд байрлаж, нүүдэлчдийн зочломтгой зан, байгалийн дуу чимээг мэдэрнэ.</p>
+<h2>Онцлох туршлага</h2>
+<p>Антальяд амарч, Памуккале болон Хиераполисын бүсээр аялж, Истанбул хотын гол дурсгалуудтай танилцан Босфорын хоолойгоор усан завины аялал хийнэ.</p>
 
-<h2>Өдөр бүрийн онцлох зүйлс</h2>
-<p>Хөтөлбөрийг Говийн олон төрлийн өнгө төрхийг харуулах байдлаар төлөвлөсөн. Алтан элсэн дээгүүр хоёр бөхт тэмээгээр аялж, зуны улиралд ч мөстэй байдаг хавцлаар алхаж, нүүдэлчин айлд зочлон ахуй соёлтой танилцана.</p>`,
+<h2>Яагаад энэ багцыг сонгох вэ?</h2>
+<p>Бүх гол үзвэрүүдийг багтаасан, нислэг, буудал, орон нутгийн тээвэр, хөтөчтэй зохион байгуулалттай тул анх удаа Турк руу явах аялагчдад нэн тохиромжтой.</p>`,
       package_options: [
         {
           id: 'standard',
           title: 'Стандарт багц',
-          description: 'Тав тухтай гэр кемп, дундын тохижилт',
-          price: 1890000,
-          currency: 'MNT',
-        },
-        {
-          id: 'comfort',
-          title: 'Тав тухтай багц',
-          description: 'Сайжруулсан гэр кемп, хувийн ариун цэвэр',
-          price: 2490000,
+          description: '5* зочид буудлын стандарт ангилал, 2 хүн нэг өрөө',
+          price: 4490000,
           currency: 'MNT',
         },
         {
           id: 'premium',
           title: 'Премиум багц',
-          description: 'Дээд зэрэглэлийн байр, хувийн хөтөч',
-          price: 3290000,
+          description: 'Сайжруулсан 5* буудал, илүү тав тухтай байрлалт',
+          price: 5490000,
           currency: 'MNT',
         },
       ],
       itinerary_days: [
         {
           day_number: 1,
-          title: 'Улаанбаатарт ирэх',
-          description: 'Нисэх буудлаас тосож авна. Хотын аялал (Гандан хийд, Үндэсний музей гэх мэт). Танилцах оройн зоог.',
-          meals: ['Оройн хоол'],
+          title: 'Улаанбаатар – Анталья',
+          description: 'Өглөө Улаанбаатараас нисэж Истанбулаар дамжин Антальяд хүрнэ. Буудалдаа бүртгүүлж амарна.',
+          meals: ['Онгоцны хоол', 'Оройн хоол'],
           optional_extras: [],
         },
         {
           day_number: 2,
-          title: 'Дунд Говь руу хөдөлнө',
-          description: 'Говийн бүс рүү уудам тал нутгаар аялсаар хүрнэ. Нүүдэлчин айлд зочилж ахуй соёлтой танилцана. Гэр кемпэд байрлана.',
+          title: 'Анталья хотын аялал',
+          description: 'Антальягийн төв болон эргийн бүсээр аялж, түүхэн дурсгал ба чөлөөт цагийн хөтөлбөртэй өдөр өнгөрүүлнэ.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
           optional_extras: [],
         },
         {
           day_number: 3,
-          title: 'Хонгорын элс',
-          description: '“Дуулдаг” элсэн манхантай танилцана. Тэмээ унах туршлага. Нар жаргах үеийн гэрэл зураг.',
+          title: 'Анталья чөлөөт өдөр',
+          description: 'Далайн эрэг, зочид буудлын үйлчилгээ, хувийн сонирхлын аялал эсвэл амралтын өдөр.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Тэмээ унах', 'Гэрэл зураг'],
+          optional_extras: ['Усан спорт', 'Шоппинг'],
         },
         {
           day_number: 4,
-          title: 'Ёлын ам',
-          description: 'Мөстэй хавцлаар алхана. Зэрлэг амьтан, шувууд ажиглана. Богино алхалт.',
+          title: 'Анталья – Памуккале (~273км)',
+          description: 'Автобусаар Памуккале руу хөдөлж буудалдаа байрлана. Орой халуун рашаан, амралтын цаг.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Зэрлэг амьтан ажиглалт'],
+          optional_extras: [],
         },
         {
           day_number: 5,
-          title: 'Баянзаг (Галууны хошуу)',
-          description: 'Үлэг гүрвэлийн олдворын алдарт бүсээр аялна. Заг модны төгөлтэй танилцана. Оройн галын дэргэд амарна.',
+          title: 'Памуккале – Хиераполис – Истанбул',
+          description: 'Памуккале, Хиераполисын дурсгалт газруудаар аялсны дараа Истанбул руу дотоодын нислэг хийнэ.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Оройн түүдэг гал'],
+          optional_extras: [],
         },
         {
           day_number: 6,
-          title: 'Улаанбаатар руу буцах',
-          description: 'Нийслэл рүү буцаж ирнэ. Дэлгүүр хэсэх чөлөөт цаг. Үдэлтийн оройн зоог (уламжлалт тоглолттой).',
+          title: 'Истанбул хот + Босфорын хоолой',
+          description: 'Истанбулын түүхэн дурсгалт бүс, сүм хийд, музей, захуудаар аялж Босфорын усан аялал хийнэ.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Соёлын тоглолт'],
+          optional_extras: ['Босфорын оройн аялал'],
         },
         {
           day_number: 7,
-          title: 'Буцах өдөр',
-          description: 'Нисэх буудал руу хүргэж өгнө.',
+          title: 'Истанбул чөлөөт өдөр',
+          description: 'Чөлөөт өдөр: Гранд базар, худалдааны төвүүд, хоолны аялал эсвэл нэмэлт хөтөлбөр сонгох боломжтой.',
           meals: ['Өглөөний цай'],
-          optional_extras: [],
-        },
-      ],
-      travel_tips: `<ul>
-    <li>Аялах хамгийн тохиромжтой үе: 5–9 сар</li>
-    <li>Өдөр шөнө температур их хэлбэлздэг — давхар хувцас бэлдээрэй</li>
-    <li>Нарны тос, нарны шил, малгай заавал авч яваарай</li>
-    <li>Сайхан зураг авах камер/утас хэрэгтэй</li>
-    <li>Алслагдсан газарт бэлэн мөнгө хэрэгтэй — АТМ ихэвчлэн Улаанбаатарт</li>
-</ul>`,
-      published: true,
-      highlighted: true,
-    },
-  });
-
-  // Post 2: Northern Mongolia Discovery
-  const post2 = await prisma.post.create({
-    data: {
-      title: 'Хойд Монголын нээлт – 10 өдөр',
-      slug: 'northern-mongolia-discovery',
-      cover_image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600',
-      excerpt: 'Хөвсгөл нуурын тунгалаг ус, тайгын ой, цаатан (цаа буга маллагч) иргэдтэй уулзах Хойд Монголын онгон байгалийн аялал.',
-      journey_overview: 'Хөвсгөл нуураас эхлээд цаа буга маллагчдын нутаг болох алслагдсан тайгын бүс хүртэлх Хойд Монголын гайхамшгийг нээнэ.',
-      content: `<h2>Онгон байгалийн аялал</h2>
-<p>Хойд Монгол бол дэлхийн онгон байгалийн үнэт бүсүүдийн нэг. Энэхүү 10 өдрийн аяллаар та цасархаг оргилууд усанд тусах тунгалаг нуур, хөвч тайгын өргөн уудам ой, эртний уламжлалаа хадгалсан цаа буга маллагчдын амьдралтай танилцана.</p>
-
-<h2>Хөвсгөл нуур – Монголын хөх сувд</h2>
-<p>“Монголын хөх сувд” хэмээн нэрлэгддэг Хөвсгөл нуур нь дэлхийн хамгийн цэвэр цэнгэг усны нөөцийн нэг. Уулсаар хүрээлэгдсэн энэ нуурын эрэгт амарч, завиар аялах, морь унах, байгальд тайвширч суух боломжтой.</p>
-
-<h2>Цаатантай уулзах нь</h2>
-<p>Аяллын хамгийн онцлох хэсэг бол тайгын алслагдсан бууцанд амьдрах цаатан (цаа бугын хүмүүс) нүүдэлчидтэй уулзах. Тэд цаа бугатайгаа онцгой харилцаатай амьдарч, олон зууны турш бараг өөрчлөгдөөгүй ахуйгаа хадгалсаар ирсэн.</p>`,
-      package_options: [
-        {
-          id: 'standard',
-          title: 'Стандарт багц',
-          description: 'Гэр кемп + орон нутгийн буудлын хослол',
-          price: 2890000,
-          currency: 'MNT',
-        },
-        {
-          id: 'comfort',
-          title: 'Тав тухтай багц',
-          description: 'Сайжруулсан байр, хувийн тээвэр',
-          price: 3690000,
-          currency: 'MNT',
-        },
-      ],
-      itinerary_days: [
-        {
-          day_number: 1,
-          title: 'Улаанбаатарт ирэх',
-          description: 'Нисэх буудлаас тосож аваад буудалд байрлуулна. Хотын товч танилцах аялал.',
-          meals: ['Оройн хоол'],
-          optional_extras: [],
-        },
-        {
-          day_number: 2,
-          title: 'Мөрөн нисээд Хөвсгөл нуур руу явна',
-          description: 'Дотоодын нислэгээр Мөрөн хүрээд, нуур руу авто аялал хийнэ. Үдээс хойш нуурын эргээр амарна.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: [],
-        },
-        {
-          day_number: 3,
-          title: 'Хөвсгөл нуурын өдөр',
-          description: 'Нууранд бүтэн өдөр: завиар/каяакаар аялах, морь унах эсвэл алхалт. Орон нутгийн айлуудаар зочилно.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Каяак/завиар аялал', 'Морь унах'],
-        },
-        {
-          day_number: 4,
-          title: 'Тайга руу зорчих',
-          description: 'Алслагдсан тайгын бүс рүү аяллаа эхлүүлнэ. Автомашин болон морьтой аяллын хэсэг багтана.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: [],
-        },
-        {
-          day_number: 5,
-          title: 'Цаатан (цаа буга) малчид',
-          description: 'Цаа буга маллагчдын хамт бүтэн өдөр. Ахуй соёлтой танилцаж, цаа буга унах, өдөр тутмын ажилд оролцоно.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Цаа буга унах', 'Соёлын туршлага'],
-        },
-        {
-          day_number: 6,
-          title: 'Тайгын судалгаа',
-          description: 'Онгон тайгын ойгоор аялж, амьтан ажиглах, гэрэл зураг авах, байгалийн алхалт хийнэ.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Зэрлэг амьтан ажиглалт'],
-        },
-        {
-          day_number: 7,
-          title: 'Нуур руу буцах',
-          description: 'Хөвсгөл нуур руу буцаж ирнэ. Оройн түүдэг гал.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Оройн түүдэг гал'],
+          optional_extras: ['Гранд базар', 'Нэмэлт музейн тасалбар'],
         },
         {
           day_number: 8,
-          title: 'Мөрөн рүү буцах',
-          description: 'Мөрөн хот руу явна. Орон нутгийн зах, музей үзнэ.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: [],
-        },
-        {
-          day_number: 9,
-          title: 'Улаанбаатар руу буцах',
-          description: 'Дотоодын нислэгээр Улаанбаатар буцна. Дэлгүүр хэсэх чөлөөт цаг. Үдэлтийн оройн зоог.',
-          meals: ['Өглөөний цай', 'Оройн хоол'],
-          optional_extras: [],
-        },
-        {
-          day_number: 10,
-          title: 'Буцах өдөр',
-          description: 'Нисэх буудал руу хүргэж өгнө.',
-          meals: ['Өглөөний цай'],
+          title: 'Истанбул – Улаанбаатар',
+          description: 'Өглөө/өдөр Истанбулаас буцах нислэгээр Улаанбаатарт ирж аялал өндөрлөнө.',
+          meals: ['Өглөөний цай', 'Онгоцны хоол'],
           optional_extras: [],
         },
       ],
       travel_tips: `<ul>
-    <li>Хамгийн тохиромжтой үе: 6–9 сар</li>
-    <li>Зун ч сэрүүхэн байдаг — дулаан хувцас заавал</li>
-    <li>Дунд зэргийн ачаалалтай — биеийн бэлтгэлтэй байх нь зүгээр</li>
-    <li>Алслагдсан газарт сүлжээ хязгаарлагдмал</li>
-    <li>Тайгад шавьж үргээгч авч яваарай</li>
+    <li>Гадаад паспортын хүчинтэй хугацаа 6+ сар байх шаардлагатай</li>
+    <li>Эрэг орчимд дулаан, дотоод бүсэд сэрүүхэн тул давхар хувцас авч яваарай</li>
+    <li>Түүхэн сүм, дурсгалт газарт зохих хувцаслалт хэрэгтэй</li>
+    <li>Евро эсвэл картаар төлбөр хийхэд тохиромжтой</li>
+    <li>Олон алхалттай тул эвтэйхэн гутал заавал бэлдэнэ</li>
 </ul>`,
       published: true,
       highlighted: true,
     },
   });
 
-  // Post 3: Central Mongolia Explorer
-  const post3 = await prisma.post.create({
+  // Post 2: Japan Express Discovery
+  const post2 = await prisma.post.create({
     data: {
-      title: 'Төв Монголын аялал – 5 өдөр',
-      slug: 'central-mongolia-explorer',
-      cover_image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1600',
-      excerpt: 'Тэрэлж, түүхэн хийдүүд, нүүдэлчдийн ахуй соёлтой танилцах — Монголд анх удаа ирж буй хүмүүст тохиромжтой 5 өдрийн аялал.',
-      journey_overview: 'Улаанбаатар хотын ойролцоох Төв бүсийн байгаль, түүх, соёлыг нэг дороос мэдрэх төгс танилцах аялал.',
-      content: `<h2>Монголыг товчхон мэдрэх нь</h2>
-<p>Энэхүү 5 өдрийн аялал нь Монголд анх удаа ирж буй эсвэл хугацаа багатай аялагчдад яг тохирно. Улаанбаатарын ойролцоох үзэсгэлэнт байгаль, буддын түүхэн өв, нүүдэлчдийн жинхэнэ соёлыг нэг дороос мэдрээрэй.</p>`,
+      title: 'Япон аялал – 5 өдөр / 4 шөнө',
+      slug: 'japan-tokyo-fuji-5d4n',
+      cover_image: 'https://hogiinsaw.wenly.space/covers/pexels-dylan-chan-2880813-4410426.jpg',
+      excerpt: 'Токио хот, Фүжи уул, Ширайто хүрхрээ, Овакүдани бүсийг багтаасан богино хугацааны Япон аялал.',
+      journey_overview: 'Улаанбаатар–Нарита шууд нислэгтэй, Токио хотын гол үзвэрүүд болон Фүжи орчмын байгалийн чиглэлүүдийг хамарсан 5 өдрийн цогц хөтөлбөр.',
+      content: `<h2>Япон руу богино хугацааны хөтөлбөр</h2>
+<p>Ажлын завсарлага болон богино амралтад тохирсон энэхүү аяллаар Токио хотын орчин үе ба уламжлалт соёлыг зэрэг мэдэрнэ.</p>
+
+<h2>Гол үзэх газрууд</h2>
+<p>Одайба, Сенсожи сүм, Накамисэ Дори, Шибуяа, Хачикогийн хөшөө, Фүжи уулын бүс, Ширайто хүрхрээ, Овакүдани зэрэг аялал жуулчлалын шилдэг цэгүүд.</p>
+
+<h2>Тав тух, зохион байгуулалт</h2>
+<p>Олон улсын нислэг, зочид буудал, орон нутгийн тээвэр, хөтөч тайлбарлагч, үндсэн хоолнууд багтсан тул аяллаа амар тайван төлөвлөх боломжтой.</p>`,
       package_options: [
         {
           id: 'standard',
           title: 'Стандарт багц',
-          description: 'Аяллын гэр кемп ба стандарт буудал',
-          price: 1190000,
+          description: '3* буудал, үндсэн хөтөлбөр, 2 хүн нэг өрөө',
+          price: 5490000,
           currency: 'MNT',
         },
         {
-          id: 'premium',
-          title: 'Премиум багц',
-          description: 'Дээд зэрэглэлийн байр, хувийн хөтөч',
-          price: 1890000,
+          id: 'comfort',
+          title: 'Тав тухтай багц',
+          description: 'Сакура/өндөр улирлын огноо, илүү уян хатан хуваарь',
+          price: 5990000,
           currency: 'MNT',
         },
       ],
       itinerary_days: [
         {
           day_number: 1,
-          title: 'Ирэх ба хотын аялал',
-          description: 'Улаанбаатар хоттой танилцах аялал: Гандан хийд, Үндэсний музей, Сүхбаатарын талбай зэрэг.',
-          meals: ['Оройн хоол'],
+          title: 'Улаанбаатар – Нарита – Токио',
+          description: 'Өглөө Улаанбаатараас Нарита нисэж, Токио хот руу шилжинэ. Шибуяа болон Хачикогийн хөшөө орчимтой танилцана.',
+          meals: ['Онгоцны хоол', 'Оройн хоол'],
           optional_extras: [],
         },
         {
           day_number: 2,
-          title: 'Тэрэлж',
-          description: 'Тэрэлж рүү явна. Хаданд авиралт/алхалт, морь унах, нүүдэлчин айлд зочилно.',
+          title: 'Токио хотын аялал',
+          description: 'Сенсожи сүм, Накамисэ Дори, Тэнгэрийн мод (Tokyo Skytree) орчим, Одайба зэрэг үзвэрүүдээр аялна.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Морь унах'],
+          optional_extras: [],
         },
         {
           day_number: 3,
-          title: 'Хархорин',
-          description: 'Эртний нийслэл Хархорин руу явна. Эрдэнэ Зуу хийд болон Хархорин музей үзнэ.',
+          title: 'Токио – Ширайто хүрхрээ – Фүжи уул',
+          description: 'Токио хотоос Фүжи орчим руу гарч Ширайто хүрхрээ, уулын бүсийн байгальтай танилцана.',
+          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
+          optional_extras: ['Gotemba outlet'],
+        },
+        {
+          day_number: 4,
+          title: 'Фүжи – Овакүдани – Токио',
+          description: 'Овакүдани идэвхтэй галт уулын бүсээр аялсны дараа Токио хот руу буцна. Үдээс хойш чөлөөт цагтай.',
+          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
+          optional_extras: ['Чөлөөт шоппинг'],
+        },
+        {
+          day_number: 5,
+          title: 'Токио – Нарита – Улаанбаатар',
+          description: 'Нарита нисэх буудлаас буцах нислэгээр Улаанбаатарт ирж аялал өндөрлөнө.',
+          meals: ['Өглөөний цай', 'Онгоцны хоол'],
+          optional_extras: [],
+        },
+      ],
+      travel_tips: `<ul>
+    <li>Япон виз болон хилээр нэвтрэх бичиг баримтаа урьдчилан бэлдэнэ</li>
+    <li>Өдөр тутам их алхах тул тухтай гутал хамгийн чухал</li>
+    <li>Хот дотор картаар төлбөр хийх боломж өндөр</li>
+    <li>Цагийн баримтлалыг сайн мөрдөөрэй</li>
+    <li>Халаасны Wi-Fi эсвэл roaming багц төлөвлөж болно</li>
+</ul>`,
+      published: true,
+      highlighted: true,
+    },
+  });
+
+  // Post 3: Beijing + Universal Studios
+  const post3 = await prisma.post.create({
+    data: {
+      title: 'Бээжин + Universal Studios – 5 өдөр / 4 шөнө',
+      slug: 'beijing-universal-studios-5d4n',
+      cover_image: 'https://hogiinsaw.wenly.space/covers/pexels-magda-ehlers-pexels-2846075.jpg',
+      excerpt: 'Шууд нислэгтэй Бээжингийн аялал: Цагаан хэрэм, Universal Studios, Zoo & Aquarium, TeamLab.',
+      journey_overview: 'Улаанбаатараас Бээжин рүү шууд нисэж, гэр бүл болон залуучуудад тохиромжтой хотын үзвэр, паркийн хосолсон багц хөтөлбөр.',
+      content: `<h2>Гэр бүлд ээлтэй Бээжингийн багц</h2>
+<p>5 өдөрт Бээжин хотын хамгийн их эрэлттэй үзвэрүүдийг багтаасан энэхүү хөтөлбөр нь хүүхэдтэй гэр бүл болон найзуудын аялалд тохиромжтой.</p>
+
+<h2>Онцлох чиглэлүүд</h2>
+<p>Цагаан хэрэм, Шувууны үүр, Universal Studios парк, Бээжингийн Zoo & Aquarium, TeamLab гэрлийн шоу зэрэг орчин үе ба түүхийн хослолыг үзнэ.</p>
+
+<h2>Төлөвлөхөд хялбар</h2>
+<p>Шууд нислэг, буудал, үндсэн үзвэрийн тасалбар, хөтөч, тээвэр багтсан тул анх удаа Бээжин рүү аялахад өндөр тохиромжтой.</p>`,
+      package_options: [
+        {
+          id: 'standard',
+          title: 'Стандарт багц',
+          description: '4* буудал, 2 хүн нэг өрөө',
+          price: 2690000,
+          currency: 'MNT',
+        },
+        {
+          id: 'premium',
+          title: 'Премиум багц',
+          description: 'Сайжруулсан байрлалт, өрөөний сонголт илүү уян хатан',
+          price: 2990000,
+          currency: 'MNT',
+        },
+      ],
+      itinerary_days: [
+        {
+          day_number: 1,
+          title: 'Улаанбаатар – Бээжин',
+          description: 'Шууд нислэгээр Бээжинд хүрч, Цагаан хэрэм болон Шувууны үүрийн бүсийг үзсэний дараа буудалдаа байрлана.',
+          meals: ['Онгоцны зууш', 'Өдрийн хоол', 'Оройн хоол'],
+          optional_extras: [],
+        },
+        {
+          day_number: 2,
+          title: 'Universal Studios бүтэн өдөр',
+          description: 'Universal Studios Beijing-д бүтэн өдрийн хөтөлбөртэй, шоу болон сэдэвчилсэн бүсүүдээр аялна.',
+          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
+          optional_extras: ['VIP Express pass'],
+        },
+        {
+          day_number: 3,
+          title: 'Бээжин хотын аялал (Zoo, Aquarium, TeamLab)',
+          description: 'Бээжингийн амьтны хүрээлэн, аквариум, TeamLab гэрлийн шоу болон хотын гол үзвэрүүдээр аялна.',
           meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
           optional_extras: [],
         },
         {
           day_number: 4,
-          title: 'Хустайгаар дайран буцах',
-          description: 'Хустайн байгалийн цогцолборт газраар дайран тахь ажиглана. Дараа нь Улаанбаатар руу буцна.',
-          meals: ['Өглөөний цай', 'Өдрийн хоол', 'Оройн хоол'],
-          optional_extras: ['Тахь ажиглалт'],
+          title: 'Чөлөөт өдөр',
+          description: 'Чөлөөт өдөр: худалдааны төвүүд, гудамжны хоол, музей эсвэл өөрийн сонирхлоор нэмэлт аялал сонгох боломжтой.',
+          meals: ['Өглөөний цай'],
+          optional_extras: ['Шоппинг', 'Нэмэлт соёлын шоу'],
         },
         {
           day_number: 5,
-          title: 'Буцах өдөр',
-          description: 'Сүүлчийн худалдан авалт хийх чөлөөт цаг. Нисэх буудал руу хүргэж өгнө.',
-          meals: ['Өглөөний цай'],
+          title: 'Бээжин – Улаанбаатар',
+          description: 'Нисэх буудал руу хүргүүлэн буцах нислэгээр Улаанбаатарт ирж аялал өндөрлөнө.',
+          meals: ['Өглөөний цай', 'Онгоцны хоол'],
           optional_extras: [],
         },
       ],
       travel_tips: `<ul>
-    <li>Жилийн дөрвөн улиралд боломжтой ч 5–9 сар хамгийн тохиромжтой</li>
-    <li>Бүх насныханд, ямар ч биеийн тамирын түвшинд тохиромжтой</li>
-    <li>Хүүхэдтэй гэр бүлд маш тохиромжтой</li>
+    <li>Хил нэвтрэх бичиг баримт, визийн нөхцөлийг урьдчилан шалгана</li>
+    <li>Хот дотор алхалт ихтэй тул эвтэйхэн пүүз авч явна</li>
+    <li>Хүүхэдтэй аялж буй бол паркийн өдрийг тусад нь төлөвлөхөд тохиромжтой</li>
+    <li>WeChat/Alipay-д холбох картын боломжийг урьдчилан нягтлаарай</li>
 </ul>`,
       published: true,
-      highlighted: false,
+      highlighted: true,
     },
   });
 
@@ -554,33 +526,38 @@ async function main() {
     data: [
       {
         post_id: post1.id,
-        url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200',
-        alt: 'Говийн цөлийн үзэмж',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%98%D1%81%D1%82%D0%B0%D0%BD%D0%B1%D1%83%D0%BB.jpg1_-300x200.jpg',
+        alt: 'Истанбул хотын үзэмж',
       },
       {
         post_id: post1.id,
-        url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1200',
-        alt: 'Нар жаргах үеийн элсэн манхан',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%BF%D0%B0%D0%BC%D0%B0%D0%BA%D1%83%D0%BB%D0%BB%D0%B5.jpg1_-300x200.jpg',
+        alt: 'Памуккалегийн хөвөн цайз',
       },
       {
         post_id: post1.id,
-        url: 'https://images.unsplash.com/photo-1563784462041-5f1d7b0d8e2f?w=1200',
-        alt: 'Говийн хоёр бөхт тэмээ',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%90%D0%BD%D1%82%D0%B0%D0%BB%D1%8C%D1%8F-300x200.jpg',
+        alt: 'Антальягийн далайн эрэг',
       },
       {
         post_id: post2.id,
-        url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200',
-        alt: 'Хөвсгөл нуурын панорама',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2021/06/xtokyo-150x150.jpg.pagespeed.ic.aq-lkOrfGv.webp',
+        alt: 'Токио хот',
       },
       {
         post_id: post2.id,
-        url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1200',
-        alt: 'Уулын үзэмж',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2021/06/xMt.-Fuji-150x150.jpg.pagespeed.ic.XOcWNbr22i.webp',
+        alt: 'Фүжи уул',
       },
       {
         post_id: post3.id,
-        url: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=1200',
-        alt: 'Буддын хийд',
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2023/08/3-300x200.jpg',
+        alt: 'Бээжин хотын үзэмж',
+      },
+      {
+        post_id: post3.id,
+        url: 'https://www.gazarchin.mn/wp-content/uploads/2023/08/4-300x200.jpg',
+        alt: 'Universal Studios Beijing',
       },
     ],
   });
@@ -653,11 +630,11 @@ async function main() {
   // ─── Routes and Route Points ───────────────────────────────────────────────
   console.log('🗺️ Creating routes and waypoints...');
 
-  // Route for Post 1 (Gobi Desert)
+  // Route for Post 1 (Turkey)
   const route1 = await prisma.route.create({
     data: {
       post_id: post1.id,
-      title: 'Говийн тойрог маршрут',
+      title: 'Турк: Анталья – Памуккале – Истанбул',
       points: {
         create: [
           {
@@ -665,71 +642,58 @@ async function main() {
             latitude: 47.8864,
             longitude: 106.9057,
             name: 'Улаанбаатар',
-            description: 'Эхлэл цэг — Монголын нийслэл хот',
-            transport_type: 'DRIVING',
-            recommended_time_to_visit: '1 өдөр',
+            description: 'Аяллын эхлэл цэг',
+            transport_type: 'PLANE',
+            recommended_time_to_visit: 'Нислэг',
             day_number: 1,
             location_id: locations[2].id,
             images: [],
           },
           {
             order_index: 1,
-            latitude: 45.5,
-            longitude: 104.5,
-            name: 'Дунд Говь',
-            description: 'Говийн байгалийн анхны мэдрэмж',
-            transport_type: 'DRIVING',
-            interesting_fact: 'Говь нь дэлхийн хамгийн том цөлүүдийн нэг',
-            recommended_time_to_visit: '1 өдөр',
+            latitude: 36.8969,
+            longitude: 30.7133,
+            name: 'Анталья',
+            description: 'Газар дундын тэнгисийн эргийн амралтын бүс',
+            transport_type: 'PLANE',
+            interesting_fact: 'Туркийн аялал жуулчлалын гол төвүүдийн нэг',
+            recommended_time_to_visit: '3 өдөр',
             day_number: 2,
-            images: [],
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%90%D0%BD%D1%82%D0%B0%D0%BB%D1%8C%D1%8F-300x200.jpg'],
           },
           {
             order_index: 2,
-            latitude: 43.7333,
-            longitude: 102.5167,
-            name: 'Хонгорын элс',
-            description: '180км үргэлжлэх асар том “дуулдаг” элсэн манхан',
+            latitude: 37.9137,
+            longitude: 29.1187,
+            name: 'Памуккале',
+            description: 'Хөвөн цайз шохойн тогтоц, Хиераполисын бүс',
             transport_type: 'DRIVING',
-            interesting_fact: 'Элсний өндөр 300м хүрч, салхинд “дуулдаг” мэт авиа гардаг',
+            interesting_fact: 'UNESCO-д бүртгэлтэй түүх, байгалийн цогц дурсгал',
             recommended_time_to_visit: '1 өдөр',
-            day_number: 3,
-            location_id: locations[5].id,
-            images: ['https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800'],
+            day_number: 4,
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%BF%D0%B0%D0%BC%D0%B0%D0%BA%D1%83%D0%BB%D0%BB%D0%B5.jpg1_-300x200.jpg'],
           },
           {
             order_index: 3,
-            latitude: 43.5,
-            longitude: 104.0,
-            name: 'Ёлын ам (Бүргэдийн хөндий)',
-            description: 'Зуны улиралд ч мөстэй байдаг нарийн хавцал',
-            transport_type: 'DRIVING',
-            interesting_fact: 'Хавцлын гүн сүүдэрлэг хэсэгт жилийн турш мөс байдаг',
-            recommended_time_to_visit: 'Хагас өдөр',
-            day_number: 4,
-            images: [],
+            latitude: 41.0082,
+            longitude: 28.9784,
+            name: 'Истанбул',
+            description: 'Европ, Азийг холбосон түүхэн их хот',
+            transport_type: 'PLANE',
+            interesting_fact: 'Босфорын хоолой хоёр тивийг заагладаг',
+            recommended_time_to_visit: '3 өдөр',
+            day_number: 6,
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2021/10/%D0%98%D1%81%D1%82%D0%B0%D0%BD%D0%B1%D1%83%D0%BB.jpg1_-300x200.jpg'],
           },
           {
             order_index: 4,
-            latitude: 44.1333,
-            longitude: 103.8333,
-            name: 'Баянзаг (Галууны хошуу)',
-            description: 'Үлэг гүрвэлийн олдвороороо алдартай газар',
-            transport_type: 'DRIVING',
-            interesting_fact: '1923 онд дэлхийн анхны үлэг гүрвэлийн өндөг эндээс олдсон',
-            recommended_time_to_visit: 'Хагас өдөр',
-            day_number: 5,
-            images: [],
-          },
-          {
-            order_index: 5,
             latitude: 47.8864,
             longitude: 106.9057,
-            name: 'Улаанбаатар руу буцах',
-            description: 'Нийслэл рүү буцах зам',
-            transport_type: 'DRIVING',
-            recommended_time_to_visit: '1 өдөр',
-            day_number: 6,
+            name: 'Улаанбаатар (буцах)',
+            description: 'Аяллын төгсгөл',
+            transport_type: 'PLANE',
+            recommended_time_to_visit: 'Нислэг',
+            day_number: 8,
             location_id: locations[2].id,
             images: [],
           },
@@ -738,11 +702,11 @@ async function main() {
     },
   });
 
-  // Route for Post 2 (Northern Mongolia)
+  // Route for Post 2 (Japan)
   const route2 = await prisma.route.create({
     data: {
       post_id: post2.id,
-      title: 'Хойд Монголын маршрут',
+      title: 'Япон: Токио – Фүжи',
       points: {
         create: [
           {
@@ -750,7 +714,7 @@ async function main() {
             latitude: 47.8864,
             longitude: 106.9057,
             name: 'Улаанбаатар',
-            description: 'Нийслэлээс хөдөлнө',
+            description: 'Шууд нислэгийн эхлэл',
             transport_type: 'PLANE',
             day_number: 1,
             location_id: locations[2].id,
@@ -758,27 +722,37 @@ async function main() {
           },
           {
             order_index: 1,
-            latitude: 51.0,
-            longitude: 100.5,
-            name: 'Хөвсгөл нуур',
-            description: 'Монголын тунгалаг уулын нуур',
-            transport_type: 'DRIVING',
-            interesting_fact: 'Дэлхийн цэнгэг усны нөөцийн томоохон хэсэг энд хадгалагддаг гэж үздэг',
+            latitude: 35.6762,
+            longitude: 139.6503,
+            name: 'Токио',
+            description: 'Орчин үеийн болон уламжлалт соёлыг хослуулсан мегаполис хот',
+            transport_type: 'PLANE',
+            interesting_fact: 'Дэлхийн хамгийн том метрополитен бүсийн нэг',
             recommended_time_to_visit: '3 өдөр',
             day_number: 2,
-            location_id: locations[1].id,
-            images: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'],
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2021/06/xtokyo-150x150.jpg.pagespeed.ic.aq-lkOrfGv.webp'],
           },
           {
             order_index: 2,
-            latitude: 51.5,
-            longitude: 99.5,
-            name: 'Цаатны тайгын бууц',
-            description: 'Цаа буга маллагчдын алслагдсан бууц',
+            latitude: 35.3606,
+            longitude: 138.7274,
+            name: 'Фүжи уулын бүс',
+            description: 'Ширайто хүрхрээ, уулын байгалийн маршрут',
             transport_type: 'DRIVING',
-            interesting_fact: 'Цаатан нь цаа буга маллах соёлоо хадгалсан ховор нүүдэлчин бүлгүүдийн нэг',
-            recommended_time_to_visit: '3 өдөр',
-            day_number: 4,
+            interesting_fact: 'Фүжи нь Японы хамгийн өндөр оргил (3776м)',
+            recommended_time_to_visit: '2 өдөр',
+            day_number: 3,
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2021/06/xMt.-Fuji-150x150.jpg.pagespeed.ic.XOcWNbr22i.webp'],
+          },
+          {
+            order_index: 3,
+            latitude: 47.8864,
+            longitude: 106.9057,
+            name: 'Улаанбаатар (буцах)',
+            description: 'Аяллын төгсгөл',
+            transport_type: 'PLANE',
+            day_number: 5,
+            location_id: locations[2].id,
             images: [],
           },
         ],
@@ -786,11 +760,11 @@ async function main() {
     },
   });
 
-  // Route for Post 3 (Central Mongolia)
+  // Route for Post 3 (Beijing)
   const route3 = await prisma.route.create({
     data: {
       post_id: post3.id,
-      title: 'Төв Монголын тойрог маршрут',
+      title: 'Бээжин: Хот + Universal Studios',
       points: {
         create: [
           {
@@ -798,47 +772,55 @@ async function main() {
             latitude: 47.8864,
             longitude: 106.9057,
             name: 'Улаанбаатар',
-            description: 'Нийслэлээс эхэлнэ',
-            transport_type: 'WALKING',
+            description: 'Шууд нислэгийн эхлэл',
+            transport_type: 'PLANE',
             day_number: 1,
             location_id: locations[2].id,
             images: [],
           },
           {
             order_index: 1,
-            latitude: 47.9833,
-            longitude: 107.4333,
-            name: 'Тэрэлж',
-            description: 'Уулын үзэмж, хад чулуун тогтоц',
-            transport_type: 'DRIVING',
-            recommended_time_to_visit: '1 өдөр',
-            day_number: 2,
-            location_id: locations[3].id,
-            images: [],
+            latitude: 39.9042,
+            longitude: 116.4074,
+            name: 'Бээжин',
+            description: 'Хятадын нийслэл, түүх соёлын төв',
+            transport_type: 'PLANE',
+            recommended_time_to_visit: '5 өдөр',
+            day_number: 1,
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2023/08/x3-150x150.jpg.pagespeed.ic.6FqYbEsagm.webp'],
           },
           {
             order_index: 2,
-            latitude: 47.2167,
-            longitude: 102.8333,
-            name: 'Эрдэнэ Зуу хийд',
-            description: 'Монголын эртний хийдийн нэг',
+            latitude: 39.8905,
+            longitude: 116.7036,
+            name: 'Universal Studios Beijing',
+            description: 'Сэдэвчилсэн парк, шоу болон тоглоомын бүсүүд',
             transport_type: 'DRIVING',
-            interesting_fact: 'Эртний нийслэл Хар хорумын туурин дээр байгуулагдсан',
-            recommended_time_to_visit: 'Хагас өдөр',
-            day_number: 3,
-            location_id: locations[4].id,
-            images: [],
+            interesting_fact: 'Азийн томоохон студи паркуудын нэг',
+            recommended_time_to_visit: 'Бүтэн өдөр',
+            day_number: 2,
+            images: ['https://www.gazarchin.mn/wp-content/uploads/2023/08/x4-150x150.jpg.pagespeed.ic.QYMek98owY.webp'],
           },
           {
             order_index: 3,
-            latitude: 47.7,
-            longitude: 105.3,
-            name: 'Хустайн байгалийн цогцолборт газар',
-            description: 'Тахь (Пржевальскийн адуу) нутагшсан газар',
+            latitude: 40.4319,
+            longitude: 116.5704,
+            name: 'Цагаан хэрэм',
+            description: 'Дэлхийн долоон гайхамшгийн нэг',
             transport_type: 'DRIVING',
-            interesting_fact: 'Тахь адууг дахин нутагшуулж амжилттай хамгаалж буй бүс',
             recommended_time_to_visit: 'Хагас өдөр',
-            day_number: 4,
+            day_number: 3,
+            images: [],
+          },
+          {
+            order_index: 4,
+            latitude: 47.8864,
+            longitude: 106.9057,
+            name: 'Улаанбаатар (буцах)',
+            description: 'Аяллын төгсгөл',
+            transport_type: 'PLANE',
+            day_number: 5,
+            location_id: locations[2].id,
             images: [],
           },
         ],
@@ -853,11 +835,11 @@ async function main() {
 
   const sessions = [];
 
-  // Sessions for Post 1 (Gobi Desert)
+  // Sessions for Post 1 (Turkey)
   for (let i = 0; i < 6; i++) {
-    const departureDate = new Date(2026, 4 + i, 15); // May through October
+    const departureDate = new Date(2026, 2 + i, i % 2 === 0 ? 5 : 21); // March through August, bi-weekly style
     const returnDate = new Date(departureDate);
-    returnDate.setDate(returnDate.getDate() + 7);
+    returnDate.setDate(returnDate.getDate() + 8);
 
     sessions.push(
       await prisma.departureSession.create({
@@ -866,24 +848,27 @@ async function main() {
           package_option_id: 'standard',
           departure_date: departureDate,
           return_date: returnDate,
-          label: `Говь – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
-          base_price: 1890000,
+          label: `Турк – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
+          base_price: 4490000,
           currency: 'MNT',
-          final_price: 1890000,
-          capacity: 12,
-          seats_booked: i % 2 === 0 ? Math.floor(Math.random() * 8) : 0,
-          status: i < 2 ? 'OPEN' : 'DRAFT',
+          discount_type: i % 3 === 0 ? 'PERCENT' : null,
+          discount_value: i % 3 === 0 ? 5 : null,
+          discount_reason: i % 3 === 0 ? 'Эрт захиалгын хөнгөлөлт' : null,
+          final_price: i % 3 === 0 ? 4265500 : 4490000,
+          capacity: 24,
+          seats_booked: i < 3 ? Math.floor(Math.random() * 18) : 0,
+          status: i < 4 ? 'OPEN' : 'DRAFT',
           public_note: 'Эрт захиалгын урамшуулал үйлчилнэ',
         },
       })
     );
   }
 
-  // Sessions for Post 2 (Northern Mongolia)
+  // Sessions for Post 2 (Japan)
   for (let i = 0; i < 4; i++) {
-    const departureDate = new Date(2026, 5 + i, 1); // June through September
+    const departureDate = new Date(2026, 2 + i, [27, 5, 22, 12][i]); // 3/27, 4/5, 5/22, 6/12
     const returnDate = new Date(departureDate);
-    returnDate.setDate(returnDate.getDate() + 10);
+    returnDate.setDate(returnDate.getDate() + 5);
 
     sessions.push(
       await prisma.departureSession.create({
@@ -892,21 +877,21 @@ async function main() {
           package_option_id: 'standard',
           departure_date: departureDate,
           return_date: returnDate,
-          label: `Хойд бүс – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
-          base_price: 2890000,
+          label: `Япон – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
+          base_price: 5490000,
           currency: 'MNT',
-          final_price: 2890000,
-          capacity: 10,
-          seats_booked: i === 0 ? 6 : 0,
+          final_price: 5490000,
+          capacity: 20,
+          seats_booked: i === 0 ? 11 : 0,
           status: i < 3 ? 'OPEN' : 'DRAFT',
         },
       })
     );
   }
 
-  // Sessions for Post 3 (Central Mongolia)
+  // Sessions for Post 3 (Beijing)
   for (let i = 0; i < 8; i++) {
-    const departureDate = new Date(2026, 3 + i, 5); // April through November
+    const departureDate = new Date(2026, 2 + i, i % 2 === 0 ? 3 : 29); // March through October
     const returnDate = new Date(departureDate);
     returnDate.setDate(returnDate.getDate() + 5);
 
@@ -917,15 +902,15 @@ async function main() {
           package_option_id: 'standard',
           departure_date: departureDate,
           return_date: returnDate,
-          label: `Төв бүс – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
-          base_price: 1190000,
+          label: `Бээжин – ${departureDate.toLocaleDateString('mn-MN', { month: 'long', year: 'numeric' })}`,
+          base_price: 2690000,
           currency: 'MNT',
-          discount_type: i % 3 === 0 ? 'PERCENT' : null,
-          discount_value: i % 3 === 0 ? 10 : null,
-          discount_reason: i % 3 === 0 ? 'Хаврын урамшуулал' : null,
-          final_price: i % 3 === 0 ? 1071000 : 1190000,
-          capacity: 15,
-          seats_booked: i < 4 ? Math.floor(Math.random() * 10) : 0,
+          discount_type: i % 3 === 0 ? 'FIXED' : null,
+          discount_value: i % 3 === 0 ? 200000 : null,
+          discount_reason: i % 3 === 0 ? 'Гэр бүлийн урамшуулал' : null,
+          final_price: i % 3 === 0 ? 2490000 : 2690000,
+          capacity: 25,
+          seats_booked: i < 4 ? Math.floor(Math.random() * 16) : 0,
           status: i < 5 ? 'OPEN' : 'DRAFT',
         },
       })
@@ -950,7 +935,7 @@ async function main() {
       contact_phone: '+976-9911-2233',
       contact_email: 'saruul.bat@example.mn',
       passenger_count: 2,
-      total_price_snapshot: 3780000,
+      total_price_snapshot: 8980000,
       currency: 'MNT',
       booking_status: 'CONFIRMED',
       payment_status: 'PAID',
@@ -991,7 +976,7 @@ async function main() {
       contact_phone: '+976-8811-4455',
       contact_email: 'enkhjin.sukh@example.mn',
       passenger_count: 1,
-      total_price_snapshot: 3690000,
+      total_price_snapshot: 5990000,
       currency: 'MNT',
       booking_status: 'PENDING',
       payment_status: 'PARTIAL',
@@ -1023,7 +1008,7 @@ async function main() {
       contact_phone: '+976-9900-1122',
       contact_email: 'baterdene.ganbold@example.mn',
       passenger_count: 4,
-      total_price_snapshot: 7560000,
+      total_price_snapshot: 11960000,
       currency: 'MNT',
       booking_status: 'CONFIRMED',
       payment_status: 'PAID',
