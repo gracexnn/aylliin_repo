@@ -94,11 +94,15 @@ export async function POST(request: NextRequest) {
       if (!session) {
         throw new Error('DEPARTURE_SESSION_NOT_FOUND');
       }
+      if (session.status !== 'OPEN') {
+        throw new Error('DEPARTURE_SESSION_NOT_OPEN');
+      }
 
       // Atomic seat reservation: increment only if enough seats remain
       const seatUpdate = await tx.departureSession.updateMany({
         where: {
           id: data.departure_session_id,
+          status: 'OPEN',
           seats_booked: { lte: session.capacity - data.passenger_count },
         },
         data: { seats_booked: { increment: data.passenger_count } },
@@ -196,6 +200,9 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       if (error.message === 'DEPARTURE_SESSION_NOT_FOUND') {
         return NextResponse.json({ error: 'Departure session not found' }, { status: 404 });
+      }
+      if (error.message === 'DEPARTURE_SESSION_NOT_OPEN') {
+        return NextResponse.json({ error: 'Departure session is not open for booking' }, { status: 400 });
       }
       if (error.message.startsWith('INSUFFICIENT_SEATS:')) {
         const available = error.message.split(':')[1];
