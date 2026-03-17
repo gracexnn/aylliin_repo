@@ -8,7 +8,9 @@ import prisma from '@/db/client'
 import { qpayService } from '@/lib/qpay'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+        ? (process.env.CLIENT_ORIGIN ?? 'https://aylal-client.vercel.app')
+        : '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 }
@@ -52,10 +54,10 @@ export async function POST(
             )
         }
 
-        // Extract invoice ID from admin_note
-        const invoiceMatch = booking.admin_note?.match(/QPay Invoice ID: ([a-f0-9-]+)/)
+        // Use dedicated qpay_invoice_id column — avoids brittle regex parsing of admin_note
+        const invoiceId = booking.qpay_invoice_id
         
-        if (!invoiceMatch) {
+        if (!invoiceId) {
             return NextResponse.json(
                 {
                     success: true,
@@ -65,8 +67,6 @@ export async function POST(
                 { headers: corsHeaders }
             )
         }
-
-        const invoiceId = invoiceMatch[1]
 
         // Check payment with QPay
         const isPaid = await qpayService.verifyPayment(invoiceId)

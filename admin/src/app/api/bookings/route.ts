@@ -84,7 +84,9 @@ export async function POST(request: NextRequest) {
 
     // Create booking with travelers in a transaction, including availability check inside
     const booking = await prisma.$transaction(async (tx) => {
-      // Re-check availability inside transaction to prevent overbooking race condition
+      // Re-check availability inside transaction to prevent overbooking race condition.
+      // Use an atomic conditional updateMany: the WHERE clause checks seats_booked at
+      // update time, so two concurrent transactions cannot both pass simultaneously.
       const session = await tx.departureSession.findUnique({
         where: { id: data.departure_session_id },
       });
@@ -93,9 +95,23 @@ export async function POST(request: NextRequest) {
         throw new Error('DEPARTURE_SESSION_NOT_FOUND');
       }
 
-      const seatsAvailable = session.capacity - session.seats_booked;
-      if (data.passenger_count > seatsAvailable) {
-        throw new Error(`INSUFFICIENT_SEATS:${seatsAvailable}`);
+      // Atomic seat reservation: increment only if enough seats remain
+      const seatUpdate = await tx.departureSession.updateMany({
+        where: {
+          id: data.departure_session_id,
+          seats_booked: { lte: session.capacity - data.passenger_count },
+        },
+        data: { seats_booked: { increment: data.passenger_count } },
+      });
+
+      if (seatUpdate.count === 0) {
+        // Another concurrent request consumed the remaining seats
+        const refetch = await tx.departureSession.findUnique({
+          where: { id: data.departure_session_id },
+          select: { capacity: true, seats_booked: true },
+        });
+        const available = refetch ? refetch.capacity - refetch.seats_booked : 0;
+        throw new Error(`INSUFFICIENT_SEATS:${available}`);
       }
 
       const newBooking = await tx.booking.create({
@@ -145,14 +161,14 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Update session seats_booked
-      await tx.departureSession.update({
-        where: { id: data.departure_session_id },
-        data: {
-          seats_booked: {
-            increment: data.passenger_count,
-          },
+      // Auto-transition session to FULL if capacity is now reached
+      await tx.departureSession.updateMany({
+        where: {
+          id: data.departure_session_id,
+          status: 'OPEN',
+          seats_booked: { gte: session.capacity },
         },
+        data: { status: 'FULL' },
       });
 
       // Fetch the complete booking with travelers

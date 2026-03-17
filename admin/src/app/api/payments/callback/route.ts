@@ -7,9 +7,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/db/client'
 import { qpayService } from '@/lib/qpay'
 
-// CORS headers
+// CORS headers — origin is configurable via CLIENT_ORIGIN env var
 const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' ? 'https://aylal-client.vercel.app' : '*',
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+        ? (process.env.CLIENT_ORIGIN ?? 'https://aylal-client.vercel.app')
+        : '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
@@ -38,13 +40,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Booking not found' }, { status: 404, headers: corsHeaders })
         }
 
-        // Extract invoice ID from booking notes (use precise regex to avoid greedy match issues)
-        const invoiceIdMatch = booking.admin_note?.match(/QPay Invoice ID: ([a-f0-9-]+)/)
-        if (!invoiceIdMatch) {
-            return NextResponse.json({ error: 'Invoice ID not found in booking' }, { status: 400, headers: corsHeaders })
+        // Use dedicated qpay_invoice_id column — avoids brittle regex parsing of admin_note
+        const invoiceId = booking.qpay_invoice_id
+        if (!invoiceId) {
+            return NextResponse.json({ error: 'Invoice ID not found for this booking' }, { status: 400, headers: corsHeaders })
         }
-
-        const invoiceId = invoiceIdMatch[1]
 
         // Verify payment with QPay
         const isPaid = await qpayService.verifyPayment(invoiceId)
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
                 payment_status: true,
                 total_price_snapshot: true,
                 currency: true,
-                admin_note: true,
+                qpay_invoice_id: true,
             }
         })
 
