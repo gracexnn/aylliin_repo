@@ -106,7 +106,6 @@ export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
     dash: [7, 7],
     width: 3,
     glow: 16,
-    badge: true,
   },
   {
     value: 'FERRY',
@@ -118,7 +117,6 @@ export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
     dash: [9, 7],
     width: 3,
     glow: 16,
-    badge: true,
   },
   {
     value: 'PLANE',
@@ -130,7 +128,6 @@ export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
     dash: [12, 8],
     width: 3,
     glow: 18,
-    badge: true,
   },
   {
     value: 'HELICOPTER',
@@ -142,7 +139,6 @@ export const TRANSPORT_MODE_OPTIONS: TransportModeOption[] = [
     dash: [8, 8],
     width: 3,
     glow: 18,
-    badge: true,
   },
 ];
 
