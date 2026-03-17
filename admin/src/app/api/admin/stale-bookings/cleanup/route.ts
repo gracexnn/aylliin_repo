@@ -59,12 +59,22 @@ export async function POST(req: NextRequest) {
 
     for (const booking of staleBookings) {
         try {
-            await prisma.$transaction(async (tx) => {
-                // Cancel the booking
-                await tx.booking.update({
-                    where: { id: booking.id },
+            const didCancel = await prisma.$transaction(async (tx) => {
+                // Cancel the booking only if it is still stale (PENDING + UNPAID + older than cutoff)
+                const updateResult = await tx.booking.updateMany({
+                    where: {
+                        id: booking.id,
+                        booking_status: 'PENDING',
+                        payment_status: 'UNPAID',
+                        created_at: { lt: cutoffDate },
+                    },
                     data: { booking_status: 'CANCELLED' },
                 })
+
+                // If no rows were updated, the booking is no longer stale; skip seat release
+                if (updateResult.count === 0) {
+                    return false
+                }
 
                 // Release reserved seats (guard against underflow)
                 await tx.departureSession.updateMany({
@@ -90,8 +100,12 @@ export async function POST(req: NextRequest) {
                         data: { status: 'OPEN' },
                     })
                 }
+
+                return true
             })
-            cancelled++
+            if (didCancel) {
+                cancelled++
+            }
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err)
             errors.push(`booking ${booking.booking_code}: ${msg}`)
