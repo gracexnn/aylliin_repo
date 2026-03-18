@@ -3,10 +3,11 @@ import { About, Blog, Gallery, Home, Newsletter, Person, Social, Work } from "@/
 const person: Person = {
   firstName: "Аялал",
   lastName: "Систем",
-  name: "Аялал Систем",
+  name: "Аяллын Систем",
   role: "Аяллын Захиалгын Платформ",
   avatar: "/images/avatar.jpg",
-  email: "info@wenly.space",
+  email: "naraenk27@gmail.com",
+  phone: 88745504,
   location: "Asia/Ulaanbaatar",
   languages: ["Монгол", "English"],
 };
@@ -30,6 +31,12 @@ const social: Social = [
     link: `mailto:${person.email}`,
     essential: true,
   },
+  {
+    name: "Phone",
+    icon: "phone",
+    link: `tel:${person.phone}`,
+    essential: true,
+  }
 ];
 
 const home: Home = {
@@ -45,7 +52,7 @@ const home: Home = {
     title: <>Аялал</>,
     href: "/",
   },
-  subline: <>Аяллын захиалгын платформ — клиент болон администраторт зориулсан нэгдсэн шийдэл.</>,
+  subline: <>Аяллын захиалгын платформ — хэрэглэгч болон аяллын үйл ажиллагаанд зориулсан нэгдсэн шийдэл.</>,
 };
 
 const about: About = {
