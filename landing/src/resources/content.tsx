@@ -2,49 +2,45 @@ import { About, Blog, Gallery, Home, Newsletter, Person, Social, Work } from "@/
 import { Line, Row, Text } from "@once-ui-system/core";
 
 const person: Person = {
-  firstName: "Selene",
-  lastName: "Yu",
-  name: `Selene Yu`,
-  role: "Design Engineer",
+  firstName: "Аялал",
+  lastName: "Систем",
+  name: "Аялал Систем",
+  role: "Аяллын Захиалгын Платформ",
   avatar: "/images/avatar.jpg",
-  email: "example@gmail.com",
-  location: "Asia/Jakarta", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-  languages: ["English", "Bahasa"], // optional: Leave the array empty if you don't want to display languages
+  email: "info@aylliin.mn",
+  location: "Asia/Ulaanbaatar",
+  languages: ["Монгол", "English"],
 };
 
 const newsletter: Newsletter = {
   display: true,
-  title: <>Subscribe to {person.firstName}'s Newsletter</>,
-  description: <>My weekly newsletter about creativity and engineering</>,
+  title: <>Аялал мэдээллийн захиа авах</>,
+  description: (
+    <>
+      Шинэ аялалын багцууд, онцгой санал болон аяллын зөвлөмжийг хамгийн түрүүнд мэдрэхийн тулд
+      бүртгүүлээрэй.
+    </>
+  ),
 };
 
 const social: Social = [
-  // Links are automatically displayed.
-  // Import new icons in /once-ui/icons.ts
-  // Set essentials: true for links you want to show on the about page
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/once-ui-system",
+    link: "https://github.com/gracexnn/aylliin_repo",
     essential: true,
   },
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/company/once-ui/",
+    link: "https://www.linkedin.com/",
     essential: true,
   },
   {
     name: "Instagram",
     icon: "instagram",
-    link: "https://www.instagram.com/once_ui/",
+    link: "https://www.instagram.com/",
     essential: false,
-  },
-  {
-    name: "Threads",
-    icon: "threads",
-    link: "https://www.threads.com/@once_ui",
-    essential: true,
   },
   {
     name: "Email",
@@ -57,35 +53,41 @@ const social: Social = [
 const home: Home = {
   path: "/",
   image: "/images/og/home.jpg",
-  label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Building bridges between design and code</>,
+  label: "Нүүр",
+  title: "Аялал – Аяллын Захиалгын Платформ",
+  description:
+    "Монголын хамгийн найдвартай онлайн аяллын захиалгын платформ. Аялал зохион байгуулагч, үйлчлүүлэгч, администратор нарт зориулсан бүрэн шийдэл.",
+  headline: <>Аяллыг энгийн, хялбар, найдвартай болго</>,
   featured: {
     display: true,
     title: (
       <Row gap="12" vertical="center">
-        <strong className="ml-4">Once UI</strong>{" "}
+        <strong className="ml-4">Аялал</strong>{" "}
         <Line background="brand-alpha-strong" vert height="20" />
         <Text marginRight="4" onBackground="brand-medium">
-          Featured work
+          Шинэ платформ
         </Text>
       </Row>
     ),
-    href: "/work/building-once-ui-a-customizable-design-system",
+    href: "/work/aylal-client-portal",
   },
   subline: (
     <>
-    I'm Selene, a design engineer at <Text as="span" size="xl" weight="strong">ONCE UI</Text>, where I craft intuitive <br /> user experiences. After hours, I build my own projects.
-</>
+      Манай платформ нь аяллын агуулга удирдлага, захиалгын систем болон олон түрээслэгчийн{" "}
+      <Text as="span" size="xl" weight="strong">
+        нэгдсэн шийдэл
+      </Text>{" "}
+      юм.
+    </>
   ),
 };
 
 const about: About = {
   path: "/about",
-  label: "About",
-  title: `About – ${person.name}`,
-  description: `Meet ${person.name}, ${person.role} from ${person.location}`,
+  label: "Тухай",
+  title: "Тухай – Аялал Систем",
+  description:
+    "Аялал платформын тухай. Монголын аяллын салбарт дижитал шийдэл нэвтрүүлж буй манай баг.",
   tableOfContent: {
     display: true,
     subItems: false,
@@ -99,130 +101,135 @@ const about: About = {
   },
   intro: {
     display: true,
-    title: "Introduction",
+    title: "Танилцуулга",
     description: (
       <>
-        Selene is a Jakarta-based design engineer with a passion for transforming complex challenges
-        into simple, elegant design solutions. Her work spans digital interfaces, interactive
-        experiences, and the convergence of design and technology.
+        Аялал платформ нь Монголын аяллын салбарыг дижитал болгох зорилготой стартап юм. Бид
+        аялал зохион байгуулагчид болон үйлчлүүлэгчдийг нэг нэгдсэн системд холбож, захиалга,
+        төлбөр тооцоо, агуулга удирдлагыг автоматжуулдаг. Манай шийдэл нь үйлчлүүлэгчийн
+        интерфэйс ба администратор хэрэгслийг нэгтгэн аяллын бүхий л процессыг хялбарчилдаг.
       </>
     ),
   },
   work: {
-    display: true, // set to false to hide this section
-    title: "Work Experience",
+    display: true,
+    title: "Платформын бүрдэл хэсгүүд",
     experiences: [
       {
-        company: "FLY",
-        timeframe: "2022 - Present",
-        role: "Senior Design Engineer",
+        company: "Клиент Портал",
+        timeframe: "2024 – Одоог хүртэл",
+        role: "Үйлчлүүлэгчид зориулсан вэб апп",
         achievements: [
           <>
-            Redesigned the UI/UX for the FLY platform, resulting in a 20% increase in user
-            engagement and 30% faster load times.
+            Аяллын багцуудыг хайх, шүүх, харьцуулах боломж бүхий ухаалаг хайлтын систем
+            хэрэгжүүлсэн – хэрэглэгчдийн хамрах хүрээ 45%-иар өссөн.
           </>,
           <>
-            Spearheaded the integration of AI tools into design workflows, enabling designers to
-            iterate 50% faster.
+            Онлайн захиалга, төлбөр тооцоо, баримт бичгийн менежментийг нэг дэлгэц дээр
+            нэгтгэснээр гүйлгээний хурд 60%-иар хурдассан.
           </>,
         ],
         images: [
-          // optional: leave the array empty if you don't want to display images
           {
             src: "/images/projects/project-01/cover-01.jpg",
-            alt: "Once UI Project",
+            alt: "Клиент портал",
             width: 16,
             height: 9,
           },
         ],
       },
       {
-        company: "Creativ3",
-        timeframe: "2018 - 2022",
-        role: "Lead Designer",
+        company: "Админ Хяналтын Самбар",
+        timeframe: "2024 – Одоог хүртэл",
+        role: "Администраторт зориулсан удирдлагын хэрэгсэл",
         achievements: [
           <>
-            Developed a design system that unified the brand across multiple platforms, improving
-            design consistency by 40%.
+            Аяллын агуулга (тайлбар, зураг, хөтөлбөр, үнэ) үүсгэх, засварлах, нийтлэх
+            бүрэн CRUD интерфэйс боловсруулсан.
           </>,
           <>
-            Led a cross-functional team to launch a new product line, contributing to a 15% increase
-            in overall company revenue.
+            Бодит цагийн захиалгын мониторинг, үйлчлүүлэгчийн мэдэгдэл болон олон
+            үйлчилгээ үзүүлэгчийг дэмжих олон түрээслэгчийн бүтэц нэвтрүүлсэн.
           </>,
         ],
-        images: [],
+        images: [
+          {
+            src: "/images/projects/project-01/cover-02.jpg",
+            alt: "Админ хяналтын самбар",
+            width: 16,
+            height: 9,
+          },
+        ],
       },
     ],
   },
   studies: {
-    display: true, // set to false to hide this section
-    title: "Studies",
+    display: true,
+    title: "Технологийн стек",
     institutions: [
       {
-        name: "University of Jakarta",
-        description: <>Studied software engineering.</>,
+        name: "Frontend: Next.js + TypeScript",
+        description: (
+          <>
+            Клиент болон admin портал хоёулаа React 19 дээр суурилсан Next.js ашиглан
+            бүтээгдсэн. Tailwind CSS болон Once UI компонент сангаар загварчилсан.
+          </>
+        ),
       },
       {
-        name: "Build the Future",
-        description: <>Studied online marketing and personal branding.</>,
+        name: "Backend & Database",
+        description: (
+          <>
+            RESTful API болон бодит цагийн өгөгдлийн синхрончлол. Олон түрээслэгчийн
+            архитектур нь тус тусын түрээслэгч бүрийн мэдээллийг бие биеэс тусгаарлан хадгалдаг.
+          </>
+        ),
       },
     ],
   },
   technical: {
-    display: true, // set to false to hide this section
-    title: "Technical skills",
+    display: true,
+    title: "Техникийн чадавх",
     skills: [
       {
-        title: "Figma",
+        title: "Next.js & TypeScript",
         description: (
-          <>Able to prototype in Figma with Once UI with unnatural speed.</>
+          <>
+            Server-side rendering болон статик генерацийг ашиглан хурдан, SEO-д ээлтэй вэб
+            апп боловсруулдаг. TypeScript ашиглан кодын найдвартай байдлыг хангадаг.
+          </>
         ),
         tags: [
-          {
-            name: "Figma",
-            icon: "figma",
-          },
+          { name: "TypeScript", icon: "typescript" },
+          { name: "Next.js", icon: "nextjs" },
+          { name: "JavaScript", icon: "javascript" },
         ],
-        // optional: leave the array empty if you don't want to display images
         images: [
           {
-            src: "/images/projects/project-01/cover-02.jpg",
-            alt: "Project image",
-            width: 16,
-            height: 9,
-          },
-          {
             src: "/images/projects/project-01/cover-03.jpg",
-            alt: "Project image",
+            alt: "Next.js хөгжүүлэлт",
             width: 16,
             height: 9,
           },
         ],
       },
       {
-        title: "Next.js",
+        title: "UI/UX Design System",
         description: (
-          <>Building next gen apps with Next.js + Once UI + Supabase.</>
+          <>
+            Once UI компонент сан болон Figma дизайн системийг ашиглан тогтвортой,
+            хэрэглэхэд хялбар интерфэйс бүтээдэг. Клиент болон admin хоёр портал нэгдсэн
+            дизайн хэлийг баримталдаг.
+          </>
         ),
         tags: [
-          {
-            name: "JavaScript",
-            icon: "javascript",
-          },
-          {
-            name: "Next.js",
-            icon: "nextjs",
-          },
-          {
-            name: "Supabase",
-            icon: "supabase",
-          },
+          { name: "Figma", icon: "figma" },
+          { name: "Tailwind CSS", icon: "tailwindcss" },
         ],
-        // optional: leave the array empty if you don't want to display images
         images: [
           {
             src: "/images/projects/project-01/cover-04.jpg",
-            alt: "Project image",
+            alt: "UI дизайн систем",
             width: 16,
             height: 9,
           },
@@ -234,68 +241,63 @@ const about: About = {
 
 const blog: Blog = {
   path: "/blog",
-  label: "Blog",
-  title: "Writing about design and tech...",
-  description: `Read what ${person.name} has been up to recently`,
-  // Create new blog posts by adding a new .mdx file to app/blog/posts
-  // All posts will be listed on the /blog route
+  label: "Блог",
+  title: "Аяллын зөвлөмж ба мэдээ...",
+  description: "Аялал платформоос хамгийн сүүлийн мэдээ, зөвлөмж болон шинэчлэлүүдийг уншаарай.",
 };
 
 const work: Work = {
   path: "/work",
-  label: "Work",
-  title: `Projects – ${person.name}`,
-  description: `Design and dev projects by ${person.name}`,
-  // Create new project pages by adding a new .mdx file to app/blog/posts
-  // All projects will be listed on the /home and /work routes
+  label: "Ажлууд",
+  title: "Платформын хөгжүүлэлт",
+  description:
+    "Аялал платформын клиент портал болон admin хяналтын самбарын хөгжүүлэлтийн ажлуудтай танилц.",
 };
 
 const gallery: Gallery = {
   path: "/gallery",
-  label: "Gallery",
-  title: `Photo gallery – ${person.name}`,
-  description: `A photo collection by ${person.name}`,
-  // Images by https://lorant.one
-  // These are placeholder images, replace with your own
+  label: "Галлерей",
+  title: "Аяллын зургийн галлерей",
+  description: "Монголын үзэсгэлэнт газруудын фото цомог",
   images: [
     {
       src: "/images/gallery/horizontal-1.jpg",
-      alt: "image",
+      alt: "Монголын байгаль",
       orientation: "horizontal",
     },
     {
       src: "/images/gallery/vertical-4.jpg",
-      alt: "image",
+      alt: "Аяллын зураг",
       orientation: "vertical",
     },
     {
       src: "/images/gallery/horizontal-3.jpg",
-      alt: "image",
+      alt: "Монголын нутаг",
       orientation: "horizontal",
     },
     {
       src: "/images/gallery/vertical-1.jpg",
-      alt: "image",
+      alt: "Аяллын зураг",
       orientation: "vertical",
     },
     {
       src: "/images/gallery/vertical-2.jpg",
-      alt: "image",
+      alt: "Аяллын зураг",
       orientation: "vertical",
     },
     {
       src: "/images/gallery/horizontal-2.jpg",
-      alt: "image",
+      alt: "Монголын байгаль",
       orientation: "horizontal",
     },
     {
       src: "/images/gallery/horizontal-4.jpg",
-      alt: "image",
+      alt: "Монголын нутаг",
       orientation: "horizontal",
     },
     {
       src: "/images/gallery/vertical-3.jpg",
-      alt: "image",
+      alt: "Аяллын зураг",
       orientation: "vertical",
     },
   ],
