@@ -27,9 +27,14 @@ import {
   SiNextdotjs,
   SiFigma,
   SiSupabase,
+  SiTypescript,
+  SiTailwindcss,
 } from "react-icons/si";
 
 import { FaDiscord, FaGithub, FaLinkedin, FaX, FaThreads, FaInstagram, FaXTwitter, FaFacebook, FaPinterest, FaWhatsapp, FaReddit, FaTelegram, } from "react-icons/fa6";
+import { BiPhone } from "react-icons/bi";
+import { GoGear } from "react-icons/go";
+import { CiUser } from "react-icons/ci";
 
 export const iconLibrary: Record<string, IconType> = {
   arrowUpRight: HiArrowUpRight,
@@ -58,12 +63,17 @@ export const iconLibrary: Record<string, IconType> = {
   nextjs: SiNextdotjs,
   supabase: SiSupabase,
   figma: SiFigma,
+  typescript: SiTypescript,
+  tailwindcss: SiTailwindcss,
   facebook: FaFacebook,
   pinterest: FaPinterest,
   whatsapp: FaWhatsapp,
   reddit: FaReddit,
   telegram: FaTelegram,
   instagram: FaInstagram,
+  phone: BiPhone,
+  gear: GoGear,
+  user: CiUser
 };
 
 export type IconLibrary = typeof iconLibrary;

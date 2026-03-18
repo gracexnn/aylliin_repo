@@ -166,6 +166,36 @@ export const Header = () => {
                   </Row>
                 </>
               )}
+                <>
+                  <Row s={{ hide: true }}>
+                    <ToggleButton
+                      prefixIcon="gear"
+                      label={'Админ'}
+                      href={process.env.NEXT_PUBLIC_DEMO_ADMIN_URL}
+                    />
+                  </Row>
+                  <Row hide s={{ hide: false }}>
+                    <ToggleButton
+                      prefixIcon="gear"
+                      href={process.env.NEXT_PUBLIC_DEMO_ADMIN_URL}
+                    />
+                  </Row>
+                </>
+                <>
+                  <Row s={{ hide: true }}>
+                    <ToggleButton
+                      prefixIcon="user"
+                      label={'Хэрэглэгч'}
+                      href={process.env.NEXT_PUBLIC_DEMO_CLIENT_URL}
+                    />
+                  </Row>
+                  <Row hide s={{ hide: false }}>
+                    <ToggleButton
+                      prefixIcon="user"
+                      href={process.env.NEXT_PUBLIC_DEMO_CLIENT_URL}
+                    />
+                  </Row>
+                </>
               {display.themeSwitcher && (
                 <>
                   <Line background="neutral-alpha-medium" vert maxHeight="24" />
