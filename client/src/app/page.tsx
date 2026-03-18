@@ -284,51 +284,6 @@ export default async function HomePage() {
             {/* ─── Featured guides ──────────────────────────────── */}
             <FeaturedGuides />
 
-            {/* ─── About section ────────────────────────────────── */}
-            <section className="py-20 bg-gray-50" id="about">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <span className="inline-block bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
-                                Бидний зорилго
-                            </span>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-5">
-                                Зүгээр нэг явах биш, илүү гүн мэдэр
-                            </h2>
-                            <p className="text-gray-500 leading-relaxed mb-4">
-                                Aylal нь түгээмэл аяллын замаас цааш харж,
-                                тухайн газрын онцлогийг илүү сайн мэдрэхэд туслах
-                                судалгаатай аяллын багцуудын цуглуулга юм.
-                            </p>
-                            <p className="text-gray-500 leading-relaxed">
-                                Хотын богино аялал ч бай, олон өдрийн хөтөлбөр ч бай,
-                                манай маршрут ба тээврийн зөвлөгөө таныг зөв чиглэлд хөтөлнө.
-                            </p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            {[
-                                { title: 'Дэлгэрэнгүй маршрут', desc: 'Тээврийн төрлөөр ялгасан алхам алхмаар чиглэл.' },
-                                { title: 'Орон нутгийн мэдээлэл', desc: 'Өөр газраас олдоход хэцүү сонирхолтой баримтууд.' },
-                                { title: 'Хамгийн тохиромжтой үе', desc: 'Цэг бүрийг очих зөв цагийн санал.' },
-                                { title: 'Зургийн цэгүүд', desc: 'Аялалд урам өгөх онцлох зураг, санаанууд.' },
-                            ].map((feat) => (
-                                <div
-                                    key={feat.title}
-                                    className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
-                                >
-                                    <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                                        {feat.title}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 leading-relaxed">
-                                        {feat.desc}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <Footer settings={settings} />
         </>
     )
