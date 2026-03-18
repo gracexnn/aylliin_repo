@@ -13,20 +13,20 @@ import {
 interface ProjectCardProps {
   href: string;
   priority?: boolean;
-  images: string[];
   title: string;
   content: string;
   description: string;
+  images: string[];
   avatars: { src: string }[];
   link: string;
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   href,
-  images = [],
   title,
   content,
   description,
+  images,
   avatars,
   link,
 }) => {
@@ -34,12 +34,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     <Column fillWidth gap="m">
       <Carousel
         sizes="(max-width: 960px) 100vw, 960px"
-        items={images.map((image) => ({
+        items={images.map((image, index) => ({
           slide: image,
-          alt: title,
+          alt: `project-image-${index + 1}`,
         }))}
       />
-      <Flex
+      {/* <Flex
         s={{ direction: "column" }}
         fillWidth
         paddingX="s"
@@ -67,24 +67,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 <SmartLink
                   suffixIcon="arrowRight"
                   style={{ margin: "0", width: "fit-content" }}
-                  href={href}
+                  href={process.env.NEXT_PUBLIC_DEMO_CLIENT_URL}
                 >
-                  <Text variant="body-default-s">Read case study</Text>
+                  <Text variant="body-default-s">Туршиж үзэх</Text>
                 </SmartLink>
               )}
               {link && (
                 <SmartLink
                   suffixIcon="arrowUpRightFromSquare"
                   style={{ margin: "0", width: "fit-content" }}
-                  href={link}
+                  href={process.env.NEXT_PUBLIC_DEMO_ADMIN_URL}
                 >
-                  <Text variant="body-default-s">View project</Text>
+                  <Text variant="body-default-s">Админ</Text>
                 </SmartLink>
               )}
             </Flex>
           </Column>
         )}
-      </Flex>
+      </Flex> */}
     </Column>
   );
 };
