@@ -41,7 +41,7 @@ const social: Social = [
 
 const home: Home = {
   path: "/",
-  image: "/og.jpg",
+  image: "/images/og.jpg",
   label: "Нүүр",
   title: "Аялал – Аяллын Захиалгын Платформ",
   description:
