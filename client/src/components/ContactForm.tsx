@@ -149,10 +149,13 @@ export default function ContactForm() {
 
             {feedback ? (
                 <p
-                    className={`mt-4 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${{
-                        sent: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-                        error: 'border-red-200 bg-red-50 text-red-700',
-                    }[status] ?? 'border-gray-200 bg-gray-50 text-gray-700'}`}
+                    className={`mt-4 flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+                        status === 'sent'
+                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                            : status === 'error'
+                              ? 'border-red-200 bg-red-50 text-red-700'
+                              : 'border-gray-200 bg-gray-50 text-gray-700'
+                    }`}
                 >
                     {status === 'sent' ? <FiCheckCircle className="mt-0.5 shrink-0" /> : null}
                     <span>{feedback}</span>
