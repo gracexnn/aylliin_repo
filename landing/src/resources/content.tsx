@@ -6,7 +6,7 @@ const person: Person = {
   name: "Аялал Систем",
   role: "Аяллын Захиалгын Платформ",
   avatar: "/images/avatar.jpg",
-  email: "info@aylliin.mn",
+  email: "info@wenly.space",
   location: "Asia/Ulaanbaatar",
   languages: ["Монгол", "English"],
 };
@@ -21,7 +21,7 @@ const social: Social = [
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/gracexnn/aylliin_repo",
+    link: "https://github.com/gracexnn",
     essential: true,
   },
   {
