@@ -65,6 +65,7 @@ const siteConfig = {
     nav: [
         { href: '/', label: 'Нүүр' },
         { href: '/guides', label: 'Аяллын багцууд' },
+        { href: '/contact', label: 'Холбоо барих' },
         { href: '/#about', label: 'Бидний тухай' },
     ],
 
@@ -79,7 +80,7 @@ const siteConfig = {
                 { href: '/#about', label: 'Бидний тухай' },
             ],
             Тусламж: [
-                { href: '#contact', label: 'Холбоо барих' },
+                { href: '/contact', label: 'Холбоо барих' },
                 { href: '#privacy', label: 'Нууцлалын бодлого' },
                 { href: '#terms', label: 'Үйлчилгээний нөхцөл' },
             ],
