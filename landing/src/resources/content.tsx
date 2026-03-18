@@ -80,8 +80,49 @@ const gallery: Gallery = {
   path: "/gallery",
   label: "Галлерей",
   title: "Галлерей",
-  description: "",
-  images: [],
+  description: "Монголын үзэсгэлэнт газруудын фото цомог",
+  images: [
+    {
+      src: "/images/gallery/horizontal-1.jpg",
+      alt: "Монголын байгаль",
+      orientation: "horizontal",
+    },
+    {
+      src: "/images/gallery/vertical-4.jpg",
+      alt: "Аяллын зураг",
+      orientation: "vertical",
+    },
+    {
+      src: "/images/gallery/horizontal-3.jpg",
+      alt: "Монголын нутаг",
+      orientation: "horizontal",
+    },
+    {
+      src: "/images/gallery/vertical-1.jpg",
+      alt: "Аяллын зураг",
+      orientation: "vertical",
+    },
+    {
+      src: "/images/gallery/vertical-2.jpg",
+      alt: "Аяллын зураг",
+      orientation: "vertical",
+    },
+    {
+      src: "/images/gallery/horizontal-2.jpg",
+      alt: "Монголын байгаль",
+      orientation: "horizontal",
+    },
+    {
+      src: "/images/gallery/horizontal-4.jpg",
+      alt: "Монголын нутаг",
+      orientation: "horizontal",
+    },
+    {
+      src: "/images/gallery/vertical-3.jpg",
+      alt: "Аяллын зураг",
+      orientation: "vertical",
+    },
+  ],
 };
 
 export { person, social, newsletter, home, about, blog, work, gallery };

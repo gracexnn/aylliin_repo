@@ -1,5 +1,6 @@
 import { Heading, Text, Button, RevealFx, Column, Row, Schema, Meta } from "@once-ui-system/core";
 import { home, person, baseURL } from "@/resources";
+import GalleryView from "@/components/gallery/GalleryView";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -93,6 +94,11 @@ export default function Home() {
             болон үйлчилгээ үзүүлэгчийн бүрэн хяналтын самбар.
           </Text>
         </Column>
+      </RevealFx>
+
+      {/* Photo gallery */}
+      <RevealFx delay={0.4} fillWidth>
+        <GalleryView />
       </RevealFx>
     </Column>
   );
