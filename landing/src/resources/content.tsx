@@ -56,11 +56,12 @@ const social: Social = [
 
 const home: Home = {
   path: "/",
-  image: "/images/og/home.jpg",
-  label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Building bridges between design and code</>,
+  image: "/og.jpg",
+  label: "Нүүр",
+  title: "Аялал – Аяллын Захиалгын Платформ",
+  description:
+    "Онлайн аяллын захиалгын платформ.",
+  headline: <>Аяллыг энгийн, хялбар, найдвартай болго</>,
   featured: {
     display: true,
     title: (
