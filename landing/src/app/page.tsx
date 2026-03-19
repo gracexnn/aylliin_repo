@@ -168,7 +168,7 @@ export default function Home() {
             arrowIcon
             fillWidth
           >
-            Админ хэсэг үзэх
+            Админ хэсэг
           </Button>
         </Row>
       </RevealFx>
@@ -518,6 +518,9 @@ export default function Home() {
 
       {/* CTA buttons */}
       <RevealFx delay={0.2} fillWidth>
+        <Heading as="h2" variant="display-strong-s" align="center" wrap="balance">
+          Туршиж үзэх үү?
+        </Heading>
         <Row fillWidth gap="12" s={{ direction: "column" }}>
           <Button
             href={demoClientUrl}
@@ -537,7 +540,7 @@ export default function Home() {
             arrowIcon
             fillWidth
           >
-            Админ хэсэг үзэх
+            Админ хэсэг
           </Button>
         </Row>
       </RevealFx>
