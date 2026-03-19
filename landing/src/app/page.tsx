@@ -458,7 +458,7 @@ export default function Home() {
                         style={"hidden" in line && line.hidden ? { color: "#f8fafc", visibility: "hidden" } : { color: "#f8fafc" }}
                       >
                         {line.value}
-                        {line.suffix && (
+                        {"suffix" in line && line.suffix && (
                           <Text as="span" variant="heading-default-m" onBackground="neutral-weak">
                             {line.suffix}
                           </Text>
