@@ -135,7 +135,7 @@ export default function PostsPage() {
                     <div className="flex items-center justify-end gap-2">
                       {post.published && (
                         <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/travel/${post.slug}`} target="_blank">
+                          <Link href={`https://aylal-client.vercel.app/guides/${post.slug}`} target="_blank">
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
