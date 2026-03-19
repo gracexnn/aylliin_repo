@@ -57,6 +57,43 @@ const platformFeatures = [
   }
 ];
 
+const pricingPlans = [
+  {
+    id: "standard-monthly",
+    badge: "ҮНИЙН САНАЛ",
+    name: "СТАНДАРТ БАГЦ",
+    accentColor: "#2dd4bf",
+    cardGradient:
+      "radial-gradient(120% 140% at 100% 0%, rgba(255,255,255, 0.2) 0%, rgba(4, 10, 24, 0.92) 62%)",
+    priceLines: [
+      { label: "Анхны төлбөр", value: "₮350,000", size: "s" },
+      { label: "Сарын төлбөр", value: "₮60,000", suffix: "/сар", size: "m" },
+    ],
+    domainNote: "Үйлчлүүлэгч өөрөө хариуцна",
+    included: [
+      "Системийн суурилуулалт, анхны тохиргоо",
+      "Хостинг, серверийн ажиллагаа",
+      "Засвар үйлчилгээ",
+      "Үндсэн дэмжлэг",
+    ],
+  },
+  {
+    id: "yearly",
+    badge: "ҮНИЙН САНАЛ",
+    name: "ЖИЛИЙН БАГЦ",
+    accentColor: "#38bdf8",
+    cardGradient:
+      "radial-gradient(120% 140% at 100% 0%, rgba(14, 165, 233, 0.2) 0%, rgba(4, 10, 24, 0.92) 62%)",
+    priceLines: [
+      { label: "Нийт төлбөр", value: "₮650,000", suffix: "/жил", size: "m" },
+      { label: "Сарын төлбөр", value: "₮0", suffix: "", size: "m" },
+      // { label: "", value: "", size: "s", hidden: true },
+    ],
+    domainNote: "Домэйн нэр (1ш)",
+    included: ["Системийн ашиглалт", "Хостинг, сервер", "Засвар үйлчилгээ", "Үндсэн дэмжлэг"],
+  },
+];
+
 export async function generateMetadata() {
   return Meta.generate({
     title: home.title,
@@ -360,6 +397,118 @@ export default function Home() {
           </Row>
         </Column>
       </RevealFx>
+      
+      {/* Pricing */}
+      <RevealFx delay={0.35} fillWidth>
+        <Column fillWidth gap="20" paddingTop="16" paddingBottom="24">
+          <Column horizontal="center" align="center" gap="8" paddingBottom="4">
+            <Row
+              paddingX="16"
+              paddingY="8"
+              radius="full"
+              border="brand-alpha-medium"
+              style={{
+                backgroundColor: "rgba(16, 185, 129, 0.12)",
+              }}
+            >
+              <Text variant="body-strong-xs" weight="strong" style={{ color: "#34d399" }}>
+                {pricingPlans[0].badge}
+              </Text>
+            </Row>
+            <Heading as="h2" variant="display-strong-s" align="center" wrap="balance">
+              Танд тохирсон үнийн санал
+            </Heading>
+            <Text variant="body-default-l" onBackground="neutral-weak" align="center" wrap="balance">
+              Хялбар, ил тод үнийн бодлого
+            </Text>
+          </Column>
+
+          <Row fillWidth gap="12" s={{ direction: "column" }}>
+            {pricingPlans.map((plan) => (
+              <Column
+                key={plan.id}
+                flex={1}
+                padding="32"
+                gap="20"
+                border="brand-alpha-medium"
+                radius="xl"
+                position="relative"
+                style={{
+                  background: plan.cardGradient,
+                }}
+              >
+                <Column gap="8">
+                  <Text variant="heading-strong-l" style={{ color: plan.accentColor }}>
+                    ● {plan.name}
+                  </Text>
+                  {[...plan.priceLines, { label: "", value: "", size: "s", hidden: true }].slice(0, 2).map((line) => (
+                    <Column key={`${plan.id}-${line.label}-${line.size}`} gap="4">
+                      <Text
+                        variant="body-default-s"
+                        onBackground="neutral-weak"
+                        style={line.hidden ? { visibility: "hidden" } : undefined}
+                      >
+                        {line.label}
+                      </Text>
+                      <Heading
+                        as="p"
+                        variant={line.size === "m" ? "display-strong-m" : "display-strong-xs"}
+                        wrap="balance"
+                        style={line.hidden ? { color: "#f8fafc", visibility: "hidden" } : { color: "#f8fafc" }}
+                      >
+                        {line.value}
+                        {line.suffix && (
+                          <Text as="span" variant="heading-default-m" onBackground="neutral-weak">
+                            {line.suffix}
+                          </Text>
+                        )}
+                      </Heading>
+                    </Column>
+                  ))}
+                </Column>
+
+                <div style={{ height: 1, width: "100%", backgroundColor: "var(--neutral-alpha-medium)" }} />
+
+                <Column gap="12">
+                  <Text variant="body-strong-s" style={{ color: "#cbd5e1" }}>
+                    БАГЦАД БАГТАНА
+                  </Text>
+                  {plan.included.map((item) => (
+                    <Row key={item} gap="12" align="center" vertical="center">
+                      <FiCheckCircle size={18} color={plan.accentColor} style={{ minWidth: 18 }} />
+                      <Text variant="body-default-m" onBackground="neutral-medium" style={{ textAlign:'left' }}>
+                        {item}
+                      </Text>
+                    </Row>
+                  ))}
+                </Column>
+
+                <Row
+                  fillWidth
+                  gap="8"
+                  align="center"
+                  vertical="center"
+                  paddingX="14"
+                  paddingY="10"
+                  radius="l"
+                  border="neutral-alpha-medium"
+                  style={{
+                    backgroundColor: "rgba(15, 23, 42, 0.55)",
+                  }}
+                >
+                  <Text variant="body-strong-xs" style={{ color: "#facc15" }}>
+                    Домэйн:
+                  </Text>
+                  <Text variant="body-default-s" onBackground="neutral-weak">
+                    {plan.domainNote}
+                  </Text>
+                </Row>
+              </Column>
+            ))}
+          </Row>
+        </Column>
+      </RevealFx>
+
     </Column>
   );
 }
