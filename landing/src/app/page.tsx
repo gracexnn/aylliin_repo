@@ -489,8 +489,8 @@ export default function Home() {
                   gap="8"
                   align="center"
                   vertical="center"
-                  paddingX="14"
-                  paddingY="10"
+                  paddingX="16"
+                  paddingY="8"
                   radius="l"
                   border="neutral-alpha-medium"
                   style={{
