@@ -87,7 +87,7 @@ const pricingPlans = [
       "radial-gradient(120% 140% at 100% 0%, rgba(14, 165, 233, 0.2) 0%, rgba(4, 10, 24, 0.92) 62%)",
     priceLines: [
       { label: "Нийт төлбөр", value: "₮650,000", suffix: "/жил", size: "m" },
-      { label: "Сарын төлбөр", value: "₮0", suffix: "", size: "m" },
+      { label: "Нэмэлт сарын төлбөр", value: "₮0", suffix: "", size: "m" },
       // { label: "", value: "", size: "s", hidden: true },
     ],
     domainNote: "Домэйн нэр (1ш)",
