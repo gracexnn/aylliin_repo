@@ -447,7 +447,7 @@ export default function Home() {
                       <Text
                         variant="body-default-s"
                         onBackground="neutral-weak"
-                        style={line.hidden ? { visibility: "hidden" } : undefined}
+                        style={"hidden" in line && line.hidden ? { visibility: "hidden" } : undefined}
                       >
                         {line.label}
                       </Text>
@@ -455,7 +455,7 @@ export default function Home() {
                         as="p"
                         variant={line.size === "m" ? "display-strong-m" : "display-strong-xs"}
                         wrap="balance"
-                        style={line.hidden ? { color: "#f8fafc", visibility: "hidden" } : { color: "#f8fafc" }}
+                        style={"hidden" in line && line.hidden ? { color: "#f8fafc", visibility: "hidden" } : { color: "#f8fafc" }}
                       >
                         {line.value}
                         {line.suffix && (
