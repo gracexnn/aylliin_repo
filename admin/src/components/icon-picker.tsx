@@ -171,12 +171,6 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
             </Button>
           )}
         </div>
-
-        {value && (
-          <p className="text-xs text-muted-foreground">
-            Хадгалсан утга: <span className="font-mono">{value}</span>
-          </p>
-        )}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
