@@ -510,6 +510,31 @@ export default function Home() {
         </Column>
       </RevealFx>
 
+      {/* CTA buttons */}
+      <RevealFx delay={0.2} fillWidth>
+        <Row fillWidth gap="12" s={{ direction: "column" }}>
+          <Button
+            href={demoClientUrl}
+            variant="primary"
+            size="l"
+            weight="strong"
+            arrowIcon
+            fillWidth
+          >
+            Хэрэглэгчийн хэсэг
+          </Button>
+          <Button
+            href={demoAdminUrl}
+            variant="secondary"
+            size="l"
+            weight="default"
+            arrowIcon
+            fillWidth
+          >
+            Админ хэсэг үзэх
+          </Button>
+        </Row>
+      </RevealFx>
     </Column>
   );
 }
