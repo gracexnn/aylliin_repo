@@ -28,7 +28,7 @@ const platformFeatures = [
     pills: [
       { icon: <IoAirplaneOutline size={16} />, label: "Онгоц" },
       { icon: <IoBusOutline size={16} />, label: "Автобус" },
-      { icon: <IoBicycleOutline size={16} />, label: "..." },
+      { label: "..." },
     ],
     bullets: ["Интерактив газрын зураг", "Тээврийн төрөл", "Нарийвчилсан цагийн хуваарь"],
     linkText: "Дэлгэрэнгүй",
@@ -139,8 +139,8 @@ export default function Home() {
             Систем хэрхэн ажилладаг вэ?
           </Heading>
           <Text variant="body-default-l" onBackground="neutral-weak" wrap="pretty">
-            Аялал платформ нь <strong>Клиент</strong> болон <strong>Админ</strong> гэсэн хоёр хэсгээс
-            бүрддэг. Админ хэсгээс аяллын багц үүсгэж, засварлаж, нийтлэхэд клиент хэсэг
+            Энэхүү платформ нь <strong>Хэрэглэгч</strong> болон <strong>Админ</strong> гэсэн хоёр хэсгээс
+            бүрдэнэ. Админ хэсгээс аяллын багц үүсгэж, засварлаж, нийтлэхэд клиент хэсэг
             автоматаар шинэчлэгдэж хэрэглэгчдэд шууд харагдана.
           </Text>
           <Text variant="body-default-l" onBackground="neutral-weak" wrap="pretty">
@@ -151,6 +151,24 @@ export default function Home() {
             <strong>Админ хэсэг</strong> — агуулга удирдлага, захиалгын мониторинг, хэрэглэгч
             болон үйлчилгээ үзүүлэгчийн бүрэн хяналтын самбар.
           </Text>
+          <Row
+            align="center"
+            vertical="center"
+            gap="8"
+            paddingX="12"
+            paddingY="8"
+            radius="full"
+            border="neutral-alpha-medium"
+            style={{
+              width: "fit-content",
+              backgroundColor: "rgba(16, 185, 129, 0.08)",
+            }}
+          >
+            <FiCheckCircle size={14} color="#059669" />
+            <Text variant="body-strong-s" weight="strong" style={{ color: "#a6ff9e" }}>
+              Мөн нэмэлт хөгжүүлэлт хийлгэх боломжтой
+            </Text>
+          </Row>
         </Column>
       </RevealFx>
 
@@ -170,20 +188,22 @@ export default function Home() {
                 position="relative"
               >
                 <Row fillWidth horizontal="between" align="center" vertical="center" marginBottom="8">
-                  <Row
-                    align="center"
-                    vertical="center"
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 16,
-                      backgroundColor: feature.color,
-                      justifyContent: "center",
-                      display: "flex",
-                    }}
-                  >
-                    {feature.icon}
-                  </Row>
+                  {feature.icon &&
+                    <Row
+                      align="center"
+                      vertical="center"
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 16,
+                        backgroundColor: feature.color,
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      {feature.icon}
+                    </Row>
+                  }
                   <Row
                     paddingX="16"
                     paddingY="8"
@@ -217,7 +237,9 @@ export default function Home() {
                         vertical="center"
                         style={{ backgroundColor: "rgba(25, 168, 230, 0.1)" }}
                       >
-                        <Text style={{ color: feature.color, display: "flex", alignItems: "center" }}>{pill.icon}</Text>
+                        {pill.icon &&
+                          <Text style={{ color: feature.color, display: "flex", alignItems: "center" }}>{pill.icon}</Text>
+                        }
                         <Text variant="body-strong-xs" style={{ color: feature.color }}>
                           {pill.label}
                         </Text>
@@ -262,20 +284,22 @@ export default function Home() {
                 position="relative"
               >
                 <Row fillWidth horizontal="between" align="center" vertical="center" marginBottom="8">
-                  <Row
-                    align="center"
-                    vertical="center"
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 16,
-                      backgroundColor: feature.color,
-                      justifyContent: "center",
-                      display: "flex",
-                    }}
-                  >
-                    {feature.icon}
-                  </Row>
+                  {feature.icon &&
+                    <Row
+                      align="center"
+                      vertical="center"
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 16,
+                        backgroundColor: feature.color,
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      {feature.icon}
+                    </Row>
+                  }
                   <Row
                     paddingX="16"
                     paddingY="8"
@@ -331,13 +355,6 @@ export default function Home() {
                     </Row>
                   ))}
                 </Column>
-                
-                {/* <Row marginTop="16" gap="8" align="center" vertical="center">
-                  <Text variant="body-default-m" weight="strong" style={{ color: feature.color }}>
-                    {feature.linkText}
-                  </Text>
-                  <FiArrowRight size={16} color={feature.color} />
-                </Row> */}
               </Column>
             ))}
           </Row>
