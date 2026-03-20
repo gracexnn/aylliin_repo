@@ -20,7 +20,7 @@ const khersuujaalConfig: Partial<SiteConfig> = {
     // Add tenant-specific overrides here. Omitted keys fall back to src/site.config.ts.
 
     // ─── Brand ──────────────────────────────────────────────────────────────
-  name: 'Khersuu Jaal',
+  name: 'Special Style',
   tagline: 'Аяллын багц',
   fullTitle: 'Aylal — Аяллын багц',
 
