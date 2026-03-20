@@ -7,7 +7,7 @@ const person: Person = {
   role: "Аяллын Захиалгын Платформ",
   avatar: "/images/avatar.jpg",
   email: "naraenk27@gmail.com",
-  phone: 88745504,
+  phone: "+97688745504",
   location: "Asia/Ulaanbaatar",
   languages: ["Монгол", "English"],
 };
@@ -15,7 +15,7 @@ const person: Person = {
 const newsletter: Newsletter = {
   display: false,
   title: <>Аялал мэдээллийн захиа авах</>,
-  description: <></>,
+  description: <>Аяллын шинэ багц, урамшуулал болон хямдралын мэдээллийг шуудангаар хүлээн авах.</>,
 };
 
 const social: Social = [
@@ -73,14 +73,14 @@ const blog: Blog = {
   path: "/blog",
   label: "Блог",
   title: "Блог",
-  description: "",
+  description: "Аяллын зөвлөмж, мэдээлэл болон аяллын туршлага.",
 };
 
 const work: Work = {
   path: "/work",
   label: "Ажлууд",
   title: "Ажлууд",
-  description: "",
+  description: "Манай хийсэн ажлууд болон төслүүд.",
 };
 
 const gallery: Gallery = {
