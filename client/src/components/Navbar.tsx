@@ -10,7 +10,7 @@ import siteConfig from '@/tenant-config'
 const navLinks = siteConfig.nav
 
 type NavbarProps = {
-    initialTone?: 'transparent' | 'dark-glass'
+    initialTone?: 'transparent' | 'dark-glass' | 'light-glass'
 }
 
 export default function Navbar({ initialTone = 'transparent' }: NavbarProps) {
