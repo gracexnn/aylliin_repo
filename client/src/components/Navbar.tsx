@@ -9,10 +9,15 @@ import siteConfig from '@/tenant-config'
 
 const navLinks = siteConfig.nav
 
-export default function Navbar() {
+type NavbarProps = {
+    initialTone?: 'transparent' | 'dark-glass'
+}
+
+export default function Navbar({ initialTone = 'transparent' }: NavbarProps) {
     const pathname = usePathname()
     const [menuOpen, setMenuOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const isDarkGlassTop = !scrolled && initialTone === 'dark-glass'
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -25,7 +30,9 @@ export default function Navbar() {
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
                 scrolled
                     ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100'
-                    : 'bg-transparent'
+                    : isDarkGlassTop
+                      ? 'bg-stone-950/55 backdrop-blur-md border-b border-white/10 shadow-sm'
+                      : 'bg-transparent'
             }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

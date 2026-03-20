@@ -4,6 +4,8 @@ import '@/app/globals.css'
 import SiteVisitTracker from '@/components/site-visit-tracker'
 import siteConfig from '@/tenant-config'
 
+const allowIndexing = (process.env.ALLOW_INDEXING ?? process.env.NEXT_PUBLIC_ALLOW_INDEXING ?? '').toLowerCase() === 'true'
+
 export const metadata: Metadata = {
     title: {
         default: siteConfig.fullTitle,
@@ -15,12 +17,12 @@ export const metadata: Metadata = {
         apple: siteConfig.icons.apple,
     },
     robots: {
-        index: false,
-        follow: false,
+        index: allowIndexing,
+        follow: allowIndexing,
         googleBot: {
-            index: false,
-            follow: false,
-            noimageindex: true,
+            index: allowIndexing,
+            follow: allowIndexing,
+            noimageindex: !allowIndexing,
         },
     },
     openGraph: {
