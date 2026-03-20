@@ -6,8 +6,8 @@ import type { Route, RoutePoint, TransportMode, ItineraryDay } from '@/lib/types
 import { getDayColor, getTransportVisual, getPointColor, DAY_COLORS } from '@/lib/route-utils'
 
 const BASEMAPS = [
-    { id: 'carto-dark',  label: 'Харанхуй', url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',  tilePixelRatio: 2 },
     { id: 'carto-light', label: 'Цайвар',   url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', tilePixelRatio: 2 },
+    { id: 'carto-dark',  label: 'Харанхуй', url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',  tilePixelRatio: 2 },
     { id: 'osm',         label: 'Гудамж',   url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',              tilePixelRatio: 1 },
 ] as const
 
@@ -89,9 +89,9 @@ export default function RouteMap({ routes, itineraryDays = [], activeDayFilter =
     const [mapReady,        setMapReady]        = useState(false)
     const [popup,           setPopup]           = useState<PopupState>(null)
     const [basemap,         setBasemap]         = useState<BasemapId>(() => {
-        if (typeof window === 'undefined') return 'carto-dark'
+        if (typeof window === 'undefined') return 'carto-light'
         const saved = localStorage.getItem(LS_KEY)
-        return (BASEMAPS.some((b) => b.id === saved) ? saved : 'carto-dark') as BasemapId
+        return (BASEMAPS.some((b) => b.id === saved) ? saved : 'carto-light') as BasemapId
     })
 
     const allPoints  = routes.flatMap((r) => r.points)
