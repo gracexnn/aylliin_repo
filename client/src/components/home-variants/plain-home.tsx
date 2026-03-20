@@ -10,6 +10,7 @@ const DEFAULTS = {
 	heroTitle: 'Дэлхийг өөрөөр мэдэр.',
 	heroSubtitle: 'Уламжлалт групп аяллаас татгалзаж, зөвхөн танд зориулсан хэмнэлээр дэлхийтэй танилц.',
 	heroPrimaryCta: { text: 'Аяллаа сонгох', url: '/guides' },
+	heroSecondaryCta: { text: 'Онцлох аяллууд', url: '#featured' },
 } as const
 
 function s<T>(val: T | null | undefined, fallback: T): T {
@@ -95,6 +96,10 @@ export default async function PlainHomePage() {
 		text: s(settings?.hero_primary_cta_text, DEFAULTS.heroPrimaryCta.text),
 		url: s(settings?.hero_primary_cta_url, DEFAULTS.heroPrimaryCta.url),
 	}
+	const secondaryCta = {
+		text: s(settings?.hero_secondary_cta_text, DEFAULTS.heroSecondaryCta.text),
+		url: s(settings?.hero_secondary_cta_url, DEFAULTS.heroSecondaryCta.url),
+	}
 
 	return (
 		<div className="bg-[#0a0a0a] text-white selection:bg-white/30">
@@ -129,7 +134,7 @@ export default async function PlainHomePage() {
 								{heroSubtitle}
 							</p>
 							
-							<div className="flex items-center gap-6">
+							<div className="flex flex-wrap items-center gap-4 sm:gap-6">
 								<Link
 									href={primaryCta.url}
 									className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full bg-white px-8 py-4 text-sm font-medium text-black transition-all hover:scale-105 active:scale-95"
@@ -137,9 +142,12 @@ export default async function PlainHomePage() {
 									<span>{primaryCta.text}</span>
 									<FiArrowRight className="transition-transform group-hover:translate-x-1" />
 								</Link>
-								<button className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white backdrop-blur-md transition-all hover:bg-white/10 hover:scale-105 active:scale-95">
-									<FiPlay className="ml-1" />
-								</button>
+								<Link
+									href={secondaryCta.url}
+									className="inline-flex items-center justify-center rounded-full border border-white/25 bg-white/10 px-8 py-4 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/20 hover:border-white/40"
+								>
+									{secondaryCta.text}
+								</Link>
 							</div>
 						</div>
 					</div>

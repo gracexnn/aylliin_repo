@@ -25,7 +25,7 @@ const contactHighlights = [
     {
         icon: FiMail,
         title: 'И-мэйл',
-        value: 'hello@aylal.mn',
+        value: 'hello@wenly.space',
         description: '24 цагийн дотор хариу илгээнэ',
     },
     {
@@ -48,13 +48,8 @@ export default function ContactPage() {
                 <section className="relative mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
                     <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
                         <div>
-                            <span className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">
-                                <FiZap />
-                                Contact Studio
-                            </span>
                             <h1 className="mt-5 text-4xl font-black leading-tight text-gray-900 sm:text-5xl lg:text-6xl">
-                                Аяллын дараагийн түүхээ
-                                <span className="block text-primary-600"> эндээс эхлүүлээрэй</span>
+                                Бидэнтэй холбогдох
                             </h1>
                             <p className="mt-5 max-w-xl text-base leading-7 text-gray-600 sm:text-lg">
                                 Та аяллын хүсэлтээ бидэнд илгээхэд манай зөвлөх баг таны цаг, төсөв,
