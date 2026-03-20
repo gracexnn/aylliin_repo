@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { HiOutlineMenuAlt3, HiX } from 'react-icons/hi'
 import { MdExplore } from 'react-icons/md'
-import siteConfig from '@/site.config'
+import siteConfig from '@/tenant-config'
 
 const navLinks = siteConfig.nav
 

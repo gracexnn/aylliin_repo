@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
+    "generate:tenant-registry": "node ./scripts/generate-tenant-registry.mjs",
+    "dev": "npm run generate:tenant-registry && next dev",
+    "build": "npm run generate:tenant-registry && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "auth:seed-admin": "node ./scripts/seed-admin.mjs",

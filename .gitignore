@@ -6,3 +6,6 @@
 /client/tsconfig.tsbuildinfo
 /admin/tsconfig.tsbuildinfo
 landing/.env
+client/next-env.d.ts
+client/.env.local
+client/.env

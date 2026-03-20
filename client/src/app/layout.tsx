@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense, type ReactNode } from 'react'
 import '@/app/globals.css'
 import SiteVisitTracker from '@/components/site-visit-tracker'
-import siteConfig from '@/site.config'
+import siteConfig from '@/tenant-config'
 
 export const metadata: Metadata = {
     title: {

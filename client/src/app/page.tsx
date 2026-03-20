@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 import GuideCard from '@/components/GuideCard'
 import HeroTravelSwiper from '@/components/HeroTravelSwiper'
 import { getHighlightedPosts, getLandingSettings, getPosts } from '@/lib/api'
-import siteConfig from '@/site.config'
+import siteConfig from '@/tenant-config'
 import {
     FiArrowRight,
     FiClock,

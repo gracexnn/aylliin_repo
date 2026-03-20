@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MdExplore } from 'react-icons/md'
 import { FiInstagram, FiFacebook, FiLinkedin } from 'react-icons/fi'
-import siteConfig from '@/site.config'
+import siteConfig from '@/tenant-config'
 import type { LandingSettings } from '@/lib/types'
 
 const footerLinks = siteConfig.footer.links
